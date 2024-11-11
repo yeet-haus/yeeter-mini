@@ -1,4 +1,4 @@
-# Yeeter Mini
+# Yeeter Mini - a Mini Yeeter
 
 ## Development
 
