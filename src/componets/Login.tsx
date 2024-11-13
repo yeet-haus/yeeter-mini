@@ -1,5 +1,8 @@
 import { usePrivy } from "@privy-io/react-auth";
 
+import LoginIcon from "../assets/icons/login.svg";
+import LogoutIcon from "../assets/icons/logout.svg";
+
 export const Login = () => {
   const { ready, authenticated, logout, login, user } = usePrivy();
 
@@ -7,14 +10,14 @@ export const Login = () => {
 
   if (ready && authenticated)
     return (
-      <button className="btn" onClick={() => logout()}>
-        Logout
+      <button className="btn btn-ghost" onClick={() => logout()}>
+        <img src={LogoutIcon} width="24" />
       </button>
     );
 
   return (
-    <button className="btn" onClick={() => login()}>
-      Login
+    <button className="btn btn-ghost" onClick={() => login()}>
+      <img src={LoginIcon} width="24" />
     </button>
   );
 };
