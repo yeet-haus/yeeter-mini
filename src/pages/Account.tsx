@@ -1,11 +1,17 @@
+import { AccountDisplay } from "../componets/AccountDisplay";
+import { FundWallet } from "../componets/FundWallet";
 import { Login } from "../componets/Login";
-import { APP_THEME } from "../utils/content";
 
 export const Account = () => {
   return (
     <div className="flex flex-col justify-center items-center gap-10">
       <h3>Account</h3>
       <Login />
+
+      <AccountDisplay />
+
+      <FundWallet />
+
       <p>
         Deadlights jack lad schooner scallywag dance the hempen jig carouser
         broadside cable strike colors. Bring a spring upon her cable holystone

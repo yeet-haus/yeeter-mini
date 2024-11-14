@@ -55,11 +55,11 @@ export const Footer = () => {
               <Link to="/account">
                 <div className="flex flex-row">
                   <img src={User} width="32" />
-                  <span
-                    className={`badge badge-xs badge-${
-                      ready && authenticated ? `info` : `error`
-                    }`}
-                  ></span>
+                  {ready && authenticated ? (
+                    <span className="badge badge-info badge-xs"></span>
+                  ) : (
+                    <span className="badge badge-warning badge-xs"></span>
+                  )}
                 </div>
               </Link>
             </li>

@@ -28,15 +28,16 @@ export const FundWallet = () => {
     );
 
   return (
-    <div className="flex flex-col gap-0 items-center">
-      <div onClick={handleFunding}>
-        <img src={Fund} width="24" />
-      </div>
+    <div className="flex flex-col gap-5 items-center">
       {isFetched && data && (
-        <div className="flex flex-col items-center text-xs text-base-100">
-          <span>{`${data.formatted} ${data.symbol}`}</span>
+        <div className="flex flex-col items-center">
+          <span>{`Balance: ${data.formatted} ${data.symbol}`}</span>
         </div>
       )}
+      <button className="btn" onClick={handleFunding}>
+        <img src={Fund} width="24" />
+        Fund Wallet
+      </button>
     </div>
   );
 };
