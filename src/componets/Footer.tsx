@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { usePrivy } from "@privy-io/react-auth";
 
-import { FundWallet } from "./FundWallet";
-import { Login } from "./Login";
+import { LoginFooter } from "./LoginFooter";
 
 import Launch from "../assets/icons/launch.svg";
 import Explore from "../assets/icons/explore.svg";
-import User from "../assets/icons/user.svg";
 import Left from "../assets/icons/left.svg";
 import Right from "../assets/icons/right.svg";
+import { FundWallet } from "./FundWallet";
 
 export const Footer = () => {
+  const { ready, authenticated } = usePrivy();
   const [step, setStep] = useState(0);
 
   const handleNav = (step: number) => {
@@ -33,27 +34,31 @@ export const Footer = () => {
               </div>
             )}
           </li>
+
           <li className={step === 2 ? "disabled" : ""}>
             {step === 0 && (
               <Link to="/explore">
                 <img src={Explore} width="32" />
               </Link>
             )}
-            {step === 1 && (
-              <div>
-                <img src={User} width="32" />
-              </div>
-            )}
+            {step === 1 && <LoginFooter />}
             {step === 2 && (
               <a
                 href="https://yeet.haus/faq"
                 target="_blank"
-                className="link link-primary text-sm"
+                className="link link-neutral text-xs"
               >
-                Learn more about fundraising with Yeeter
+                Learn more about decentralized fundraising
               </a>
             )}
           </li>
+
+          {step === 1 && (
+            <li className={!ready || !authenticated ? "disabled" : ""}>
+              <FundWallet />
+            </li>
+          )}
+
           <li>
             {step !== 2 && (
               <div onClick={() => handleNav(step + 1)}>
