@@ -2,6 +2,7 @@ import { Routes as Router, Route } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { Explore } from "./pages/Explore";
 import { Launch } from "./pages/Launch";
+import { Account } from "./pages/Account";
 
 // import { ReactSetter } from "@daohaus/utils";
 // import { MULTI_DAO_ROUTER } from "@daohaus/moloch-v3-hooks";
@@ -27,6 +28,7 @@ export const Routes = () => {
       <Route path="/" element={<Home />} />
       <Route path="/explore" element={<Explore />} />
       <Route path="/launch" element={<Launch />} />
+      <Route path="/account" element={<Account />} />
 
       {/* <Route path="/" element={<HomeContainer />}> */}
       {/* <Route index element={<Explore />} />

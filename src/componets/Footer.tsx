@@ -2,13 +2,11 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { usePrivy } from "@privy-io/react-auth";
 
-import { LoginFooter } from "./LoginFooter";
-
 import Launch from "../assets/icons/launch.svg";
 import Explore from "../assets/icons/explore.svg";
+import User from "../assets/icons/user.svg";
 import Left from "../assets/icons/left.svg";
 import Right from "../assets/icons/right.svg";
-import { FundWallet } from "./FundWallet";
 
 export const Footer = () => {
   const { ready, authenticated } = usePrivy();
@@ -35,14 +33,14 @@ export const Footer = () => {
             )}
           </li>
 
-          <li className={step === 2 ? "disabled" : ""}>
+          <li className={step === 1 ? "disabled" : ""}>
             {step === 0 && (
               <Link to="/explore">
                 <img src={Explore} width="32" />
               </Link>
             )}
-            {step === 1 && <LoginFooter />}
-            {step === 2 && (
+
+            {step === 1 && (
               <a
                 href="https://yeet.haus/faq"
                 target="_blank"
@@ -52,15 +50,23 @@ export const Footer = () => {
               </a>
             )}
           </li>
-
-          {step === 1 && (
-            <li className={!ready || !authenticated ? "disabled" : ""}>
-              <FundWallet />
+          {step === 0 && (
+            <li>
+              <Link to="/account">
+                <div className="flex flex-row">
+                  <img src={User} width="32" />
+                  <span
+                    className={`badge badge-xs badge-${
+                      ready && authenticated ? `info` : `error`
+                    }`}
+                  ></span>
+                </div>
+              </Link>
             </li>
           )}
 
           <li>
-            {step !== 2 && (
+            {step !== 1 && (
               <div onClick={() => handleNav(step + 1)}>
                 <img src={Right} width="24" />
               </div>
