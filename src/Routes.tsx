@@ -30,7 +30,7 @@ export const Routes = () => {
       <Route path="/explore" element={<Explore />} />
       <Route path="/launch" element={<Launch />} />
       <Route path="/account" element={<Account />} />
-      <Route path="/:chainid/:campaignid" element={<Campaign />} />
+      <Route path="/campaign/:chainid/:campaignid" element={<Campaign />} />
 
       {/* <Route path="/" element={<HomeContainer />}> */}
       {/* <Route index element={<Explore />} />

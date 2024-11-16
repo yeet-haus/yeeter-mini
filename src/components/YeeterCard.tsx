@@ -23,15 +23,17 @@ export const YeeterCard = ({
     <div className="card bg-primary shadow-xs rounded min-w-full">
       <figure>{hero && <img src={hero} />}</figure>
       <div className="card-body">
-        <h2 className="card-title">{metadata?.name ? metadata.name : "--"}</h2>
+        <h2 className="card-title text-3xl">
+          {metadata?.name ? metadata.name : "--"}
+        </h2>
         {yeeter && (
           <div className="stat">
-            <div className="stat-title">Raised</div>
+            <div className="stat-title text-bold">Raised</div>
             <div className="stat-value text-white">
               {`${toWholeUnits(yeeter?.balance)} ETH`}
             </div>
             <div className="stat-desc">
-              of {toWholeUnits(yeeter?.goal)} ETH goal
+              {toWholeUnits(yeeter?.goal)} ETH goal
             </div>
           </div>
         )}
@@ -53,7 +55,7 @@ export const YeeterCard = ({
               Contribute
             </button>
           )}
-          <Link to={`/${chainId}/${campaign.id}`}>
+          <Link to={`/campaign/${chainId}/${campaign.id}`}>
             <button className="btn btn-neutral rounded-sm w-full">
               Learn More
             </button>

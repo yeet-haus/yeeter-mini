@@ -1,17 +1,27 @@
-import { APP_THEME } from "../utils/content";
+import { useParams } from "react-router-dom";
+import { useYeeter } from "../hooks/useYeeter";
 
 export const Campaign = () => {
+  const { campaignid, chainid } = useParams();
+  const { yeeter, metadata } = useYeeter({
+    chainId: chainid,
+    yeeterId: campaignid,
+  });
+
+  console.log(yeeter);
+  console.log(metadata);
   return (
-    <div className="flex flex-col justify-center items-center gap-10">
-      <h3>Campaign</h3>
-      <img src={APP_THEME.logo} width="100rem" />
-      <p>
-        Deadlights jack lad schooner scallywag dance the hempen jig carouser
-        broadside cable strike colors. Bring a spring upon her cable holystone
-        blow the man down spanker Shiver me timbers to go on account lookout
-        wherry doubloon chase. Belay yo-ho-ho keelhaul squiffy black spot
-        yardarm spyglass sheet transom heave to.
-      </p>
+    <div className="flex flex-col justify-center items-center gap-5">
+      <h2 className="text-2xl text-primary">{metadata?.name}</h2>
+
+      <button className="btn btn-lg btn-outline btn-primary rounded-sm w-full my-10">
+        Contribute
+      </button>
+
+      <div className="flex flex-col p-10 bg-accent text-xs">
+        {yeeter && <pre>{JSON.stringify(yeeter, null, 2)}</pre>}
+        {metadata && <pre>{JSON.stringify(metadata, null, 2)}</pre>}
+      </div>
     </div>
   );
 };

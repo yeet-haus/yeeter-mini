@@ -20,8 +20,8 @@ export const useYeeter = ({
   chainId,
   yeeterId,
 }: {
-  chainId: string;
-  yeeterId: string;
+  chainId?: string;
+  yeeterId?: string;
 }) => {
   const chain = chainId || DEFAULT_CHAIN_ID;
   const graphQLClient = new GraphQLClient(GRAPH_URL[chain]);
@@ -65,6 +65,8 @@ export const useYeeter = ({
       }
     },
   });
+
+  console.log(data);
 
   return {
     // @ts-expect-error fix unknown

@@ -1,17 +1,81 @@
-import { APP_THEME } from "../utils/content";
-
 export const Launch = () => {
   return (
-    <div className="flex flex-col justify-center items-center gap-10">
-      <h3>launch</h3>
-      <img src={APP_THEME.logo} width="100rem" />
-      <p>
-        Deadlights jack lad schooner scallywag dance the hempen jig carouser
-        broadside cable strike colors. Bring a spring upon her cable holystone
-        blow the man down spanker Shiver me timbers to go on account lookout
-        wherry doubloon chase. Belay yo-ho-ho keelhaul squiffy black spot
-        yardarm spyglass sheet transom heave to.
-      </p>
+    <div className="flex flex-col justify-center items-center gap-5">
+      <h2 className="text-2xl text-primary">Launch a Project</h2>
+      <div className="w-full md:w-1/2 flex flex-col gap-7 mb-20">
+        <div>
+          <label className="form-control w-full max-w-xs">
+            <div className="label">
+              <span className="label-text">Give your project a name</span>
+            </div>
+            <input
+              type="text"
+              placeholder="Name"
+              className="input input-bordered input-primary w-full max-w-xs rounded-sm"
+            />
+          </label>
+          <div className="label">
+            <span className="label-text-alt text-accent">Required/Invalid</span>
+          </div>
+        </div>
+
+        <div>
+          <label className="form-control">
+            <div className="label">
+              <span className="label-text">Describe your project</span>
+            </div>
+            <textarea
+              className="textarea textarea-bordered textarea-primary h-24 rounded-sm"
+              placeholder="Description"
+            ></textarea>
+          </label>
+          <div className="label">
+            <span className="label-text-alt text-accent">Required/Invalid</span>
+          </div>
+        </div>
+
+        <div>
+          <label className="form-control w-full max-w-xs">
+            <div className="label">
+              <span className="label-text">How much do you want to raise?</span>
+            </div>
+            <input
+              type="number"
+              placeholder="Amount in ETH"
+              className="input input-bordered input-primary w-full max-w-xs rounded-sm"
+            />
+          </label>
+          <div className="label">
+            <span className="label-text-alt text-accent">Required/Invalid</span>
+          </div>
+        </div>
+
+        <div>
+          <label className="form-control w-full max-w-xs">
+            <div className="label">
+              <span className="label-text">
+                How long should the raise be open?
+              </span>
+            </div>
+            <select className="select select-bordered select-primary">
+              <option disabled selected>
+                Pick one
+              </option>
+              <option>1 Day</option>
+              <option>3 Days</option>
+              <option>1 Week</option>
+              <option>1 Month</option>
+            </select>
+          </label>
+          <div className="label">
+            <span className="label-text-alt text-accent">Required/Invalid</span>
+          </div>
+        </div>
+
+        <button className="btn btn-lg btn-outline btn-primary rounded-sm w-full mt-5">
+          Launch
+        </button>
+      </div>
     </div>
   );
 };
