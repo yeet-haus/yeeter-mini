@@ -18,7 +18,7 @@ export const Footer = () => {
 
   return (
     <footer className="py-5 text-center text-white">
-      <div className="btm-nav bg-accent">
+      <div className="btm-nav bg-primary pt-2 border-t-2 border-dark">
         <ul className="menu menu-lg rounded-box">
           <li>
             {step === 0 && (

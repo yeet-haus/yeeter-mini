@@ -1,5 +1,5 @@
 import BeerRunLogo from "../assets/beer_run_logo.svg";
-import FunderfulLogo from "../assets/funderful_logo.svg";
+import FunderfulLogo from "../assets/funderful_logo_3.svg";
 
 type CopyObj = {
   title: string;

@@ -1,5 +1,5 @@
 import "./App.css";
-import { Layout } from "./componets/Layout";
+import { Layout } from "./components/Layout";
 
 import { Routes } from "./Routes";
 

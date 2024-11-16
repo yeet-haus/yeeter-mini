@@ -1,4 +1,4 @@
-import { formatEther } from "viem";
+import { formatEther, formatUnits } from "viem";
 
 export const nowInSeconds = (): number => new Date().getTime() / 1000;
 
@@ -35,3 +35,5 @@ export const isJSON = (obj: unknown) => {
     return false;
   }
 };
+export const toWholeUnits = (amount: string, decimals = 18) =>
+  formatUnits(BigInt(amount), decimals).toString();

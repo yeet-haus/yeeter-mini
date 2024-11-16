@@ -30,6 +30,7 @@ export default {
           neutral: "#F8FAFA",
           "base-100": "#F8FAFA",
           "base-300": "#2E2F3E",
+          "background-color": "#F8FAFA",
         },
       },
       "dark",

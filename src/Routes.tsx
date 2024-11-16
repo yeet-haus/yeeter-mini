@@ -3,6 +3,7 @@ import { Home } from "./pages/Home";
 import { Explore } from "./pages/Explore";
 import { Launch } from "./pages/Launch";
 import { Account } from "./pages/Account";
+import { Campaign } from "./pages/Campaign";
 
 // import { ReactSetter } from "@daohaus/utils";
 // import { MULTI_DAO_ROUTER } from "@daohaus/moloch-v3-hooks";
@@ -29,6 +30,7 @@ export const Routes = () => {
       <Route path="/explore" element={<Explore />} />
       <Route path="/launch" element={<Launch />} />
       <Route path="/account" element={<Account />} />
+      <Route path="/:chainid/:campaignid" element={<Campaign />} />
 
       {/* <Route path="/" element={<HomeContainer />}> */}
       {/* <Route index element={<Explore />} />
