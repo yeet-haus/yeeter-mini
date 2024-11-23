@@ -10,6 +10,9 @@ export default {
         body: ["Lato", "sans-serif"],
         header: ["Fugaz One", "sans-serif"],
       },
+      width: {
+        768: "768px",
+      },
     },
   },
   daisyui: {
@@ -31,6 +34,9 @@ export default {
           "base-100": "#F8FAFA",
           "base-300": "#2E2F3E",
           "background-color": "#F8FAFA",
+        },
+        weeyeet: {
+          ...require("daisyui/src/theming/themes")["corporate"],
         },
       },
       "dark",

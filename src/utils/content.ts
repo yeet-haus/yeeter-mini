@@ -1,5 +1,6 @@
 import BeerRunLogo from "../assets/beer_run_logo.svg";
 import FunderfulLogo from "../assets/funderful_logo_3.svg";
+import WeeyeetLogo from "../assets/weeyeet_logo.svg";
 
 type CopyObj = {
   title: string;
@@ -20,6 +21,12 @@ const APP_THEME_OPTIONS: Record<string, CopyObj> = {
     subtitle: "A Mini Yeeter",
     logo: FunderfulLogo,
     themeName: "funderful",
+  },
+  WEEYEET: {
+    title: "Wee Yeet",
+    subtitle: "A Mini Yeeter",
+    logo: WeeyeetLogo,
+    themeName: "weeyeet",
   },
 };
 

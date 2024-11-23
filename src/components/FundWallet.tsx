@@ -20,12 +20,7 @@ export const FundWallet = () => {
     }
   };
 
-  if (!ready || !authenticated)
-    return (
-      <div className="flex flex-col gap-0 items-center">
-        <img src={Fund} width="24" />
-      </div>
-    );
+  if (!ready || !authenticated) return null;
 
   return (
     <div className="flex flex-col gap-5 items-center">
