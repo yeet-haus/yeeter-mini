@@ -9,17 +9,7 @@ export const ActiveYeeter = ({
   campaignid?: string;
   chainid?: string;
 }) => {
-  //description
-  //form for more details
-  //links
-  // project + dao (fund management)
-  // exit if yeeter
-  //balance
-  //goal
-  //end date
-  //
-
-  const { yeeter, metadata } = useYeeter({
+  const { yeeter } = useYeeter({
     chainId: chainid,
     yeeterId: campaignid,
   });
@@ -30,7 +20,7 @@ export const ActiveYeeter = ({
 
       <RaiseStats yeeter={yeeter} />
 
-      <button className="btn btn-lg btn-outline btn-primary rounded-sm w-full my-10">
+      <button className="btn btn-lg btn-outline btn-primary rounded-sm w-full my-5">
         Contribute
       </button>
     </>

@@ -5,6 +5,7 @@ import { ActiveYeeter } from "../components/ActiveYeeter";
 import { UpcomingYeeter } from "../components/UpcomingYeeter";
 import { ClosedYeeter } from "../components/ClosedYeeter";
 import { YeetMetaDetails } from "../components/YeetMetaDetails";
+import { Timeline } from "../components/Timeline";
 
 export const Campaign = () => {
   const { campaignid, chainid } = useParams();
@@ -19,12 +20,12 @@ export const Campaign = () => {
   const hero = metadata?.icon && metadata?.icon !== "" && metadata?.icon;
 
   return (
-    <div className="flex flex-col justify-center items-center gap-3">
+    <div className="flex flex-col justify-center items-center gap-1">
       {isLoading && (
         <span className="loading loading-bars loading-lg tex-primary w-full"></span>
       )}
 
-      <h2 className="text-3xl text-primary">{metadata?.name}</h2>
+      <h2 className="text-3xl text-primary mb-2">{metadata?.name}</h2>
 
       <figure>{hero && <img src={hero} />}</figure>
 
@@ -36,10 +37,14 @@ export const Campaign = () => {
         <ClosedYeeter campaignid={campaignid} chainid={chainid} />
       )}
 
+      <div className="mb-5">
+        <Timeline yeeter={yeeter} />
+      </div>
+
       <YeetMetaDetails
         metadata={metadata}
         chainid={chainid}
-        daoid={yeeter.dao.id}
+        daoid={yeeter?.dao.id}
       />
 
       <div className="flex flex-col p-3 w-full bg-accent text-xs rounded-sm">

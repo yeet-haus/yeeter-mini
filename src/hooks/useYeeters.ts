@@ -16,6 +16,8 @@ const QUERIES: Record<string, string> = {
   closed: GET_CLOSED_YEETERS,
 };
 
+const SECONDS_IN_DAY = 86400;
+
 export const useYeeters = ({
   chainId,
   filter,
@@ -25,7 +27,7 @@ export const useYeeters = ({
 }) => {
   const chain = chainId || DEFAULT_CHAIN_ID;
   const graphQLClient = new GraphQLClient(GRAPH_URL[chain]);
-  const now = (nowInSeconds() - 604800).toFixed().toString();
+  const now = (nowInSeconds() - SECONDS_IN_DAY).toFixed().toString();
 
   const query = QUERIES[filter];
   const variables = filter !== "all" ? { now } : undefined;

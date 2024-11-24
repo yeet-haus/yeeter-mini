@@ -43,7 +43,7 @@ export const YeetMetaDetails = ({
         type="radio"
         name="my_tabs_2"
         role="tab"
-        className="tab"
+        className="tab text-lg"
         aria-label="About"
       />
       <div
@@ -67,7 +67,7 @@ export const YeetMetaDetails = ({
         type="radio"
         name="my_tabs_2"
         role="tab"
-        className="tab"
+        className="tab text-lg"
         aria-label="Links"
         defaultChecked
       />
@@ -83,6 +83,7 @@ export const YeetMetaDetails = ({
                   className="link link-primary"
                   href={link.url}
                   target="_blank"
+                  key={link.url}
                 >
                   {link.label} ⟶
                 </a>
