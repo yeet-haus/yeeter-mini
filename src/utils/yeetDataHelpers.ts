@@ -1,5 +1,7 @@
 // import { formatValueTo, fromWei } from "@daohaus/utils";
 import { RecordItem, YeeterItem, YeeterMetadata } from "./types";
+import { fromWei } from "./helpers";
+import { formatValueTo } from "./units";
 
 export const calcProgressPerc = (a: string, b: string) => {
   let div = Number(a) / Number(b);
@@ -39,43 +41,43 @@ export const calcYeetIsFull = (yeeter: YeeterItem) => {
   return Number(yeeter.balance) >= Number(yeeter.goal);
 };
 
-// export const formatMinContribution = (yeeter: YeeterItem) => {
-//   return formatValueTo({
-//     value: fromWei(yeeter.minTribute),
-//     decimals: 5,
-//     format: "number",
-//   });
-// };
+export const formatMinContribution = (yeeter: YeeterItem) => {
+  return formatValueTo({
+    value: fromWei(yeeter.minTribute),
+    decimals: 5,
+    format: "number",
+  });
+};
 
-// export const formatLootForMin = (yeeter: YeeterItem) => {
-//   const loot = BigInt(yeeter.minTribute) * BigInt(yeeter.multiplier);
-//   return formatValueTo({
-//     value: fromWei(loot.toString()),
-//     decimals: 5,
-//     format: "number",
-//   });
-// };
+export const formatLootForMin = (yeeter: YeeterItem) => {
+  const loot = BigInt(yeeter.minTribute) * BigInt(yeeter.multiplier);
+  return formatValueTo({
+    value: fromWei(loot.toString()),
+    decimals: 5,
+    format: "number",
+  });
+};
 
-// export const formatLootForMinSimple = (
-//   minTribute: string,
-//   multiplier: string
-// ) => {
-//   const loot = BigInt(minTribute) * BigInt(multiplier);
-//   return formatValueTo({
-//     value: fromWei(loot.toString()),
-//     decimals: 5,
-//     format: "number",
-//   });
-// };
+export const formatLootForMinSimple = (
+  minTribute: string,
+  multiplier: string
+) => {
+  const loot = BigInt(minTribute) * BigInt(multiplier);
+  return formatValueTo({
+    value: fromWei(loot.toString()),
+    decimals: 5,
+    format: "number",
+  });
+};
 
-// export const formatLootForAmount = (yeeter: YeeterItem, amount: string) => {
-//   const loot = BigInt(amount) * BigInt(yeeter.multiplier);
-//   return formatValueTo({
-//     value: fromWei(loot.toString()),
-//     decimals: 5,
-//     format: "number",
-//   });
-// };
+export const formatLootForAmount = (yeeter: YeeterItem, amount: string) => {
+  const loot = BigInt(amount) * BigInt(yeeter.multiplier);
+  return formatValueTo({
+    value: fromWei(loot.toString()),
+    decimals: 5,
+    format: "number",
+  });
+};
 
 export const addParsedContent = (
   record?: RecordItem

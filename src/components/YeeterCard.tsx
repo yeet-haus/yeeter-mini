@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { YeeterItem } from "../utils/types";
 import { useYeeter } from "../hooks/useYeeter";
 import { toWholeUnits } from "../utils/helpers";
+import { YeetModal } from "./YeetModal";
 
 export const YeeterCard = ({
   campaign,
@@ -51,9 +52,11 @@ export const YeeterCard = ({
 
         <div className="flex flex-col gap-5 justify-center w-full">
           {yeeter.isActive && (
-            <button className="btn btn-neutral rounded-sm w-full">
-              Contribute
-            </button>
+            <YeetModal
+              buttonClass="btn btn-neutral rounded-sm w-full"
+              campaignid={campaign.id}
+              chainid={chainId}
+            />
           )}
           <Link to={`/campaign/${chainId}/${campaign.id}`}>
             <button className="btn btn-neutral rounded-sm w-full">
