@@ -6,6 +6,7 @@ import { UpcomingYeeter } from "../components/UpcomingYeeter";
 import { ClosedYeeter } from "../components/ClosedYeeter";
 import { YeetMetaDetails } from "../components/YeetMetaDetails";
 import { Timeline } from "../components/Timeline";
+import { YeetMessages } from "../components/YeetMessages";
 
 export const Campaign = () => {
   const { campaignid, chainid } = useParams();
@@ -47,36 +48,9 @@ export const Campaign = () => {
         daoid={yeeter?.dao.id}
       />
 
-      <div className="flex flex-col p-3 w-full bg-accent text-xs rounded-sm">
-        <div className="chat chat-start">
-          <div className="chat-image avatar">
-            <div className="w-10 rounded-full">
-              <img
-                alt="Tailwind CSS chat bubble component"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              />
-            </div>
-          </div>
-          <div className="chat-bubble">
-            <p className="font-bold">0.3 ETH</p>
-            <p>I Yeeted!!</p>
-          </div>
-        </div>
-        <div className="chat chat-start">
-          <div className="chat-image avatar">
-            <div className="w-10 rounded-full">
-              <img
-                alt="Tailwind CSS chat bubble component"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              />
-            </div>
-          </div>
-          <div className="chat-bubble">
-            <p className="font-bold">1 ETH</p>
-            <p>LFG!!!!!!!!!!!!!!!</p>
-          </div>
-        </div>
-      </div>
+      {chainid && campaignid && (
+        <YeetMessages chainid={chainid} campaignid={campaignid} />
+      )}
     </div>
   );
 };

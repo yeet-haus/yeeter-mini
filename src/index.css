@@ -34,3 +34,7 @@ h6 {
 button {
   cursor: pointer;
 }
+
+.av-contain img {
+  object-fit: contain;
+}
