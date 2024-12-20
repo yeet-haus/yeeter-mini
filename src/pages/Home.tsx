@@ -11,27 +11,14 @@ export const Home = () => {
 
       <div className="flex flex-col gap-4 items-center justify-center w-full">
         <div className="px-10 py-5 bg-primary text-white grid w-full place-content-center rounded">
-          <h3 className="text-2xl">Launch Projects</h3>
-          <p>
-            Launching your project with {APP_THEME.title} is simple. Provide
-            your project's description, deadline and funding goal,and you're
-            gtg.
-          </p>
+          <h3 className="text-2xl">I'm a wee lad</h3>
+          <p>Find projects to help out or launch your own!</p>
         </div>
         <div className="px-10 py-5 bg-primary text-white  grid w-full place-content-center rounded">
-          <h3 className="text-2xl">Raise Funds</h3>
-          <p>
-            Funding with {APP_THEME.title} is fast. Contributors yeet funds into
-            your project, scoring loot shares in your account.
-          </p>
+          <h3 className="text-2xl">Wee raise funds together</h3>
         </div>
         <div className="px-10 py-5 bg-primary text-white  grid w-full place-content-center rounded">
-          <h3 className="text-2xl">Protect Your Community</h3>
-          <p>
-            Protecting your community with {APP_THEME.title} is easy. Launching
-            a project deploys a DAO governed by your team. Members retain exit
-            rights if you do not follow through.
-          </p>
+          <h3 className="text-2xl">Wee don't rug</h3>
         </div>
       </div>
 

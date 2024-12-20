@@ -16,7 +16,7 @@ export const useYeets = ({
   const graphQLClient = new GraphQLClient(GRAPH_URL[chain]);
 
   const { data, ...rest } = useQuery({
-    queryKey: [`list-yeets-${campaignid}`, { campaignid }],
+    queryKey: [`yeets`, { campaignid }],
     queryFn: () =>
       graphQLClient.request(LIST_YEETS, { shamanAddress: campaignid }),
   });

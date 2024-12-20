@@ -27,7 +27,7 @@ export const formatDateFromSeconds = (
     return;
   }
 
-  return format(new Date(Number(seconds) * 1000), "M / dd / yy");
+  return format(new Date(Number(seconds) * 1000), "MMM dd");
 };
 
 export const formatLongDateFromSeconds = (

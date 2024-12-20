@@ -1,5 +1,4 @@
 import { useYeets } from "../hooks/useYeets";
-import { ContributorProfile } from "./ContributorProfile";
 import { YeetMessage } from "./YeetMessage";
 
 export const YeetMessages = ({
@@ -13,8 +12,6 @@ export const YeetMessages = ({
     chainid,
     campaignid,
   });
-
-  console.log("yeets", yeets);
 
   return (
     <div className="flex flex-col p-3 w-full border-accent text-xs rounded-sm">

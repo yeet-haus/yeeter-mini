@@ -16,6 +16,7 @@ export type YeeterItem = {
   isEnded: boolean;
   isComingSoon: boolean;
   isFull: boolean;
+  yeets?: YeetsItem[];
 };
 
 export type RecordItem = {

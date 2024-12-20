@@ -1,7 +1,7 @@
 export const UpcomingYeeter = () => {
   return (
     <>
-      <p>COMING SOON</p>
+      <h2 className="text-4xl text-accent mt-3 mb-8">Raise opens soon</h2>
     </>
   );
 };

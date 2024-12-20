@@ -1,7 +1,17 @@
+import { base, sepolia, optimism, arbitrum, gnosis, Chain } from "viem/chains";
+
 type KEYCHAIN = {
   [key: string]: string;
 };
 type KeychainList = Record<string, KEYCHAIN>;
+
+export const WAGMI_CHAIN_OBJS: Record<string, Chain> = {
+  "0x64": gnosis,
+  "0xa": optimism,
+  "0xa4b1": arbitrum,
+  "0xaa36a7": sepolia,
+  "0x2105": base,
+};
 
 export const GRAPH_URL: KEYCHAIN = {
   "0xaa36a7": `https://gateway-arbitrum.network.thegraph.com/api/${

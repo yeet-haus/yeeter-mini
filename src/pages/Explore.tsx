@@ -8,7 +8,7 @@ export const Explore = () => {
   const [listType, setListType] = useState("open");
 
   const { yeeters, isLoading, isFetched } = useYeeters({
-    chainId: DEFAULT_CHAIN_ID,
+    chainid: DEFAULT_CHAIN_ID,
     filter: listType,
   });
 
@@ -23,6 +23,14 @@ export const Explore = () => {
           onClick={() => setListType("open")}
         >
           Open
+        </a>
+
+        <a
+          role="tab"
+          className={`tab ${listType === "upcoming" ? "tab-active" : ""}`}
+          onClick={() => setListType("upcoming")}
+        >
+          Coming Soon
         </a>
 
         <a

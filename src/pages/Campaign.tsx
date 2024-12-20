@@ -11,14 +11,9 @@ import { YeetMessages } from "../components/YeetMessages";
 export const Campaign = () => {
   const { campaignid, chainid } = useParams();
   const { yeeter, metadata, isLoading } = useYeeter({
-    chainId: chainid,
-    yeeterId: campaignid,
+    chainid,
+    campaignid,
   });
-
-  console.log(yeeter);
-  console.log(metadata);
-
-  const hero = metadata?.icon && metadata?.icon !== "" && metadata?.icon;
 
   return (
     <div className="flex flex-col justify-center items-center gap-1">
@@ -27,8 +22,6 @@ export const Campaign = () => {
       )}
 
       <h2 className="text-3xl text-primary mb-2">{metadata?.name}</h2>
-
-      <figure>{hero && <img src={hero} />}</figure>
 
       {yeeter?.isComingSoon && <UpcomingYeeter />}
       {yeeter?.isActive && (

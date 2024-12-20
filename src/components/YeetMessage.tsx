@@ -2,7 +2,8 @@ import { http, createConfig, useEnsName } from "wagmi";
 import { mainnet } from "wagmi/chains";
 import { YeetsItem } from "../utils/types";
 import { ContributorProfile } from "./ContributorProfile";
-import { truncateAddress } from "../utils/helpers";
+import { fromWei, truncateAddress } from "../utils/helpers";
+import { formatValueTo } from "../utils/units";
 
 const config = createConfig({
   chains: [mainnet],
@@ -23,7 +24,11 @@ export const YeetMessage = ({ yeet }: { yeet: YeetsItem }) => {
       <div className="chat-bubble chat-bubble-accent text-left">
         <p>{yeet.message || "yeet"}</p>
         <div className="flex flex-wrap items-center justify-between gap-5 mt-1">
-          <p className="text-base font-bold">0.3 ETH</p>
+          <p className="text-base font-bold">{`${formatValueTo({
+            value: fromWei(yeet.amount),
+            decimals: 3,
+            format: "numberShort",
+          })} ETH`}</p>
           <p className="text-sm">{name || truncateAddress(yeet.contributor)}</p>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import React from "react";
 
 import { PrivyProvider } from "@privy-io/react-auth";
-import { base, sepolia } from "viem/chains";
+import { base, sepolia, optimism, arbitrum, gnosis } from "viem/chains";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -17,8 +17,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         embeddedWallets: {
           createOnLogin: "users-without-wallets",
         },
-        defaultChain: base,
-        supportedChains: [base, sepolia],
+        defaultChain: import.meta.env.VITE_DEV_ENV === "local" ? sepolia : base,
+        supportedChains: [base, sepolia, optimism, arbitrum, gnosis],
       }}
     >
       {children}

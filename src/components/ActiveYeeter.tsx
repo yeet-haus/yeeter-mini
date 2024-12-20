@@ -11,9 +11,11 @@ export const ActiveYeeter = ({
   chainid?: string;
 }) => {
   const { yeeter } = useYeeter({
-    chainId: chainid,
-    yeeterId: campaignid,
+    chainid,
+    campaignid,
   });
+
+  if (!campaignid || !chainid) return;
 
   return (
     <>

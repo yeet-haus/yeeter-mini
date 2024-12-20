@@ -35,6 +35,8 @@ export const YeetMetaDetails = ({
     );
   }, [metadata]);
 
+  const hero = metadata?.icon && metadata?.icon !== "" && metadata?.icon;
+
   if (!metadata || !chainid) return;
 
   return (
@@ -52,6 +54,8 @@ export const YeetMetaDetails = ({
       >
         <div className="flex flex-col gap-4">
           <div className="font-bold text-xl">{metadata?.name}</div>
+
+          <figure>{hero && <img src={hero} />}</figure>
 
           <div className="font-bold text-md">{metadata?.missionStatement}</div>
 
@@ -95,6 +99,13 @@ export const YeetMetaDetails = ({
             target="_blank"
           >
             Project Admin ⟶
+          </a>
+          <a
+            className="link link-primary"
+            href={`https://app.yeet.haus/#/molochv3/${chainid}/${daoid}`}
+            target="_blank"
+          >
+            on Yeet.haus ⟶
           </a>
         </div>
       </div>

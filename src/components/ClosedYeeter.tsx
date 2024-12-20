@@ -8,14 +8,14 @@ export const ClosedYeeter = ({
   campaignid?: string;
   chainid?: string;
 }) => {
-  const { yeeter, metadata } = useYeeter({
-    chainId: chainid,
-    yeeterId: campaignid,
+  const { yeeter } = useYeeter({
+    chainid,
+    campaignid,
   });
   return (
     <>
       <GoalProgress yeeter={yeeter} />
-      <p>RAISE IS CLOSED</p>
+      <h2 className="text-4xl text-accent my-3">Raise has closed</h2>
     </>
   );
 };
