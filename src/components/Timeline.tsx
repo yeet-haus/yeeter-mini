@@ -74,7 +74,7 @@ export const Timeline = ({ yeeter }: { yeeter: YeeterItem }) => {
             />
           </svg>
         </div>
-        <div className="timeline-end timeline-box">Close</div>
+        <div className="timeline-end timeline-box">Closed</div>
       </li>
     </ul>
   );
