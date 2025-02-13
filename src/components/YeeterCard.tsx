@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { YeeterItem } from "../utils/types";
 import { useYeeter } from "../hooks/useYeeter";
 import { toWholeUnits } from "../utils/helpers";
+import { YeetModal } from "./YeetModal";
 
 export const YeeterCard = ({
   campaign,
@@ -11,8 +12,8 @@ export const YeeterCard = ({
   chainId: string;
 }) => {
   const { yeeter, metadata } = useYeeter({
-    yeeterId: campaign.id,
-    chainId: chainId,
+    campaignid: campaign.id,
+    chainid: chainId,
   });
 
   if (!yeeter) return null;
@@ -21,20 +22,34 @@ export const YeeterCard = ({
 
   return (
     <div className="card bg-primary shadow-xs rounded min-w-full">
-      <figure>{hero && <img src={hero} />}</figure>
+      <figure>
+        {hero && <img src={hero} width={250} className="rounded-full mt-5" />}
+      </figure>
       <div className="card-body">
         <h2 className="card-title text-3xl">
           {metadata?.name ? metadata.name : "--"}
         </h2>
         {yeeter && (
           <div className="stat">
-            <div className="stat-title text-bold">Raised</div>
-            <div className="stat-value text-white">
-              {`${toWholeUnits(yeeter?.balance)} ETH`}
-            </div>
-            <div className="stat-desc">
-              {toWholeUnits(yeeter?.goal)} ETH goal
-            </div>
+            {!yeeter.isComingSoon && (
+              <>
+                <div className="stat-title text-bold">Raised</div>
+                <div className="stat-value text-white">
+                  {`${toWholeUnits(yeeter?.balance)} ETH`}
+                </div>
+                <div className="stat-desc">
+                  {toWholeUnits(yeeter?.goal)} ETH goal
+                </div>
+              </>
+            )}
+            {yeeter.isComingSoon && (
+              <>
+                <div className="stat-title text-bold">Raising</div>
+                <div className="stat-value text-white">
+                  {`${toWholeUnits(yeeter?.goal)} ETH`}
+                </div>
+              </>
+            )}
           </div>
         )}
 
@@ -50,16 +65,18 @@ export const YeeterCard = ({
         )}
 
         <div className="flex flex-col gap-5 justify-center w-full">
-          {yeeter.isActive && (
-            <button className="btn btn-neutral rounded-sm w-full">
-              Contribute
-            </button>
-          )}
           <Link to={`/campaign/${chainId}/${campaign.id}`}>
             <button className="btn btn-neutral rounded-sm w-full">
               Learn More
             </button>
           </Link>
+          {yeeter.isActive && (
+            <YeetModal
+              buttonClass="btn btn-neutral rounded-sm w-full"
+              campaignid={campaign.id}
+              chainid={chainId}
+            />
+          )}
         </div>
       </div>
     </div>

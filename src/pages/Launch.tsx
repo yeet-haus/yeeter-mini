@@ -1,3 +1,5 @@
+import { FEE_DISCLOSURE } from "../utils/constants";
+
 export const Launch = () => {
   return (
     <div className="flex flex-col justify-center items-center gap-5">
@@ -75,6 +77,7 @@ export const Launch = () => {
         <button className="btn btn-lg btn-outline btn-primary rounded-sm w-full mt-5">
           Launch
         </button>
+        <p className="text-sm text-accent">{FEE_DISCLOSURE}</p>
       </div>
     </div>
   );

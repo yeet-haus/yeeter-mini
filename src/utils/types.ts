@@ -3,6 +3,7 @@ export type YeeterItem = {
   createdAt: string;
   dao: {
     id: string;
+    name: string;
   };
   endTime: string;
   startTime: string;
@@ -16,6 +17,7 @@ export type YeeterItem = {
   isEnded: boolean;
   isComingSoon: boolean;
   isFull: boolean;
+  yeets?: YeetsItem[];
 };
 
 export type RecordItem = {
@@ -42,4 +44,5 @@ export type YeetsItem = {
   id: string;
   message: string;
   shares: string;
+  yeeter: YeeterItem;
 };

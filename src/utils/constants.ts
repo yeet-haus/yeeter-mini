@@ -1,7 +1,17 @@
+import { base, sepolia, optimism, arbitrum, gnosis, Chain } from "viem/chains";
+
 type KEYCHAIN = {
   [key: string]: string;
 };
 type KeychainList = Record<string, KEYCHAIN>;
+
+export const WAGMI_CHAIN_OBJS: Record<string, Chain> = {
+  "0x64": gnosis,
+  "0xa": optimism,
+  "0xa4b1": arbitrum,
+  "0xaa36a7": sepolia,
+  "0x2105": base,
+};
 
 export const GRAPH_URL: KEYCHAIN = {
   "0xaa36a7": `https://gateway-arbitrum.network.thegraph.com/api/${
@@ -39,9 +49,19 @@ export const HAUS_GRAPH_URL: KEYCHAIN = {
   }/subgraphs/id/7yh4eHJ4qpHEiLPAk9BXhL5YgYrTrRE6gWy8x4oHyAqW`,
 };
 
+export const EXPLORER_URL: KEYCHAIN = {
+  "0x1": "https://etherscan.io",
+  "0x64": "https://gnosisscan.io",
+  "0x89": "https://polygonscan.com",
+  "0xa": "https://optimistic.etherscan.io",
+  "0xa4b1": "https://arbiscan.io",
+  "0xaa36a7": "https://sepolia.etherscan.io",
+  "0x2105": "https://basescan.org",
+};
+
 export const YEETER_DAO_REFERRER = "DHOnboarderShamanSummoner";
 
-export const DEFAULT_CHAIN_ID = "0x2105";
+export const DEFAULT_CHAIN_ID = "0xaa36a7";
 
 export const YEETER_CONTRACTS: KeychainList = {
   ONBOARDER_SUMMONER: {

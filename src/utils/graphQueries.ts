@@ -43,7 +43,7 @@ export const GET_OPEN_YEETERS = gql`
       first: 1000, 
       orderBy: createdAt, 
       orderDirection: desc,
-      where: { endTime_gte: $now }
+      where: { endTime_gte: $now, startTime_lte: $now }
     ) {
       ${yeeterFields}
 
@@ -58,6 +58,20 @@ export const GET_CLOSED_YEETERS = gql`
       orderBy: createdAt, 
       orderDirection: desc,
       where: { endTime_lte: $now }
+    ) {
+      ${yeeterFields}
+
+    }
+  }
+`;
+
+export const GET_UPCOMING_YEETERS = gql`
+  query yeeters($now: String!) {
+    yeeters(
+      first: 1000, 
+      orderBy: createdAt, 
+      orderDirection: desc,
+      where: { startTime_gte: $now }
     ) {
       ${yeeterFields}
 
@@ -116,6 +130,27 @@ export const GET_YEETER_PROFILE = gql`
     dao(id: $daoid) {
       id
       name
+    }
+  }
+`;
+
+export const LIST_YEETS_FOR_ADDRESS = gql`
+  query yeets($address: String!) {
+    yeets(
+      where: { contributor: $address }
+      orderBy: createdAt
+      orderDirection: desc
+      first: 1000
+    ) {
+      id
+      createdAt
+      contributor
+      amount
+      shares
+      message
+      yeeter {
+        ${yeeterFields}
+      }
     }
   }
 `;

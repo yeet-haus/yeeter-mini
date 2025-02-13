@@ -17,22 +17,22 @@ import {
 } from "../utils/yeetDataHelpers";
 
 export const useYeeter = ({
-  chainId,
-  yeeterId,
+  chainid,
+  campaignid,
 }: {
-  chainId?: string;
-  yeeterId?: string;
+  chainid?: string;
+  campaignid?: string;
 }) => {
-  const chain = chainId || DEFAULT_CHAIN_ID;
+  const chain = chainid || DEFAULT_CHAIN_ID;
   const graphQLClient = new GraphQLClient(GRAPH_URL[chain]);
   const hausGraphQLClient = new GraphQLClient(HAUS_GRAPH_URL[chain]);
 
   const { data, ...rest } = useQuery({
-    queryKey: [`get-yeeter-${chainId}-${yeeterId}`, { chainId, yeeterId }],
+    queryKey: [`yeeter`, { chainid, campaignid }],
     queryFn: async () => {
       try {
         const yeeterRes = (await graphQLClient.request(GET_YEETER, {
-          shamanAddress: yeeterId,
+          shamanAddress: campaignid,
         })) as {
           yeeter: YeeterItem;
         };
@@ -65,8 +65,6 @@ export const useYeeter = ({
       }
     },
   });
-
-  console.log(data);
 
   return {
     // @ts-expect-error fix unknown
