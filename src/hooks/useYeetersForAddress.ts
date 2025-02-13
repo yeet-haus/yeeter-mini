@@ -27,8 +27,6 @@ export const useYeetersForAddress = ({
     enabled: !!address,
   });
 
-  console.log("data?.yeets", data?.yeets);
-
   const uniqYeeters = data?.yeets.reduce(
     (
       acc: { ids: Record<string, YeetsWithYeeter[]>; yeeters: YeeterItem[] },

@@ -1,12 +1,9 @@
 import { Link } from "react-router-dom";
 import { YeeterItem, YeetsItem } from "../utils/types";
 import { useYeeter } from "../hooks/useYeeter";
-import { fromWei, toWholeUnits } from "../utils/helpers";
+import { fromWei } from "../utils/helpers";
 import { formatValueTo } from "../utils/units";
-import {
-  formatDateFromSeconds,
-  formatShortDateTimeFromSeconds,
-} from "../utils/dates";
+import { formatDateFromSeconds } from "../utils/dates";
 
 export const AccountYeeterCard = ({
   campaign,
@@ -34,25 +31,33 @@ export const AccountYeeterCard = ({
           Contributions
         </p>
 
-        {yeeter &&
-          accountYeets &&
-          accountYeets.map((yeet) => {
-            return (
-              <div className="flex flex-row justify-start gap-5 text-left">
-                <p>{formatDateFromSeconds(yeet.createdAt)}</p>
-                <p>{`${formatValueTo({
-                  value: fromWei(yeet.amount),
-                  decimals: 3,
-                  format: "numberShort",
-                })} ETH`}</p>
-              </div>
-            );
-          })}
+        <div className="w-full text-left">
+          {yeeter &&
+            accountYeets &&
+            accountYeets.map((yeet) => {
+              return (
+                <div key={yeet.id} className="flex flex-col w-full">
+                  <div className="stat pl-1">
+                    <div className="stat-title text-white text-xs">
+                      {formatDateFromSeconds(yeet.createdAt)}
+                    </div>
+                    <div className="stat-value text-accent text-base">{`${formatValueTo(
+                      {
+                        value: fromWei(yeet.amount),
+                        decimals: 3,
+                        format: "numberShort",
+                      }
+                    )} ETH`}</div>
+                  </div>
+                </div>
+              );
+            })}
+        </div>
 
         <div className="flex flex-col justify-center w-full">
           <Link to={`/campaign/${chainId}/${campaign.id}`}>
             <button className="btn btn-neutral rounded-sm w-full">
-              Learn More
+              View Project
             </button>
           </Link>
         </div>
