@@ -1,4 +1,5 @@
 import { base, sepolia, optimism, arbitrum, gnosis, Chain } from "viem/chains";
+import { Keychain } from "./tx-prepper/prepper-types";
 
 type KEYCHAIN = {
   [key: string]: string;
@@ -85,12 +86,14 @@ export const DEFAULT_YEETER_VALUES = {
   isShares: false,
   feeRecipients: ["0xD0f8720846890a7961945261FE5012E4cA39918e"],
   feeAmounts: ["30000"],
-  lootPerYeet: "100",
-  multiplier: "100",
+  multiplier: "1000",
+  minTribute: "10000000000000000",
 };
 export const DEFAULT_SUMMON_VALUES = {
-  votingPeriodInSeconds: 43200,
-  gracePeriodInSeconds: 21600,
+  votingPeriodInSeconds: 120,
+  // votingPeriodInSeconds: 43200,
+  gracePeriodInSeconds: 60,
+  // gracePeriodInSeconds: 21600,
   newOffering: "0",
   quorum: "0",
   sponsorThreshold: "1000000000000000000",

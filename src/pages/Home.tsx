@@ -12,7 +12,7 @@ export const Home = () => {
       <div className="flex flex-col gap-4 items-center justify-center w-full">
         <div className="px-10 py-5 bg-primary text-white grid w-full place-content-center rounded">
           <h3 className="text-2xl">I'm a wee lad</h3>
-          <p>Find projects to help out or launch your own!</p>
+          <p>Launch a fundraiser or find open projects to help out!</p>
         </div>
         <div className="px-10 py-5 bg-primary text-white  grid w-full place-content-center rounded">
           <h3 className="text-2xl">Wee raise funds together</h3>

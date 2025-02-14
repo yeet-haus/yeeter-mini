@@ -36,7 +36,7 @@ export const YeetModal = ({
   const [fieldMessages, setFieldMessages] = useState<Record<string, string>>({
     amount: "",
   });
-  const [submittedAmount, setrSubmittedAmount] = useState<string>("0");
+  const [submittedAmount, setSubmittedAmount] = useState<string>("0");
 
   const {
     writeContract,
@@ -79,7 +79,7 @@ export const YeetModal = ({
       if (!yeeter) return;
 
       console.log("prep yeet", value);
-      setrSubmittedAmount(toBaseUnits(value.amount));
+      setSubmittedAmount(toBaseUnits(value.amount));
 
       writeContract({
         address: yeeter.id as `0x${string}`,

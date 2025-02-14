@@ -37,3 +37,12 @@ export const isJSON = (obj: unknown) => {
 };
 export const toWholeUnits = (amount: string, decimals = 18) =>
   formatUnits(BigInt(amount), decimals).toString();
+
+export const getNonce = (length = 24) => {
+  let text = "";
+  const possible = "0123456789";
+  for (let i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+};

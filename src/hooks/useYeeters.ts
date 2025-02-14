@@ -18,7 +18,7 @@ const QUERIES: Record<string, string> = {
   upcoming: GET_UPCOMING_YEETERS,
 };
 
-const SECONDS_IN_DAY = 86400;
+// const SECONDS_IN_DAY = 86400;
 
 export const useYeeters = ({
   chainid,
@@ -29,7 +29,8 @@ export const useYeeters = ({
 }) => {
   const chain = chainid || DEFAULT_CHAIN_ID;
   const graphQLClient = new GraphQLClient(GRAPH_URL[chain]);
-  const now = (nowInSeconds() - SECONDS_IN_DAY).toFixed().toString();
+  // const now = (nowInSeconds() - SECONDS_IN_DAY).toFixed().toString();
+  const now = nowInSeconds().toFixed().toString();
 
   const query = QUERIES[filter];
   const variables = filter !== "all" ? { now } : undefined;
