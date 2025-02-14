@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "@tanstack/react-form";
 
 import {
@@ -7,24 +7,22 @@ import {
   EXPLORER_URL,
   YEETER_CONTRACTS,
 } from "../utils/constants";
-
 import { FieldInfo } from "./FieldInfo";
 import { toBaseUnits } from "../utils/units";
 import {
   useAccount,
+  useChains,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 import { useChainId } from "wagmi";
 import { toHex } from "viem";
-
-import yeeterAbi from "../utils/tx-prepper/abi/yeeterShaman.json";
 import { usePrivy } from "@privy-io/react-auth";
-
 import yeeterSummonerAbi from "../utils/tx-prepper/abi/yeeterSummoner.json";
 import { assembleYeeterSummonerArgs } from "../utils/summonTx";
 import { nowInSeconds } from "../utils/helpers";
+import { NavLink } from "react-router-dom";
 
 export const LaunchForm = () => {
   const { ready, authenticated } = usePrivy();
@@ -32,9 +30,10 @@ export const LaunchForm = () => {
 
   const queryClient = useQueryClient();
   const chainId = useChainId();
-
+  const chains = useChains();
   const chainid = toHex(chainId);
-  console.log("chainid", chainid);
+
+  console.log("chains", chains);
 
   const {
     writeContract,
@@ -57,6 +56,8 @@ export const LaunchForm = () => {
     if (isConfirmed) {
       console.log("INVALIDATING/REFETCH");
       reset();
+      // @ts-expect-error fix unknown
+      document.getElementById("launch-success-modal").showModal();
     }
   }, [isConfirmed, queryClient, chainid]);
 
@@ -114,18 +115,22 @@ export const LaunchForm = () => {
 
   return (
     <>
-      {/* {!isConfirmed && (
-        <div className="text-lg font-bold mt-5">
-          Receive {formatLootForMin(yeeter)} loot tokens per{" "}
-          {formatMinContribution(yeeter)} ETH contributed
+      <dialog id="launch-success-modal" className="modal">
+        <div className="modal-box">
+          <h3 className="text-2xl text-primary">Success!</h3>
+          <p className="py-4">Your project has been created.</p>
+          <p className="py-1 text-xs">
+            It can take a few minutes for the project to index. If you don't see
+            your project in the list immediately, wait a wee bit and refresh the
+            page.
+          </p>
+          <div className="modal-action">
+            <NavLink to={`/explore`}>
+              <button className="btn">Find Project</button>
+            </NavLink>
+          </div>
         </div>
-      )}
-
-      {isConfirmed && (
-        <div className="text-lg font-bold mt-5">
-          You got {formatLootForAmount(yeeter, submittedAmount)} loot tokens!
-        </div>
-      )} */}
+      </dialog>
 
       <form
         onSubmit={(e) => {
