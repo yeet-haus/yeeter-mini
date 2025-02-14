@@ -3,6 +3,7 @@ import { YeeterItem } from "../utils/types";
 import { useYeeter } from "../hooks/useYeeter";
 import { toWholeUnits } from "../utils/helpers";
 import { YeetModal } from "./YeetModal";
+import { formatShortDateTimeFromSeconds } from "../utils/dates";
 
 export const YeeterCard = ({
   campaign,
@@ -19,6 +20,8 @@ export const YeeterCard = ({
   if (!yeeter) return null;
 
   const hero = metadata?.icon && metadata?.icon !== "" && metadata?.icon;
+
+  console.log("yeeter", yeeter);
 
   return (
     <div className="card bg-primary shadow-xs rounded min-w-full">
@@ -60,7 +63,16 @@ export const YeeterCard = ({
         )}
         {yeeter.isComingSoon && (
           <div className="flex flex-row justify-center w-full mb-3">
-            <div className="badge badge-accent">Coming Soon</div>
+            <div className="badge badge-accent">
+              Coming on {formatShortDateTimeFromSeconds(yeeter.startTime)}
+            </div>
+          </div>
+        )}
+        {yeeter.isActive && (
+          <div className="flex flex-row justify-center w-full mb-3">
+            <div className="badge badge-accent">
+              Closing on {formatShortDateTimeFromSeconds(yeeter.endTime)}
+            </div>
           </div>
         )}
 

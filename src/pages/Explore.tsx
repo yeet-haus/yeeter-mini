@@ -25,13 +25,13 @@ export const Explore = () => {
           Open
         </a>
 
-        <a
+        {/* <a
           role="tab"
           className={`tab ${listType === "upcoming" ? "tab-active" : ""}`}
           onClick={() => setListType("upcoming")}
         >
           Coming Soon
-        </a>
+        </a> */}
 
         <a
           role="tab"
