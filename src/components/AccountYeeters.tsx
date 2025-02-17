@@ -29,7 +29,7 @@ export const AccountYeeters = () => {
           yeeters.map((yeeter: YeeterItem) => {
             return (
               <AccountYeeterCard
-                campaign={yeeter}
+                yeeterid={yeeter.id}
                 chainId={DEFAULT_CHAIN_ID}
                 key={yeeter.id}
                 accountYeets={yeeter.yeets}

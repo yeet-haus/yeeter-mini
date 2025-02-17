@@ -2,28 +2,41 @@ import { useQuery } from "@tanstack/react-query";
 import { GraphQLClient } from "graphql-request";
 
 import { LIST_YEETS } from "../utils/graphQueries";
-import { DEFAULT_CHAIN_ID, GRAPH_URL } from "../utils/constants";
 import { YeetsItem } from "../utils/types";
+import { useContext } from "react";
+import { DaoHooksContext } from "../providers/DaoHooksProvider";
+import { getGraphUrl } from "../utils/endpoints";
 
 export const useYeets = ({
   chainid,
-  campaignid,
+  yeeterid,
 }: {
-  chainid?: string;
-  campaignid?: string;
+  chainid: string;
+  yeeterid: string;
 }) => {
-  const chain = chainid || DEFAULT_CHAIN_ID;
-  const graphQLClient = new GraphQLClient(GRAPH_URL[chain]);
+  const hookContext = useContext(DaoHooksContext);
+
+  if (!hookContext || !hookContext.config.graphKey) {
+    throw new Error("DaoHooksContext must be used within a DaoHooksProvider");
+  }
+
+  const yeeterUrl = getGraphUrl({
+    chainid,
+    graphKey: hookContext.config.graphKey,
+    subgraphKey: "YEETER",
+  });
+
+  const graphQLClient = new GraphQLClient(yeeterUrl);
 
   const { data, ...rest } = useQuery({
-    queryKey: [`yeets`, { campaignid }],
-    queryFn: () =>
-      graphQLClient.request(LIST_YEETS, { shamanAddress: campaignid }),
+    queryKey: [`list-yeets-${yeeterid}`, { yeeterid }],
+    queryFn: (): Promise<{
+      yeets: YeetsItem[];
+    }> => graphQLClient.request(LIST_YEETS, { shamanAddress: yeeterid }),
   });
 
   return {
-    // @ts-expect-error fix unknown
-    yeets: data?.yeets as YeetsItem[],
+    yeets: data?.yeets,
     ...rest,
   };
 };

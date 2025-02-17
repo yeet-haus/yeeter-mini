@@ -79,9 +79,7 @@ export const formatLootForAmount = (yeeter: YeeterItem, amount: string) => {
   });
 };
 
-export const addParsedContent = (
-  record?: RecordItem
-): YeeterMetadata | undefined => {
+export const addParsedContent = <T>(record?: RecordItem): T | undefined => {
   if (record?.contentType === "json") {
     try {
       const obj = JSON.parse(record.content);

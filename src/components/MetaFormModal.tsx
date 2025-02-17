@@ -1,30 +1,24 @@
+import { useEffect } from "react";
 import { useForm } from "@tanstack/react-form";
 
 import { useYeeter } from "../hooks/useYeeter";
 import { EXPLORER_URL } from "../utils/constants";
-import {
-  formatLootForAmount,
-  formatLootForMin,
-  formatMinContribution,
-} from "../utils/yeetDataHelpers";
+
 import { FieldInfo } from "./FieldInfo";
-import { useEffect, useState } from "react";
-import { toBaseUnits } from "../utils/units";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 
-import yeeterAbi from "../utils/tx-prepper/abi/yeeterShaman.json";
 import { usePrivy } from "@privy-io/react-auth";
 import { LoginModalSwitch } from "./LoginModalSwitch";
 
-export const YeetModal = ({
-  buttonClass,
+export const MetaFormModal = ({
   yeeterid,
   chainid,
+  daoid,
 }: {
-  buttonClass: string;
   yeeterid: string;
   chainid: string;
+  daoid: string;
 }) => {
   const { yeeter } = useYeeter({
     chainid,
@@ -33,13 +27,8 @@ export const YeetModal = ({
   const { ready, authenticated } = usePrivy();
   const queryClient = useQueryClient();
 
-  const [fieldMessages, setFieldMessages] = useState<Record<string, string>>({
-    amount: "",
-  });
-  const [submittedAmount, setSubmittedAmount] = useState<string>("0");
-
   const {
-    writeContract,
+    // writeContract,
     data: hash,
     isError,
     isPending: isSendTxPending,
@@ -55,14 +44,6 @@ export const YeetModal = ({
       queryClient.refetchQueries({
         queryKey: ["yeeter", { chainid, yeeterid }],
       });
-
-      queryClient.refetchQueries({
-        queryKey: ["yeets", { yeeterid }],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["yeeters", { chainid }],
-      });
     };
     if (isConfirmed) {
       console.log("INVALIDATING/REFETCH");
@@ -70,24 +51,30 @@ export const YeetModal = ({
     }
   }, [isConfirmed, queryClient, yeeterid, chainid]);
 
+  // TODO: LINKS
+
   const form = useForm({
     defaultValues: {
-      amount: "",
-      message: "",
+      name: "",
+      description: "",
+      projectDetails: "",
+      missionStatement: "",
+      icon: "",
     },
     onSubmit: async ({ value }) => {
-      if (!yeeter) return;
+      console.log("values", value);
+      // if (!yeeter) return;
 
-      console.log("prep yeet", value);
-      setSubmittedAmount(toBaseUnits(value.amount));
+      // console.log("prep yeet", value);
+      // setSubmittedAmount(toBaseUnits(value.amount));
 
-      writeContract({
-        address: yeeter.id as `0x${string}`,
-        abi: yeeterAbi,
-        functionName: "contributeEth",
-        value: BigInt(toBaseUnits(value.amount)),
-        args: [value.message],
-      });
+      // writeContract({
+      //   address: yeeter.id as `0x${string}`,
+      //   abi: yeeterAbi,
+      //   functionName: "contributeEth",
+      //   value: BigInt(toBaseUnits(value.amount)),
+      //   args: [value.message],
+      // });
     },
   });
 
@@ -96,35 +83,44 @@ export const YeetModal = ({
   const showLoading = isSendTxPending || isConfirming;
   const needsAuth = !ready || !authenticated;
 
+  console.log("needsAuth", needsAuth);
+
   return (
     <>
-      <button
-        className={buttonClass}
+      <p
         // @ts-expect-error fix unknown
-        onClick={() => document.getElementById("yeet-modal").showModal()}
+        onClick={() => document.getElementById("meta-form-modal").showModal()}
+        className="underline text-primary"
       >
-        Contribute
-      </button>
-      <dialog id="yeet-modal" className="modal modal-bottom sm:modal-middle">
+        Edit project details ⟶
+      </p>
+      <dialog
+        id="meta-form-modal"
+        className="modal modal-bottom sm:modal-middle"
+      >
         <div className="modal-box">
+          <h3 className="font-bold text-lg">
+            Project Detail editing is coming soon
+          </h3>
+          <p>
+            In the meantime, you can edit these in the
+            <a
+              className="link link-primary"
+              href={`https://app.yeet.haus/#/molochv3/${chainid}/${daoid}/update`}
+              target="_blank"
+            >
+              {" "}
+              Yeeter app
+            </a>
+          </p>
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
             </button>
           </form>
 
-          {!isConfirmed && (
-            <div className="text-lg font-bold mt-5">
-              Receive {formatLootForMin(yeeter)} loot tokens per{" "}
-              {formatMinContribution(yeeter)} ETH contributed
-            </div>
-          )}
-
           {isConfirmed && (
-            <div className="text-lg font-bold mt-5">
-              You got {formatLootForAmount(yeeter, submittedAmount)} loot
-              tokens!
-            </div>
+            <div className="text-lg font-bold mt-5">Success!</div>
           )}
           <div className="divider divider-secondary"></div>
 
@@ -137,44 +133,25 @@ export const YeetModal = ({
           >
             <div>
               <form.Field
-                name="amount"
+                name="name"
                 validators={{
                   onChange: ({ value }) => {
                     if (!value) return "Required";
-                    if (toBaseUnits(value) < yeeter.minTribute)
-                      return `${formatMinContribution(yeeter)} minimum`;
+
                     return undefined;
-                  },
-                }}
-                listeners={{
-                  onChange: ({ value, fieldApi }) => {
-                    const invalid = toBaseUnits(value) < yeeter.minTribute;
-                    const loot = formatLootForAmount(
-                      yeeter,
-                      toBaseUnits(value)
-                    );
-                    setFieldMessages((prev) => {
-                      return {
-                        ...prev,
-                        [fieldApi.name]: invalid
-                          ? ""
-                          : `You'll get ${loot} Loot Tokens`,
-                      };
-                    });
                   },
                 }}
                 children={(field) => (
                   <>
                     <label className="form-control w-full max-w-xs">
                       <div className="label">
-                        <span className="label-text">
-                          How much do you want to contribute?
-                        </span>
+                        <span className="label-text">Name</span>
                       </div>
                       <input
                         type="number"
-                        placeholder="Amount in ETH"
-                        disabled={showLoading || isConfirmed}
+                        // placeholder="Project Name"
+                        // disabled={showLoading || isConfirmed}
+                        disabled={true}
                         className="input input-bordered input-primary w-full max-w-xs rounded-sm"
                         id={field.name}
                         name={field.name}
@@ -183,10 +160,7 @@ export const YeetModal = ({
                         onChange={(e) => field.handleChange(e.target.value)}
                       />
                     </label>
-                    <FieldInfo
-                      field={field}
-                      message={fieldMessages[field.name]}
-                    />
+                    <FieldInfo field={field} />
                   </>
                 )}
               />
@@ -194,17 +168,18 @@ export const YeetModal = ({
 
             <div>
               <form.Field
-                name="message"
+                name="description"
                 children={(field) => (
                   <>
                     <label className="form-control">
                       <div className="label">
-                        <span className="label-text">Send a message</span>
+                        <span className="label-text">Description</span>
                       </div>
                       <textarea
                         className="textarea textarea-bordered textarea-primary h-24 rounded-sm"
-                        placeholder="Description"
-                        disabled={showLoading || isConfirmed}
+                        // placeholder="Description"
+                        // disabled={showLoading || isConfirmed}
+                        disabled={true}
                         id={field.name}
                         name={field.name}
                         value={field.state.value}
@@ -247,9 +222,10 @@ export const YeetModal = ({
                   <>
                     <button
                       className="btn btn-sm btn-primary"
-                      disabled={
-                        showLoading || !canSubmit || needsAuth || isConfirmed
-                      }
+                      // disabled={
+                      //   showLoading || !canSubmit || needsAuth || isConfirmed
+                      // }
+                      disabled={true}
                     >
                       Contribute
                     </button>

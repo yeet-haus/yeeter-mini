@@ -43,8 +43,6 @@ export const LoginModalSwitch = ({
     },
   });
 
-  console.log("ready", authenticated);
-
   useEffect(() => {
     if (
       ready &&
@@ -55,8 +53,6 @@ export const LoginModalSwitch = ({
       switchChain({ chainId: WAGMI_CHAIN_OBJS[targetChainId].id });
     }
   }, [chainId, targetChainId, ready, authenticated, switchChain]);
-  // console.log("chainid", chainId);
-  // console.log("chains", chains);
 
   const handleLogin = () => {
     // document.getElementById("yeet-modal").hideModal();

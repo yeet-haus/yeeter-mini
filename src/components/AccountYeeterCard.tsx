@@ -1,21 +1,21 @@
 import { Link } from "react-router-dom";
-import { YeeterItem, YeetsItem } from "../utils/types";
+import { YeetsItem } from "../utils/types";
 import { useYeeter } from "../hooks/useYeeter";
 import { fromWei } from "../utils/helpers";
 import { formatValueTo } from "../utils/units";
 import { formatDateFromSeconds } from "../utils/dates";
 
 export const AccountYeeterCard = ({
-  campaign,
+  yeeterid,
   chainId,
   accountYeets,
 }: {
-  campaign: YeeterItem;
+  yeeterid: string;
   chainId: string;
   accountYeets?: YeetsItem[];
 }) => {
   const { yeeter, metadata } = useYeeter({
-    campaignid: campaign.id,
+    yeeterid: yeeterid,
     chainid: chainId,
   });
 
@@ -55,7 +55,7 @@ export const AccountYeeterCard = ({
         </div>
 
         <div className="flex flex-col justify-center w-full">
-          <Link to={`/campaign/${chainId}/${campaign.id}`}>
+          <Link to={`/yeeter/${chainId}/${yeeterid}`}>
             <button className="btn btn-neutral rounded-sm w-full">
               View Project
             </button>

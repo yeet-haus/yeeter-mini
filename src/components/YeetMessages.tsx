@@ -3,14 +3,14 @@ import { YeetMessage } from "./YeetMessage";
 
 export const YeetMessages = ({
   chainid,
-  campaignid,
+  yeeterid,
 }: {
   chainid: string;
-  campaignid: string;
+  yeeterid: string;
 }) => {
   const { yeets } = useYeets({
     chainid,
-    campaignid,
+    yeeterid,
   });
 
   return (

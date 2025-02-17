@@ -1,27 +1,24 @@
 import { Link } from "react-router-dom";
-import { YeeterItem } from "../utils/types";
 import { useYeeter } from "../hooks/useYeeter";
 import { toWholeUnits } from "../utils/helpers";
 import { YeetModal } from "./YeetModal";
 import { formatShortDateTimeFromSeconds } from "../utils/dates";
 
 export const YeeterCard = ({
-  campaign,
+  yeeterid,
   chainId,
 }: {
-  campaign: YeeterItem;
+  yeeterid: string;
   chainId: string;
 }) => {
   const { yeeter, metadata } = useYeeter({
-    campaignid: campaign.id,
+    yeeterid: yeeterid,
     chainid: chainId,
   });
 
   if (!yeeter) return null;
 
   const hero = metadata?.icon && metadata?.icon !== "" && metadata?.icon;
-
-  console.log("yeeter", yeeter);
 
   return (
     <div className="card bg-primary shadow-xs rounded min-w-full">
@@ -77,7 +74,7 @@ export const YeeterCard = ({
         )}
 
         <div className="flex flex-col gap-5 justify-center w-full">
-          <Link to={`/campaign/${chainId}/${campaign.id}`}>
+          <Link to={`/yeeter/${chainId}/${yeeterid}`}>
             <button className="btn btn-neutral rounded-sm w-full">
               Learn More
             </button>
@@ -85,7 +82,7 @@ export const YeeterCard = ({
           {yeeter.isActive && (
             <YeetModal
               buttonClass="btn btn-neutral rounded-sm w-full"
-              campaignid={campaign.id}
+              yeeterid={yeeterid}
               chainid={chainId}
             />
           )}
