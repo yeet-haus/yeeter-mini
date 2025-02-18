@@ -1,5 +1,4 @@
-// import { formatValueTo, fromWei } from "@daohaus/utils";
-import { RecordItem, YeeterItem, YeeterMetadata } from "./types";
+import { RecordItem, YeeterItem } from "./types";
 import { fromWei } from "./helpers";
 import { formatValueTo } from "./units";
 

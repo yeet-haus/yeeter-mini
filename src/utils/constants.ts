@@ -1,5 +1,4 @@
 import { base, sepolia, optimism, arbitrum, gnosis, Chain } from "viem/chains";
-import { Keychain } from "./tx-prepper/prepper-types";
 
 type KEYCHAIN = {
   [key: string]: string;
