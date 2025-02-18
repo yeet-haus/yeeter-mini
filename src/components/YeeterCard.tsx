@@ -1,18 +1,18 @@
 import { Link } from "react-router-dom";
-import { YeeterItem } from "../utils/types";
 import { useYeeter } from "../hooks/useYeeter";
 import { toWholeUnits } from "../utils/helpers";
 import { YeetModal } from "./YeetModal";
+import { formatShortDateTimeFromSeconds } from "../utils/dates";
 
 export const YeeterCard = ({
-  campaign,
+  yeeterid,
   chainId,
 }: {
-  campaign: YeeterItem;
+  yeeterid: string;
   chainId: string;
 }) => {
   const { yeeter, metadata } = useYeeter({
-    campaignid: campaign.id,
+    yeeterid: yeeterid,
     chainid: chainId,
   });
 
@@ -60,12 +60,21 @@ export const YeeterCard = ({
         )}
         {yeeter.isComingSoon && (
           <div className="flex flex-row justify-center w-full mb-3">
-            <div className="badge badge-accent">Coming Soon</div>
+            <div className="badge badge-accent">
+              Coming on {formatShortDateTimeFromSeconds(yeeter.startTime)}
+            </div>
+          </div>
+        )}
+        {yeeter.isActive && (
+          <div className="flex flex-row justify-center w-full mb-3">
+            <div className="badge badge-accent">
+              Closing on {formatShortDateTimeFromSeconds(yeeter.endTime)}
+            </div>
           </div>
         )}
 
         <div className="flex flex-col gap-5 justify-center w-full">
-          <Link to={`/campaign/${chainId}/${campaign.id}`}>
+          <Link to={`/yeeter/${chainId}/${yeeterid}`}>
             <button className="btn btn-neutral rounded-sm w-full">
               Learn More
             </button>
@@ -73,7 +82,7 @@ export const YeeterCard = ({
           {yeeter.isActive && (
             <YeetModal
               buttonClass="btn btn-neutral rounded-sm w-full"
-              campaignid={campaign.id}
+              yeeterid={yeeterid}
               chainid={chainId}
             />
           )}

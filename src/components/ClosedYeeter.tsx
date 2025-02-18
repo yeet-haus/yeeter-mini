@@ -2,16 +2,17 @@ import { useYeeter } from "../hooks/useYeeter";
 import { GoalProgress } from "./GoalProgress";
 
 export const ClosedYeeter = ({
-  campaignid,
+  yeeterid,
   chainid,
 }: {
-  campaignid?: string;
+  yeeterid?: string;
   chainid?: string;
 }) => {
   const { yeeter } = useYeeter({
     chainid,
-    campaignid,
+    yeeterid,
   });
+  if (!yeeter) return;
   return (
     <>
       <GoalProgress yeeter={yeeter} />

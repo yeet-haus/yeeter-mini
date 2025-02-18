@@ -63,6 +63,7 @@ export const EXPLORER_URL: KEYCHAIN = {
 export const YEETER_DAO_REFERRER = "DHOnboarderShamanSummoner";
 
 export const DEFAULT_CHAIN_ID = "0xaa36a7";
+// export const DEFAULT_CHAIN_ID = "0x2105";
 
 export const YEETER_CONTRACTS: KeychainList = {
   ONBOARDER_SUMMONER: {
@@ -87,7 +88,7 @@ export const DEFAULT_YEETER_VALUES = {
   feeRecipients: ["0xD0f8720846890a7961945261FE5012E4cA39918e"],
   feeAmounts: ["30000"],
   multiplier: "1000",
-  minTribute: "10000000000000000",
+  minTribute: "5000000000000000",
 };
 export const DEFAULT_SUMMON_VALUES = {
   votingPeriodInSeconds: 120,

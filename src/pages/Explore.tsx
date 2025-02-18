@@ -25,13 +25,13 @@ export const Explore = () => {
           Open
         </a>
 
-        <a
+        {/* <a
           role="tab"
           className={`tab ${listType === "upcoming" ? "tab-active" : ""}`}
           onClick={() => setListType("upcoming")}
         >
           Coming Soon
-        </a>
+        </a> */}
 
         <a
           role="tab"
@@ -46,7 +46,7 @@ export const Explore = () => {
           yeeters.map((yeeter: YeeterItem) => {
             return (
               <YeeterCard
-                campaign={yeeter}
+                yeeterid={yeeter.id}
                 chainId={DEFAULT_CHAIN_ID}
                 key={yeeter.id}
               />

@@ -4,18 +4,18 @@ import { RaiseStats } from "./RaiseStats";
 import { YeetModal } from "./YeetModal";
 
 export const ActiveYeeter = ({
-  campaignid,
+  yeeterid,
   chainid,
 }: {
-  campaignid?: string;
+  yeeterid?: string;
   chainid?: string;
 }) => {
   const { yeeter } = useYeeter({
     chainid,
-    campaignid,
+    yeeterid,
   });
 
-  if (!campaignid || !chainid) return;
+  if (!yeeterid || !chainid || !yeeter) return;
 
   return (
     <>
@@ -23,7 +23,7 @@ export const ActiveYeeter = ({
       <RaiseStats yeeter={yeeter} />
       <YeetModal
         buttonClass="btn btn-lg btn-outline btn-primary rounded-sm w-full my-5"
-        campaignid={campaignid}
+        yeeterid={yeeterid}
         chainid={chainid}
       />
     </>

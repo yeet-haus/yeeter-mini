@@ -17,6 +17,9 @@ export const POSTER_TAGS = {
   daoDatabaseSharesOrLoot: "daohaus.member.database",
 };
 
+export const NETWORK_TOKEN_ETH_ADDRESS =
+  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+
 const nestInArray = (arg: ValidArgType | ValidArgType[]): NestedArray => {
   return {
     type: "nestedArray",
@@ -119,4 +122,95 @@ export const TX: Record<string, TXLego> = {
       },
     ],
   }),
+  RAGEQUIT: {
+    id: "RAGEQUIT",
+    contract: {
+      type: "static",
+      contractName: "Current DAO (Baal)",
+      abi: LOCAL_ABI.BAAL,
+      targetAddress: ".daoId",
+    },
+    method: "ragequit",
+    args: [
+      ".formValues.to",
+      { type: "static", value: "0" },
+      ".formValues.lootToBurn",
+      nestInArray({ type: "static", value: NETWORK_TOKEN_ETH_ADDRESS }),
+    ],
+  },
+  POST_PROJECT_UPDATE: {
+    id: "POST_PROJECT_UPDATE",
+    contract: {
+      type: "static",
+      contractName: "Poster",
+      abi: LOCAL_ABI.POSTER,
+      targetAddress: CONTRACT_KEYCHAINS.POSTER,
+    },
+    method: "post",
+    args: [
+      {
+        type: "JSONDetails",
+        jsonSchema: {
+          daoId: ".daoId",
+          table: { type: "static", value: "yeetProjectUpdate" },
+          queryType: { type: "static", value: "latest" },
+          name: ".formValues.name",
+          description: ".formValues.description",
+          link: ".formValues.link",
+        },
+      },
+      { type: "static", value: POSTER_TAGS.daoDatabaseShares },
+    ],
+  },
+  UPDATE_YEET_METADATA_SETTINGS: {
+    id: "UPDATE_YEET_METADATA_SETTINGS",
+    contract: {
+      type: "static",
+      contractName: "Poster",
+      abi: LOCAL_ABI.POSTER,
+      targetAddress: CONTRACT_KEYCHAINS.POSTER,
+    },
+    method: "post",
+    args: [
+      {
+        type: "JSONDetails",
+        jsonSchema: {
+          daoId: ".daoId",
+          table: { type: "static", value: "yeetDetails" },
+          queryType: { type: "static", value: "latest" },
+          name: ".formValues.name",
+          projectDetails: ".formValues.projectDetails",
+          missionStatement: ".formValues.missionStatement",
+          icon: ".formValues.icon",
+          links: {
+            type: "nestedArray",
+            args: [
+              {
+                type: "JSONDetails",
+                jsonSchema: {
+                  url: ".formValues.custom1",
+                  label: ".formValues.custom1Label",
+                },
+              },
+              {
+                type: "JSONDetails",
+                jsonSchema: {
+                  url: ".formValues.custom2",
+                  label: ".formValues.custom2Label",
+                },
+              },
+              {
+                type: "JSONDetails",
+                jsonSchema: {
+                  url: ".formValues.custom3",
+                  label: ".formValues.custom3Label",
+                },
+              },
+            ],
+          },
+        },
+      },
+      { type: "static", value: POSTER_TAGS.daoDatabaseShares },
+    ],
+  },
 };

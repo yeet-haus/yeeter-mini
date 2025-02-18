@@ -6,13 +6,36 @@ export const Launch = () => {
     <div className="flex flex-col justify-center items-center gap-5">
       <h2 className="text-2xl text-primary">Launch a Project</h2>
 
-      <div className="collapse bg-base-200">
+      <div className="collapse collapse-arrow bg-primary text-white">
         <input type="checkbox" />
-        <div className="collapse-title text-base font-medium">
+        <div className="collapse-title text-base font-bold ">
           How does this work?
         </div>
-        <div className="collapse-content">
-          <p>hello</p>
+        <div className="collapse-content flex flex-col gap-3 text-sm">
+          <p>
+            Launching a project on Wee Yeet will create an onchain fundraising
+            campaign.
+          </p>
+          <p>
+            You will set a goal and duration for the raise. These cannot be
+            changed later. Your project details (name, description, etc...) will
+            be editable.
+          </p>
+          <p>
+            You will be the project lead and can request funds for your project
+            through proposals.
+          </p>
+          <p>
+            Funders can monitor these proposals and exit with their funds if
+            they don't agree with how they are being spent.
+          </p>
+          <a
+            href="https://yeet.haus/faq"
+            target="_blank"
+            className="link link-neutral text-xs"
+          >
+            Learn more about decentralized fundraising
+          </a>
         </div>
       </div>
 
