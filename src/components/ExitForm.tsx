@@ -194,7 +194,8 @@ export const ExitForm = ({
 
               <form.Subscribe
                 selector={(state) => [state.canSubmit, state.isSubmitting]}
-                children={([canSubmit]) => (
+                // children={([canSubmit]) => (
+                children={() => (
                   <>
                     <button
                       className="btn btn-sm btn-primary"
