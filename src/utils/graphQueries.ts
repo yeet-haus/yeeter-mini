@@ -1,22 +1,22 @@
 import { gql } from "graphql-request";
 
 const yeeterFields = `
-id
-createdAt
-dao {
   id
-}
-endTime
-startTime
-isShares
-multiplier
-minTribute
-goal
-balance
-yeetCount
+  createdAt
+  dao {
+    id
+  }
+  endTime
+  startTime
+  isShares
+  multiplier
+  minTribute
+  goal
+  balance
+  yeetCount
 `;
 
-export const GET_YEETER = gql`
+export const FIND_YEETER = gql`
   query yeeter($shamanAddress: String!) {
     yeeter(id: $shamanAddress) {
       ${yeeterFields}
@@ -24,7 +24,7 @@ export const GET_YEETER = gql`
   }
 `;
 
-export const GET_ALL_YEETERS = gql`
+export const LIST_ALL_YEETERS = gql`
   {
     yeeters(
       first: 1000, 
@@ -37,7 +37,7 @@ export const GET_ALL_YEETERS = gql`
   }
 `;
 
-export const GET_OPEN_YEETERS = gql`
+export const LIST_OPEN_YEETERS = gql`
   query yeeters($now: String!) {
     yeeters(
       first: 1000, 
@@ -51,7 +51,7 @@ export const GET_OPEN_YEETERS = gql`
   }
 `;
 
-export const GET_CLOSED_YEETERS = gql`
+export const LIST_CLOSED_YEETERS = gql`
   query yeeters($now: String!) {
     yeeters(
       first: 1000, 
@@ -83,17 +83,33 @@ export const LIST_YEETS = gql`
   }
 `;
 
-export const GET_YEETS_BY_TX = gql`
-  query yeets($txHash: String!) {
-    yeets(where: { txHash: $txHash }, first: 1) {
+// addtional where for the below if needed to scope to summoner referrer
+// dao_: {
+//   referrer: "${YEET24_REFERRER}"
+// }
+
+export const LIST_YEETS_FOR_ADDRESS = gql`
+  query yeets($address: String!) {
+    yeets(
+      where: { contributor: $address }
+      orderBy: createdAt
+      orderDirection: desc
+      first: 1000
+    ) {
       id
-      txHash
+      createdAt
+      contributor
+      amount
       shares
+      message
+      yeeter {
+        ${yeeterFields}
+      }
     }
   }
 `;
 
-export const GET_YEETER_PROFILE = gql`
+export const FIND_YEETER_PROFILE = gql`
   query record($daoid: String!) {
     records(
       where: { dao: $daoid, table: "yeetDetails" }
@@ -116,6 +132,192 @@ export const GET_YEETER_PROFILE = gql`
     dao(id: $daoid) {
       id
       name
+    }
+  }
+`;
+const proposalFields = `
+  id
+  createdAt
+  createdBy
+  proposedBy
+  txHash
+  proposalId
+  prevProposalId
+  proposalDataHash
+  proposalData
+  actionGasEstimate
+  details
+  title
+  description
+  proposalType
+  contentURI
+  contentURIType
+  sponsorTxHash
+  sponsored
+  selfSponsor
+  sponsor
+  sponsorTxAt
+  votingPeriod
+  votingStarts
+  votingEnds
+  gracePeriod
+  graceEnds
+  expiration
+  expirationQueryField
+  cancelledTxHash
+  cancelledBy
+  cancelled
+  cancelledTxAt
+  yesBalance
+  noBalance
+  yesVotes
+  noVotes
+  processTxHash
+  processedBy
+  processed
+  processTxAt
+  actionFailed
+  passed
+  proposalOffering
+  maxTotalSharesAndLootAtYesVote
+  tributeToken
+  tributeOffered
+  tributeTokenSymbol
+  tributeTokenDecimals
+  tributeEscrowRecipient
+  sponsorMembership {
+    memberAddress
+    shares
+    delegateShares
+  }
+  dao {
+    totalShares
+    quorumPercent
+    minRetentionPercent
+  }
+  votes {
+    id
+    txHash
+    createdAt
+    daoAddress
+    approved
+    balance
+    member {
+      id
+      memberAddress
+    }
+  }
+`;
+
+export const LIST_ALL_DAO_PROPOSALS = gql`
+  query proposal(
+    $skip: Int!
+    $first: Int!
+    $orderBy: String!
+    $orderDirection: String!
+    $daoid: String!
+  ) {
+    proposals(
+      skip: $skip
+      first: $first
+      orderBy: $orderBy
+      orderDescription: $orderDescription,
+      where: { dao: $daoid }
+    ) {
+      ${proposalFields}
+    }
+  }
+`;
+
+export const LIST_SIGNAL_DAO_PROPOSALS = gql`
+  query proposal(
+    $skip: Int!
+    $first: Int!
+    $orderBy: String!
+    $orderDirection: String!
+    $daoid: String!
+  ) {
+    proposals(
+      skip: $skip
+      first: $first
+      orderBy: $orderBy
+      orderDescription: $orderDescription,
+      where: { dao: $daoid, proposalType: "SIGNAL" }
+    ) {
+      ${proposalFields}
+    }
+  }
+`;
+
+export const LIST_FUNDING_DAO_PROPOSALS = gql`
+  query proposal(
+    $skip: Int!
+    $first: Int!
+    $orderBy: String!
+    $orderDirection: String!
+    $daoid: String!
+  ) {
+    proposals(
+      skip: $skip
+      first: $first
+      orderBy: $orderBy
+      orderDescription: $orderDescription,
+      where: { dao: $daoid, proposalType_contains_nocase: "TRANSFER" }
+    ) {
+      ${proposalFields}
+    }
+  }
+`;
+
+export const LIST_ACTIVE_DAO_PROPOSALS = gql`
+  query proposal(
+    $skip: Int!
+    $first: Int!
+    $orderBy: String!
+    $orderDirection: String!
+    $daoid: String!
+  ) {
+    proposals(
+      skip: $skip
+      first: $first
+      orderBy: $orderBy
+      orderDescription: $orderDescription,
+      where: { 
+        dao: $daoid           
+        cancelled: false
+        sponsored: true
+        processed: false
+        actionFailed: false 
+      }
+    ) {
+      ${proposalFields}
+    }
+  }
+`;
+
+const memberFields = `
+  id
+  createdAt
+  txHash
+  memberAddress
+  shares
+  loot
+  sharesLootDelegateShares
+  delegatingTo
+  delegateShares
+  delegateOfCount
+  lastDelegateUpdateTxHash
+  votes {
+    txHash
+    createdAt
+    approved
+    balance
+  }`;
+
+export const FIND_MEMBER = gql`
+  query member($memberid: String!) {
+    member(id: $memberid) {
+      ${memberFields}
     }
   }
 `;

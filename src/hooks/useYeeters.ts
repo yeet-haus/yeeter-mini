@@ -2,42 +2,59 @@ import { GraphQLClient } from "graphql-request";
 
 import { useQuery } from "@tanstack/react-query";
 import {
-  GET_OPEN_YEETERS,
-  GET_CLOSED_YEETERS,
-  GET_ALL_YEETERS,
+  LIST_OPEN_YEETERS,
+  LIST_CLOSED_YEETERS,
+  LIST_ALL_YEETERS,
 } from "../utils/graphQueries";
-import { DEFAULT_CHAIN_ID, GRAPH_URL } from "../utils/constants";
 import { YeeterItem } from "../utils/types";
-import { nowInSeconds } from "../utils/helpers";
+import { useContext } from "react";
+import { getGraphUrl } from "../utils/endpoints";
+import { DaoHooksContext } from "../providers/DaoHooksProvider";
 
 const QUERIES: Record<string, string> = {
-  open: GET_OPEN_YEETERS,
-  all: GET_ALL_YEETERS,
-  closed: GET_CLOSED_YEETERS,
+  open: LIST_OPEN_YEETERS,
+  all: LIST_ALL_YEETERS,
+  closed: LIST_CLOSED_YEETERS,
 };
 
+// const SECONDS_IN_DAY = 86400;
+
 export const useYeeters = ({
-  chainId,
+  chainid,
   filter,
 }: {
-  chainId: string;
+  chainid: string;
   filter: string;
 }) => {
-  const chain = chainId || DEFAULT_CHAIN_ID;
-  const graphQLClient = new GraphQLClient(GRAPH_URL[chain]);
-  const now = (nowInSeconds() - 604800).toFixed().toString();
+  const hookContext = useContext(DaoHooksContext);
+
+  if (!hookContext || !hookContext.config.graphKey) {
+    throw new Error("DaoHooksContext must be used within a DaoHooksProvider");
+  }
+
+  const yeeterUrl = getGraphUrl({
+    chainid,
+    graphKey: hookContext.config.graphKey,
+    subgraphKey: "YEETER",
+  });
+
+  const graphQLClient = new GraphQLClient(yeeterUrl);
+  const nowInSeconds = (): number => new Date().getTime() / 1000;
+  // const now = (nowInSeconds() - SECONDS_IN_DAY).toFixed().toString();
+  const now = nowInSeconds().toFixed().toString();
 
   const query = QUERIES[filter];
   const variables = filter !== "all" ? { now } : undefined;
 
   const { data, ...rest } = useQuery({
-    queryKey: [`get-yeeters-${chainId}-${filter}`, { chainId, filter }],
-    queryFn: () => graphQLClient.request(query, variables),
+    queryKey: [`get-yeeters-${chainid}-${filter}`, { chainid, filter }],
+    queryFn: (): Promise<{
+      yeeters: YeeterItem[];
+    }> => graphQLClient.request(query, variables),
   });
 
   return {
-    // @ts-expect-error fix unknown
-    yeeters: data?.yeeters as YeeterItem[],
+    yeeters: data?.yeeters,
     ...rest,
   };
 };

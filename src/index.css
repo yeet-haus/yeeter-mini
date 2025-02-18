@@ -4,7 +4,6 @@
 
 :root {
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -21,6 +20,8 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background: repeat url("/weeyeet_logo_white.png");
+  background-size: 25% 25%;
 }
 
 h1,
@@ -34,4 +35,8 @@ h6 {
 
 button {
   cursor: pointer;
+}
+
+.av-contain img {
+  object-fit: contain;
 }

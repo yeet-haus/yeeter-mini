@@ -8,7 +8,7 @@ export const Explore = () => {
   const [listType, setListType] = useState("open");
 
   const { yeeters, isLoading, isFetched } = useYeeters({
-    chainId: DEFAULT_CHAIN_ID,
+    chainid: DEFAULT_CHAIN_ID,
     filter: listType,
   });
 
@@ -25,6 +25,14 @@ export const Explore = () => {
           Open
         </a>
 
+        {/* <a
+          role="tab"
+          className={`tab ${listType === "upcoming" ? "tab-active" : ""}`}
+          onClick={() => setListType("upcoming")}
+        >
+          Coming Soon
+        </a> */}
+
         <a
           role="tab"
           className={`tab ${listType === "closed" ? "tab-active" : ""}`}
@@ -38,7 +46,7 @@ export const Explore = () => {
           yeeters.map((yeeter: YeeterItem) => {
             return (
               <YeeterCard
-                campaign={yeeter}
+                yeeterid={yeeter.id}
                 chainId={DEFAULT_CHAIN_ID}
                 key={yeeter.id}
               />

@@ -3,7 +3,7 @@ import { Home } from "./pages/Home";
 import { Explore } from "./pages/Explore";
 import { Launch } from "./pages/Launch";
 import { Account } from "./pages/Account";
-import { Campaign } from "./pages/Campaign";
+import { Yeeter } from "./pages/Yeeter";
 
 export const Routes = () => {
   return (
@@ -12,7 +12,7 @@ export const Routes = () => {
       <Route path="/explore" element={<Explore />} />
       <Route path="/launch" element={<Launch />} />
       <Route path="/account" element={<Account />} />
-      <Route path="/campaign/:chainid/:campaignid" element={<Campaign />} />
+      <Route path="/yeeter/:chainid/:yeeterid" element={<Yeeter />} />
     </Router>
   );
 };

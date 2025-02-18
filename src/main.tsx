@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "./index.css";
 import App from "./App.tsx";
-import Providers from "./Providers.tsx";
+import Providers from "./providers/Providers.tsx";
 
 const config = createConfig({
   chains: [base, sepolia],
