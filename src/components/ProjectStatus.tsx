@@ -1,6 +1,8 @@
 import { useDaoProposals } from "../hooks/useDaoProposals";
 import { useYeeter } from "../hooks/useYeeter";
+import { AddProjectMemberModal } from "./AddProjectMemberModal";
 import { ExitForm } from "./ExitForm";
+import { RequestFundingModal } from "./RequestFundingModal";
 import { StatusUpdateForm } from "./StatusUpdateForm";
 
 export const ProjectStatus = ({
@@ -33,28 +35,51 @@ export const ProjectStatus = ({
   const goalReached = Number(yeeter.balance) > Number(yeeter.goal);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
+      {yeeter.isComingSoon && (
+        <div className="font-bold text-xl">Coming Soon</div>
+      )}
+      {yeeter.isActive && !goalReached && (
+        <div className="font-bold text-xl">Funding Active</div>
+      )}
+      {yeeter.isEnded && !goalReached && (
+        <div className="font-bold text-xl">Funding Goal Not Reached</div>
+      )}
+      {(yeeter.isActive || yeeter.isEnded) && goalReached && (
+        <div className="font-bold text-xl">Funding Goal Reached</div>
+      )}
+
       {isFunder && (
         <div className="badge badge-accent text-base-100">You're a funder</div>
       )}
 
       {onProjectTeam && (
-        <div className="badge badge-accent text-base-100">
-          You're on the project team
-        </div>
+        <>
+          <div className="badge badge-accent text-base-100">
+            You're on the project team
+          </div>
+          <AddProjectMemberModal
+            yeeterid={yeeterid}
+            chainid={chainid}
+            daoid={daoid}
+          />
+        </>
       )}
-      {yeeter.isComingSoon && (
-        <div className="font-bold text-xl">Coming Soon</div>
-      )}
+
       {(yeeter.isActive || yeeter.isEnded) && goalReached && (
         <>
-          <div className="font-bold text-xl">Funding Goal Reached</div>
           <div className="flex flex-col gap-1">
             <div className="text-base font-bold">Project Team</div>
-            <div className="text-base">
-              Update funders by creating status updates.
-            </div>
+            <div className="text-base">Create updates for your funders.</div>
             <StatusUpdateForm
+              yeeterid={yeeterid}
+              chainid={chainid}
+              daoid={daoid}
+            />
+            <div className="text-base">
+              Request funds by creating a proposal
+            </div>
+            <RequestFundingModal
               yeeterid={yeeterid}
               chainid={chainid}
               daoid={daoid}
@@ -73,30 +98,26 @@ export const ProjectStatus = ({
           </div>
         </>
       )}
-      {yeeter.isActive && !goalReached && (
-        <div className="font-bold text-xl">Funding Active</div>
-      )}
 
       {yeeter.isEnded && !goalReached && (
         <>
-          <div className="font-bold text-xl">Funding Goal Not Reached</div>
+          <div className="flex flex-col gap-1">
+            <div className="text-base font-bold">Project Team</div>
+            <div className="text-base">Create updates for your funders.</div>
+            <StatusUpdateForm
+              yeeterid={yeeterid}
+              chainid={chainid}
+              daoid={daoid}
+            />
+          </div>
           <div className="flex flex-col gap-1">
             <div className="text-base font-bold">Funders</div>
             <div className="text-base">
-              The project team might consider moving forward with the funds
-              raised. Look for status updates here.
-            </div>
-            <div className="text-base">
-              You can exit with yor funds (minus protocol fees).
+              You can exit with yor funds (minus protocol fees), but the project
+              team might consider moving forward with the funds raised. Look for
+              updates here.
             </div>
             <ExitForm yeeterid={yeeterid} chainid={chainid} daoid={daoid} />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <div className="text-base font-bold">Project Team</div>
-            <div className="text-base">
-              Update funders by creating status updates here.
-            </div>
           </div>
         </>
       )}

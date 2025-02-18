@@ -22,8 +22,8 @@ export const Launch = () => {
             be editable.
           </p>
           <p>
-            You will be the project lead will be able to request funds for your
-            project through proposals.
+            You will be the project lead and can request funds for your project
+            through proposals.
           </p>
           <p>
             Funders can monitor these proposals and exit with their funds if

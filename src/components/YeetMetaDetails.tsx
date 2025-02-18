@@ -8,6 +8,7 @@ import { ProjectStatus } from "./ProjectStatus";
 import { useMember } from "../hooks/useMember";
 import { useAccount } from "wagmi";
 import { MetaFormModal } from "./MetaFormModal";
+import { ProjectUpdates } from "./ProjectUpdates";
 
 type LinkObj = {
   url: string;
@@ -67,7 +68,7 @@ export const YeetMetaDetails = ({
         />
         <div
           role="tabpanel"
-          className="tab-content bg-base-100 border-base-300 rounded-box p-6 text-left"
+          className="tab-content bg-base-100 border-base-300 rounded-box p-6 text-left break-words"
         >
           <ProjectStatus
             chainid={chainid}
@@ -77,6 +78,29 @@ export const YeetMetaDetails = ({
             onProjectTeam={onProjectTeam}
           />
         </div>
+
+        <input
+          type="radio"
+          name="my_tabs_2"
+          role="tab"
+          className="tab text-lg"
+          aria-label="Updates"
+        />
+        <div
+          role="tabpanel"
+          className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+        >
+          <div className="flex flex-col gap-4 text-left break-words">
+            <ProjectUpdates
+              chainid={chainid}
+              yeeterid={yeeterid}
+              daoid={daoid}
+              isFunder={isFunder}
+              onProjectTeam={onProjectTeam}
+            />
+          </div>
+        </div>
+
         <input
           type="radio"
           name="my_tabs_2"
@@ -86,32 +110,30 @@ export const YeetMetaDetails = ({
         />
         <div
           role="tabpanel"
-          className="tab-content bg-base-100 border-base-300 rounded-box p-6 text-left"
+          className="tab-content bg-base-100 border-base-300 rounded-box p-6 text-left "
         >
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             <div className="font-bold text-xl">{metadata?.name}</div>
 
-            <figure>{hero && <img src={hero} />}</figure>
+            {hero && (
+              <figure>
+                <img src={hero} />
+              </figure>
+            )}
 
-            <div className="font-bold text-md">
-              {metadata?.missionStatement}
+            <div className="font-bold text-base break-all">
+              <Markdown remarkPlugins={[remarkGfm]}>
+                {metadata?.missionStatement}
+              </Markdown>
             </div>
 
-            <div className="">
+            <div className="text-base break-all">
               <Markdown remarkPlugins={[remarkGfm]}>
                 {metadata?.projectDetails}
               </Markdown>
             </div>
 
             {onProjectTeam && (
-              // <a
-              //   className="link link-primary"
-              //   href={`https://app.yeet.haus/#/molochv3/${chainid}/${daoid}/update`}
-              //   target="_blank"
-              // >
-              //   Edit project details ⟶
-              // </a>
-
               <MetaFormModal
                 yeeterid={yeeterid}
                 chainid={chainid}
@@ -132,7 +154,7 @@ export const YeetMetaDetails = ({
           role="tabpanel"
           className="tab-content bg-base-100 border-base-300 rounded-box p-6"
         >
-          <div className="flex flex-col gap-4 text-left">
+          <div className="flex flex-col gap-3 text-left break-words">
             {linkList &&
               linkList.map((link) => {
                 return (
