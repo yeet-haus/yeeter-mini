@@ -81,9 +81,7 @@ export const MetaFormModal = ({
   if (!yeeter) return;
 
   const showLoading = isSendTxPending || isConfirming;
-  const needsAuth = !ready || !authenticated;
-
-  console.log("needsAuth", needsAuth);
+  // const needsAuth = !ready || !authenticated;
 
   return (
     <>

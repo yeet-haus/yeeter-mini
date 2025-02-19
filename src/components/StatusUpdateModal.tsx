@@ -18,15 +18,18 @@ import { TX } from "../utils/tx-prepper/tx";
 import { useDao } from "../hooks/useDao";
 import { prepareTX } from "../utils/tx-prepper/tx-prepper";
 import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
+import { StringValueNode } from "graphql";
 
 export const StatusUpdateModal = ({
   yeeterid,
   chainid,
   daoid,
+  modalId,
 }: {
   yeeterid: string;
   chainid: string;
   daoid: string;
+  modalId: string;
 }) => {
   const { yeeter } = useYeeter({
     chainid,
@@ -113,7 +116,7 @@ export const StatusUpdateModal = ({
       <p
         onClick={() => {
           // @ts-expect-error fix unknown
-          document.getElementById("status-form-modal").showModal();
+          document.getElementById(modalId).showModal();
           resetWrite();
           form.reset();
         }}
@@ -121,10 +124,7 @@ export const StatusUpdateModal = ({
       >
         Add an update ⟶
       </p>
-      <dialog
-        id="status-form-modal"
-        className="modal modal-bottom sm:modal-middle"
-      >
+      <dialog id={modalId} className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Add an update</h3>
 
