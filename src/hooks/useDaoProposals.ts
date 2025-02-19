@@ -33,13 +33,16 @@ export const useDaoProposals = ({
 }) => {
   const hookContext = useContext(DaoHooksContext);
 
-  if (!hookContext || !hookContext.config.graphKey || !chainid) {
-    throw new Error("DaoHooksContext must be used within a DaoHooksProvider");
+  if (!hookContext || !hookContext.config.graphKey) {
+    // throw new Error("DaoHooksContext must be used within a DaoHooksProvider");
+    console.log(
+      "useDaoProposals: DaoHooksContext must be used within a DaoHooksProvider"
+    );
   }
 
   const dhUrl = getGraphUrl({
-    chainid,
-    graphKey: hookContext.config.graphKey,
+    chainid: chainid || "",
+    graphKey: hookContext?.config.graphKey || "",
     subgraphKey: "DAOHAUS",
   });
 
@@ -54,6 +57,7 @@ export const useDaoProposals = ({
       `list-proposals-${chainid}-${daoid}-${filterKey}`,
       { chainid, daoid },
     ],
+    enabled: Boolean(chainid && daoid),
     queryFn: async (): Promise<{
       proposals: ProposalItem[];
     }> => {
