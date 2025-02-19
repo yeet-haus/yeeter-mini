@@ -67,61 +67,6 @@ export const TX: Record<string, TXLego> = {
       },
     ],
   }),
-  SIGNAL_SHARES: buildMultiCallTX({
-    id: "SIGNAL_SHARES",
-    JSONDetails: {
-      type: "JSONDetails",
-      jsonSchema: {
-        title: `.formValues.title`,
-        description: `.formValues.description`,
-        contentURI: `.formValues.link`,
-        contentURIType: { type: "static", value: "url" },
-        proposalType: {
-          type: "static",
-          value: ProposalTypeIds.IssueSharesLoot,
-        },
-      },
-    },
-    actions: [
-      {
-        contract: {
-          type: "static",
-          contractName: "Poster",
-          abi: LOCAL_ABI.POSTER,
-          targetAddress: CONTRACT_KEYCHAINS.POSTER,
-        },
-        method: "post",
-        operations: { type: "static", value: 0 },
-        args: [
-          {
-            type: "JSONDetails",
-            jsonSchema: {
-              daoId: ".daoId",
-              table: { type: "static", value: "signal" },
-              queryType: { type: "static", value: "list" },
-              title: `.formValues.title`,
-              description: `.formValues.description`,
-              link: `.formValues.link`,
-            },
-          },
-          { type: "static", value: POSTER_TAGS.daoDatabaseProposal },
-        ],
-      },
-      {
-        contract: {
-          type: "static",
-          contractName: "Current DAO (Baal)",
-          abi: LOCAL_ABI.BAAL,
-          targetAddress: ".daoId",
-        },
-        method: "mintShares",
-        args: [
-          nestInArray(".formValues.recipient"),
-          nestInArray(".formValues.sharesRequested"),
-        ],
-      },
-    ],
-  }),
   RAGEQUIT: {
     id: "RAGEQUIT",
     contract: {
@@ -153,7 +98,7 @@ export const TX: Record<string, TXLego> = {
         jsonSchema: {
           daoId: ".daoId",
           table: { type: "static", value: "yeetProjectUpdate" },
-          queryType: { type: "static", value: "latest" },
+          queryType: { type: "static", value: "list" },
           name: ".formValues.name",
           description: ".formValues.description",
           link: ".formValues.link",
@@ -213,4 +158,66 @@ export const TX: Record<string, TXLego> = {
       { type: "static", value: POSTER_TAGS.daoDatabaseShares },
     ],
   },
+  ISSUE_SHARES: buildMultiCallTX({
+    id: "ISSUE",
+    JSONDetails: {
+      type: "JSONDetails",
+      jsonSchema: {
+        title: { type: "static", value: "Add Team Member" },
+        description: ".formValues.description",
+        proposalType: {
+          type: "static",
+          value: ProposalTypeIds.IssueSharesLoot,
+        },
+      },
+    },
+    actions: [
+      {
+        contract: {
+          type: "static",
+          contractName: "Current DAO (Baal)",
+          abi: LOCAL_ABI.BAAL,
+          targetAddress: ".daoId",
+        },
+        method: "mintShares",
+        args: [
+          nestInArray(".formValues.recipient"),
+          nestInArray({ type: "static", value: "1000000000000000000" }),
+        ],
+      },
+    ],
+  }),
+  REQUEST_FUNDING_ETH: buildMultiCallTX({
+    id: "ISSUE_NETWORK_TOKEN",
+    JSONDetails: {
+      type: "JSONDetails",
+      jsonSchema: {
+        title: { type: "static", value: "Funding Request" },
+        description: ".formValues.description",
+        contentURI: `.formValues.link`,
+        contentURIType: { type: "static", value: "url" },
+        proposalType: {
+          type: "static",
+          value: ProposalTypeIds.TransferNetworkToken,
+        },
+      },
+    },
+    actions: [
+      {
+        contract: {
+          type: "static",
+          contractName: "NETWORK",
+          abi: LOCAL_ABI.ERC20,
+          targetAddress: ".formValues.recipient",
+        },
+        method: "noMethod",
+        args: [],
+        value: ".formValues.tokenAmount",
+        data: {
+          type: "static",
+          value: "0x",
+        },
+      },
+    ],
+  }),
 };

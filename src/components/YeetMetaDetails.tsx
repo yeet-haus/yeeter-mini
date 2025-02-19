@@ -173,7 +173,7 @@ export const YeetMetaDetails = ({
               href={`https://admin.daohaus.club/#/molochv3/${chainid}/${daoid}`}
               target="_blank"
             >
-              Project Admin ⟶
+              on DAOhaus Admin App ⟶
             </a>
             <a
               className="link link-primary"

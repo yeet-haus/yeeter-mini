@@ -14,13 +14,12 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { usePrivy } from "@privy-io/react-auth";
 import { LoginModalSwitch } from "./LoginModalSwitch";
-import { prepareTX } from "../utils/tx-prepper/tx-prepper";
 import { TX } from "../utils/tx-prepper/tx";
 import { useDao } from "../hooks/useDao";
+import { prepareTX } from "../utils/tx-prepper/tx-prepper";
 import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
-import { isEthAddress } from "../utils/tx-prepper/typeguards";
 
-export const AddProjectMemberModal = ({
+export const StatusUpdateModal = ({
   yeeterid,
   chainid,
   daoid,
@@ -33,12 +32,13 @@ export const AddProjectMemberModal = ({
     chainid,
     yeeterid,
   });
+  const { ready, authenticated } = usePrivy();
+  const { address } = useAccount();
   const { dao } = useDao({
     chainid,
     daoid,
   });
-  const { ready, authenticated } = usePrivy();
-  const { address } = useAccount();
+
   const queryClient = useQueryClient();
 
   const {
@@ -56,13 +56,15 @@ export const AddProjectMemberModal = ({
 
   const form = useForm({
     defaultValues: {
+      name: "",
       description: "",
-      recipient: "",
+      link: "",
     },
     onSubmit: async ({ value }) => {
+      console.log("values", value);
       if (!yeeter || !dao || !address) return;
 
-      const tx = TX.ISSUE_SHARES;
+      const tx = TX.POST_PROJECT_UPDATE;
 
       const wholeState = {
         formValues: {
@@ -94,13 +96,12 @@ export const AddProjectMemberModal = ({
       queryClient.refetchQueries({
         queryKey: ["yeeter", { chainid, yeeterid }],
       });
-      form.reset();
     };
     if (isConfirmed) {
       console.log("INVALIDATING/REFETCH");
       reset();
     }
-  }, [isConfirmed, queryClient, yeeterid, chainid, form]);
+  }, [isConfirmed, queryClient, yeeterid, chainid]);
 
   if (!yeeter) return;
 
@@ -112,33 +113,21 @@ export const AddProjectMemberModal = ({
       <p
         onClick={() => {
           // @ts-expect-error fix unknown
-          document.getElementById("member-form-modal").showModal();
+          document.getElementById("status-form-modal").showModal();
           resetWrite();
           form.reset();
         }}
         className="underline text-primary"
       >
-        Add a team member ⟶
+        Add an update ⟶
       </p>
       <dialog
-        id="member-form-modal"
+        id="status-form-modal"
         className="modal modal-bottom sm:modal-middle"
       >
         <div className="modal-box">
-          <h3 className="font-bold text-lg">Add a project team member</h3>
-          <p className="text-sm">
-            This will create a proposal to grant a voting share token to the
-            address you provide. Once submitted you will need to visit the
-            <a
-              className="link link-primary"
-              href={`https://admin.daohaus.club/#/molochv3/${chainid}/${daoid}/proposals`}
-              target="_blank"
-            >
-              {" "}
-              DAOhaus admin app
-            </a>{" "}
-            to vote on and execute the proposal.
-          </p>
+          <h3 className="font-bold text-lg">Add an update</h3>
+
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
@@ -149,15 +138,7 @@ export const AddProjectMemberModal = ({
             <>
               <h4 className="font-bold text-lg mt-5 text-primary">Success!</h4>
               <p className="text-sm">
-                Vote on and execute the proposal in the
-                <a
-                  className="link link-primary"
-                  href={`https://admin.daohaus.club/#/molochv3/${chainid}/${daoid}/proposals`}
-                  target="_blank"
-                >
-                  {" "}
-                  DAOhaus admin app
-                </a>{" "}
+                You're update will be displayed here soon.
               </p>
             </>
           )}
@@ -173,10 +154,44 @@ export const AddProjectMemberModal = ({
             >
               <div>
                 <form.Field
+                  name="name"
+                  validators={{
+                    onChange: ({ value }) => {
+                      if (!value) return "Required";
+
+                      return undefined;
+                    },
+                  }}
+                  children={(field) => (
+                    <>
+                      <label className="form-control w-full max-w-xs">
+                        <div className="label">
+                          <span className="label-text">Update Title</span>
+                        </div>
+                        <input
+                          placeholder="Title"
+                          disabled={showLoading || isConfirmed}
+                          className="input input-bordered input-primary w-full max-w-xs rounded-sm"
+                          id={field.name}
+                          name={field.name}
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                        />
+                      </label>
+                      <FieldInfo field={field} />
+                    </>
+                  )}
+                />
+              </div>
+
+              <div>
+                <form.Field
                   name="description"
                   validators={{
                     onChange: ({ value }) => {
                       if (!value) return "Required";
+
                       return undefined;
                     },
                   }}
@@ -184,10 +199,7 @@ export const AddProjectMemberModal = ({
                     <>
                       <label className="form-control">
                         <div className="label">
-                          <span className="label-text">
-                            Provide some info on who/why your are proposing to
-                            add a team member.
-                          </span>
+                          <span className="label-text">Update Details</span>
                         </div>
                         <textarea
                           className="textarea textarea-bordered textarea-primary h-24 rounded-sm"
@@ -200,7 +212,6 @@ export const AddProjectMemberModal = ({
                           onChange={(e) => field.handleChange(e.target.value)}
                         ></textarea>
                       </label>
-                      <FieldInfo field={field} />
                     </>
                   )}
                 />
@@ -208,22 +219,15 @@ export const AddProjectMemberModal = ({
 
               <div>
                 <form.Field
-                  name="recipient"
-                  validators={{
-                    onChange: ({ value }) => {
-                      if (!isEthAddress(value))
-                        return "Valid ETH Address is Required";
-                      return undefined;
-                    },
-                  }}
+                  name="link"
                   children={(field) => (
                     <>
                       <label className="form-control w-full max-w-xs">
                         <div className="label">
-                          <span className="label-text">New Member Address</span>
+                          <span className="label-text">Link</span>
                         </div>
                         <input
-                          placeholder="Address"
+                          placeholder="Url to more details"
                           disabled={showLoading || isConfirmed}
                           className="input input-bordered input-primary w-full max-w-xs rounded-sm"
                           id={field.name}
@@ -233,7 +237,10 @@ export const AddProjectMemberModal = ({
                           onChange={(e) => field.handleChange(e.target.value)}
                         />
                       </label>
-                      <FieldInfo field={field} />
+                      <FieldInfo
+                        field={field}
+                        message="Ensure you input a valid url"
+                      />
                     </>
                   )}
                 />
@@ -273,7 +280,7 @@ export const AddProjectMemberModal = ({
                           showLoading || !canSubmit || needsAuth || isConfirmed
                         }
                       >
-                        Submit Proposal
+                        Post Update
                       </button>
                     </>
                   )}
