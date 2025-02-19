@@ -1,5 +1,10 @@
+import { useDaoListRecords } from "../hooks/useDaoListRecords";
 import { useDaoProposals } from "../hooks/useDaoProposals";
 import { useYeeter } from "../hooks/useYeeter";
+import { nowInSeconds } from "../utils/helpers";
+import { StatusRecord } from "../utils/types";
+import { ProposalUpdateCard } from "./ProposalUpdateCard";
+import { StatusUpdateCard } from "./StatusUpdateCard";
 import { StatusUpdateModal } from "./StatusUpdateModal";
 
 export const ProjectUpdates = ({
@@ -24,7 +29,27 @@ export const ProjectUpdates = ({
     chainid,
     filter: "funding",
   });
-  console.log("proposals", proposals);
+
+  const { proposals: memberProposals } = useDaoProposals({
+    daoid,
+    chainid,
+    filter: "member",
+  });
+
+  const { records } = useDaoListRecords({
+    daoid,
+    chainid,
+    table: "yeetProjectUpdate",
+  }) as { records: StatusRecord[] | undefined };
+
+  console.log("records", records);
+
+  const now = nowInSeconds();
+  const passedOrActiveProps = proposals?.filter(
+    (p) => p.passed || Number(p.graceEnds) > now
+  );
+
+  console.log("memberProposals", memberProposals);
 
   if (!yeeter || !chainid) return;
 
@@ -40,11 +65,49 @@ export const ProjectUpdates = ({
             yeeterid={yeeterid}
             chainid={chainid}
             daoid={daoid}
+            modalId="status-updates-form-modal"
           />
         )}
 
-        <div className="font-bold text-xl">Status updates</div>
-        <div className="font-bold text-xl">Funding requests</div>
+        <div className="font-bold text-xl mt-4">Status updates</div>
+        {records &&
+          records.map((r) => {
+            return <StatusUpdateCard key={r.id} statusRecord={r} />;
+          })}
+
+        {!records || (records.length < 1 && <p>No updates</p>)}
+        <div className="font-bold text-xl mt-3">Funding requests</div>
+        {passedOrActiveProps &&
+          passedOrActiveProps.map((p) => {
+            return (
+              <ProposalUpdateCard
+                key={p.id}
+                proposal={p}
+                chainid={chainid}
+                daoid={daoid}
+                proposalType="funding"
+              />
+            );
+          })}
+
+        {!passedOrActiveProps ||
+          (passedOrActiveProps.length < 1 && <p>No requests</p>)}
+
+        <div className="font-bold text-xl mt-3">Project team additions</div>
+        {memberProposals &&
+          memberProposals.map((p) => {
+            return (
+              <ProposalUpdateCard
+                key={p.id}
+                proposal={p}
+                chainid={chainid}
+                daoid={daoid}
+                proposalType="member"
+              />
+            );
+          })}
+        {!memberProposals ||
+          (memberProposals.length < 1 && <p>No team member additions</p>)}
       </div>
     </div>
   );

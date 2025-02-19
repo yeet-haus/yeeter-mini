@@ -242,7 +242,39 @@ export const LIST_SIGNAL_DAO_PROPOSALS = gql`
       first: $first
       orderBy: $orderBy
       orderDescription: $orderDescription,
-      where: { dao: $daoid, proposalType: "SIGNAL" }
+      where: { 
+        dao: $daoid
+        proposalType: "SIGNAL" 
+        cancelled: false
+        sponsored: true
+        actionFailed: false 
+      }
+    ) {
+      ${proposalFields}
+    }
+  }
+`;
+
+export const LIST_MEMBER_DAO_PROPOSALS = gql`
+  query proposal(
+    $skip: Int!
+    $first: Int!
+    $orderBy: String!
+    $orderDirection: String!
+    $daoid: String!
+  ) {
+    proposals(
+      skip: $skip
+      first: $first
+      orderBy: $orderBy
+      orderDescription: $orderDescription,
+      where: { 
+        dao: $daoid
+        proposalType: "ISSUE" 
+        cancelled: false
+        sponsored: true
+        actionFailed: false 
+      }
     ) {
       ${proposalFields}
     }
@@ -262,7 +294,13 @@ export const LIST_FUNDING_DAO_PROPOSALS = gql`
       first: $first
       orderBy: $orderBy
       orderDescription: $orderDescription,
-      where: { dao: $daoid, proposalType_contains_nocase: "TRANSFER" }
+      where: { 
+        dao: $daoid
+        proposalType_contains_nocase: "TRANSFER"
+        cancelled: false
+        sponsored: true
+        actionFailed: false 
+      }
     ) {
       ${proposalFields}
     }
@@ -386,6 +424,58 @@ export const FIND_DAO = gql`
   query dao($daoid: String!) {
     dao(id: $daoid) {
       ${daoFields}
+    }
+  }
+`;
+
+const recordsFields = `
+  id
+  createdAt
+  createdBy
+  tag
+  table
+  contentType
+  content
+  queryType
+  dao {
+    id
+    name
+  }
+`;
+
+export const LIST_RECORDS = gql`
+  query record(
+    $daoid: String!
+    $table: String!
+    $skip: Int!
+    $first: Int!
+    $orderBy: String!
+    $orderDirection: String!
+  ) {
+    records(
+      skip: $skip
+      first: $first
+      orderBy: $orderBy
+      orderDirection: $orderDirection
+      where: { dao: $daoid, table: $table }
+    ) {
+      ${recordsFields}
+    }
+  }
+`;
+
+export const LAST_RECORD = gql`
+  query record(
+    $daoid: String!
+    $table: String!
+  ) {
+    records(
+      first: 1
+      orderBy: createdAt
+      orderDirection: desc
+      where: { dao: $daoid, table: $table }
+    ) {
+      ${recordsFields}
     }
   }
 `;

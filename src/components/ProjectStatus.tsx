@@ -1,4 +1,3 @@
-import { useDaoProposals } from "../hooks/useDaoProposals";
 import { useYeeter } from "../hooks/useYeeter";
 import { AddProjectMemberModal } from "./AddProjectMemberModal";
 import { ExitForm } from "./ExitForm";
@@ -22,13 +21,6 @@ export const ProjectStatus = ({
     chainid,
     yeeterid,
   });
-
-  const { proposals } = useDaoProposals({
-    daoid,
-    chainid,
-    filter: "funding",
-  });
-  console.log("proposals", proposals);
 
   if (!yeeter || !chainid) return;
 
@@ -58,6 +50,7 @@ export const ProjectStatus = ({
           <div className="badge badge-accent text-base-100">
             You're on the project team
           </div>
+          <div className="text-lg font-bold">Project Team</div>
           <AddProjectMemberModal
             yeeterid={yeeterid}
             chainid={chainid}
@@ -68,57 +61,64 @@ export const ProjectStatus = ({
 
       {(yeeter.isActive || yeeter.isEnded) && goalReached && (
         <>
-          <div className="flex flex-col gap-1">
-            <div className="text-base font-bold">Project Team</div>
-            <div className="text-base">Create updates for your funders.</div>
-            <StatusUpdateModal
-              yeeterid={yeeterid}
-              chainid={chainid}
-              daoid={daoid}
-            />
-            <div className="text-base">
-              Request funds by creating a proposal
+          {onProjectTeam && (
+            <div className="flex flex-col gap-1">
+              <div className="text-base">Create updates for your funders.</div>
+              <StatusUpdateModal
+                yeeterid={yeeterid}
+                chainid={chainid}
+                daoid={daoid}
+                modalId="status-form-modal"
+              />
+              <div className="text-base">
+                Request funds by creating a proposal
+              </div>
+              <RequestFundingModal
+                yeeterid={yeeterid}
+                chainid={chainid}
+                daoid={daoid}
+              />
             </div>
-            <RequestFundingModal
-              yeeterid={yeeterid}
-              chainid={chainid}
-              daoid={daoid}
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-base font-bold">Funders</div>
-            <div className="text-base">
-              Look for status updates form the project team here.
+          )}
+
+          {isFunder && (
+            <div className="flex flex-col gap-1">
+              <div className="text-lg font-bold">Funders</div>
+              <div className="text-base">
+                Look for status updates from the project team here.
+              </div>
+              <div className="text-base">
+                If you disagree with how the funds are being spent, you can exit
+                with yor funds (minus protocol fees)
+              </div>
+              <ExitForm yeeterid={yeeterid} chainid={chainid} daoid={daoid} />
             </div>
-            <div className="text-base">
-              If you disagree with how the funds are being spent, you can exit
-              with yor funds (minus protocol fees)
-            </div>
-            <ExitForm yeeterid={yeeterid} chainid={chainid} daoid={daoid} />
-          </div>
+          )}
         </>
       )}
 
       {yeeter.isEnded && !goalReached && (
         <>
           <div className="flex flex-col gap-1">
-            <div className="text-base font-bold">Project Team</div>
             <div className="text-base">Create updates for your funders.</div>
             <StatusUpdateModal
               yeeterid={yeeterid}
               chainid={chainid}
               daoid={daoid}
+              modalId="status-form--fail-modal"
             />
           </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-base font-bold">Funders</div>
-            <div className="text-base">
-              You can exit with yor funds (minus protocol fees), but the project
-              team might consider moving forward with the funds raised. Look for
-              updates here.
+          {isFunder && (
+            <div className="flex flex-col gap-1">
+              <div className="text-base font-bold">Funders</div>
+              <div className="text-base">
+                You can exit with yor funds (minus protocol fees), but the
+                project team might consider moving forward with the funds
+                raised. Look for updates here.
+              </div>
+              <ExitForm yeeterid={yeeterid} chainid={chainid} daoid={daoid} />
             </div>
-            <ExitForm yeeterid={yeeterid} chainid={chainid} daoid={daoid} />
-          </div>
+          )}
         </>
       )}
     </div>
