@@ -18,7 +18,6 @@ import { TX } from "../utils/tx-prepper/tx";
 import { useDao } from "../hooks/useDao";
 import { prepareTX } from "../utils/tx-prepper/tx-prepper";
 import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
-import { StringValueNode } from "graphql";
 
 export const StatusUpdateModal = ({
   yeeterid,

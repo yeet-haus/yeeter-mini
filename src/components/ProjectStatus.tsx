@@ -105,6 +105,7 @@ export const ProjectStatus = ({
               yeeterid={yeeterid}
               chainid={chainid}
               daoid={daoid}
+              modalId="status-form--fail-modal"
             />
           </div>
           {isFunder && (

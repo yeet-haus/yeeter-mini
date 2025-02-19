@@ -8,7 +8,7 @@ import { EXPLORER_URL } from "../utils/constants";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { usePrivy } from "@privy-io/react-auth";
+// import { usePrivy } from "@privy-io/react-auth";
 import { LoginModalSwitch } from "./LoginModalSwitch";
 
 export const MetaFormModal = ({
@@ -24,7 +24,7 @@ export const MetaFormModal = ({
     chainid,
     yeeterid,
   });
-  const { ready, authenticated } = usePrivy();
+  // const { ready, authenticated } = usePrivy();
   const queryClient = useQueryClient();
 
   const {
