@@ -191,6 +191,7 @@ export const LaunchForm = () => {
                     onChange={(e) => field.handleChange(e.target.value)}
                   ></textarea>
                 </label>
+                <FieldInfo field={field} />
               </>
             )}
           />
@@ -202,6 +203,7 @@ export const LaunchForm = () => {
             validators={{
               onChange: ({ value }) => {
                 if (!value) return "Required";
+
                 return undefined;
               },
             }}

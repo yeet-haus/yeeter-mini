@@ -46,3 +46,24 @@ export const getNonce = (length = 24) => {
   }
   return text;
 };
+
+export const memberTokenBalanceShare = (
+  tokenBalance: string | number,
+  daoTotalShares: string | number,
+  daoTotalLoot: string | number,
+  memberShares: string | number,
+  memberLoot: string | number,
+  decimals: string | number = 18
+): number => {
+  const daoSharesAndLoot =
+    Number(formatEther(BigInt(daoTotalShares))) +
+    Number(formatEther(BigInt(daoTotalLoot)));
+  const sharesAndLoot =
+    Number(formatEther(BigInt(memberShares))) +
+    Number(formatEther(BigInt(memberLoot)));
+
+  const ratio = sharesAndLoot / daoSharesAndLoot;
+
+  const memberSharesWei = Number(tokenBalance) * ratio;
+  return memberSharesWei / 10 ** Number(decimals);
+};

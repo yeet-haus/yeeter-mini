@@ -4,7 +4,6 @@ import { useForm } from "@tanstack/react-form";
 import { useYeeter } from "../hooks/useYeeter";
 import { EXPLORER_URL } from "../utils/constants";
 
-import { FieldInfo } from "./FieldInfo";
 import {
   useAccount,
   useWaitForTransactionReceipt,
@@ -14,6 +13,13 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { usePrivy } from "@privy-io/react-auth";
 import { LoginModalSwitch } from "./LoginModalSwitch";
+import { useDao } from "../hooks/useDao";
+import { TX } from "../utils/tx-prepper/tx";
+import { prepareTX } from "../utils/tx-prepper/tx-prepper";
+import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
+import { useMember } from "../hooks/useMember";
+import { memberTokenBalanceShare, toWholeUnits } from "../utils/helpers";
+import { useDaoTokenBalances } from "../hooks/useDaoTokenBalances";
 
 export const ExitForm = ({
   yeeterid,
@@ -30,21 +36,65 @@ export const ExitForm = ({
   });
   const { ready, authenticated } = usePrivy();
   const { address } = useAccount();
+  const { dao } = useDao({
+    chainid,
+    daoid,
+  });
+  const { member } = useMember({
+    daoid,
+    chainid,
+    memberaddress: address,
+  });
+  const { tokens } = useDaoTokenBalances({
+    chainid,
+    safeAddress: dao?.safeAddress,
+  });
   const queryClient = useQueryClient();
 
-  console.log("daoid", daoid);
-
   const {
-    // writeContract,
+    writeContract,
     data: hash,
     isError,
     isPending: isSendTxPending,
+    reset: resetWrite,
   } = useWriteContract();
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
       hash,
     });
+
+  const form = useForm({
+    onSubmit: async () => {
+      if (!yeeter || !dao || !address || !member) return;
+
+      const tx = TX.RAGEQUIT;
+
+      const wholeState = {
+        formValues: {
+          lootToBurn: member.loot,
+          to: address,
+        },
+        senderAddress: address,
+        daoId: daoid,
+        localABIs: {},
+      };
+
+      const txPrep = await prepareTX({
+        tx,
+        chainId: chainid as ValidNetwork,
+        safeId: dao.safeAddress,
+        appState: wholeState,
+        argCallbackRecord: {},
+        localABIs: {},
+      });
+
+      console.log("txPrep", txPrep);
+      if (!txPrep) return;
+
+      writeContract(txPrep);
+    },
+  });
 
   useEffect(() => {
     const reset = async () => {
@@ -58,63 +108,58 @@ export const ExitForm = ({
     }
   }, [isConfirmed, queryClient, yeeterid, chainid]);
 
-  // TODO: LINKS
+  const displayTokenReturn = () => {
+    if (!tokens || !dao || !member) return;
+    const ethBalance =
+      tokens.find((token) => !token.tokenAddress)?.balance || "0";
 
-  const form = useForm({
-    defaultValues: {
-      loot: "",
-    },
-    onSubmit: async ({ value }) => {
-      console.log("values", value);
-      // if (!yeeter) return;
-
-      // console.log("prep yeet", value);
-      // setSubmittedAmount(toBaseUnits(value.amount));
-
-      // writeContract({
-      //   address: yeeter.id as `0x${string}`,
-      //   abi: yeeterAbi,
-      //   functionName: "contributeEth",
-      //   value: BigInt(toBaseUnits(value.amount)),
-      //   args: [value.message],
-      // });
-    },
-  });
+    return `${memberTokenBalanceShare(
+      ethBalance,
+      dao.totalShares,
+      dao.totalLoot,
+      "0",
+      member.loot,
+      18
+    ).toFixed(5)} ETH`;
+  };
 
   if (!yeeter) return;
 
   const showLoading = isSendTxPending || isConfirming;
   const needsAuth = !ready || !authenticated;
 
-  console.log("needsAuth", needsAuth);
-
   return (
     <>
       <p
-        // @ts-expect-error fix unknown
-        onClick={() => document.getElementById("exit-form-modal").showModal()}
+        onClick={() => {
+          // @ts-expect-error fix unknown
+          document.getElementById("exit-form-modal").showModal();
+          resetWrite();
+          form.reset();
+        }}
         className="underline text-primary"
       >
-        Exit Funds ⟶
+        Exit funds ⟶
       </p>
       <dialog
         id="exit-form-modal"
         className="modal modal-bottom sm:modal-middle"
       >
         <div className="modal-box">
-          <h3 className="font-bold text-lg">Exit is coming soon</h3>
+          <h3 className="font-bold text-lg">Exit funds</h3>
 
-          <p>
-            In the meantime, you can edit these in the
-            <a
-              className="link link-primary"
-              href={`https://admin.daohaus.club/#/molochv3/${chainid}/${daoid}/member/${address}`}
-              target="_blank"
-            >
-              {" "}
-              Admin app
-            </a>
-          </p>
+          {member && dao && (
+            <>
+              <p className="text-base my-3">
+                You are holding <b>{toWholeUnits(member.loot)} </b>Loot tokens.
+                You can exchange those for <b>{displayTokenReturn()}*</b>
+              </p>
+              <p className="text-xs mt-1">
+                *This is your contribution minus the platform fee and any funds
+                the project team has already spent.
+              </p>
+            </>
+          )}
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
@@ -122,9 +167,8 @@ export const ExitForm = ({
           </form>
 
           {isConfirmed && (
-            <div className="text-lg font-bold mt-5">Success!</div>
+            <h4 className="text-lg font-bold mt-5">Exit complete</h4>
           )}
-          <div className="divider divider-secondary"></div>
 
           <form
             onSubmit={(e) => {
@@ -133,41 +177,6 @@ export const ExitForm = ({
               form.handleSubmit();
             }}
           >
-            <div>
-              <form.Field
-                name="loot"
-                validators={{
-                  onChange: ({ value }) => {
-                    if (!value) return "Required";
-
-                    return undefined;
-                  },
-                }}
-                children={(field) => (
-                  <>
-                    <label className="form-control w-full max-w-xs">
-                      <div className="label">
-                        <span className="label-text">Loot to exit</span>
-                      </div>
-                      <input
-                        type="number"
-                        // placeholder="Project Name"
-                        // disabled={showLoading || isConfirmed}
-                        disabled={true}
-                        className="input input-bordered input-primary w-full max-w-xs rounded-sm"
-                        id={field.name}
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                      />
-                    </label>
-                    <FieldInfo field={field} />
-                  </>
-                )}
-              />
-            </div>
-
             <div className="modal-action">
               {hash && (
                 <div className="mt-1">
@@ -194,17 +203,13 @@ export const ExitForm = ({
 
               <form.Subscribe
                 selector={(state) => [state.canSubmit, state.isSubmitting]}
-                // children={([canSubmit]) => (
                 children={() => (
                   <>
                     <button
                       className="btn btn-sm btn-primary"
-                      // disabled={
-                      //   showLoading || !canSubmit || needsAuth || isConfirmed
-                      // }
-                      disabled={true}
+                      disabled={showLoading || needsAuth || isConfirmed}
                     >
-                      Contribute
+                      Exit
                     </button>
                   </>
                 )}

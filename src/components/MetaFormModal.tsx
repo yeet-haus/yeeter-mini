@@ -4,7 +4,7 @@ import { useForm } from "@tanstack/react-form";
 import { useYeeter } from "../hooks/useYeeter";
 import { EXPLORER_URL } from "../utils/constants";
 
-import { FieldInfo } from "./FieldInfo";
+// import { FieldInfo } from "./FieldInfo";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -99,9 +99,7 @@ export const MetaFormModal = ({
         className="modal modal-bottom sm:modal-middle"
       >
         <div className="modal-box">
-          <h3 className="font-bold text-lg">
-            Project Detail editing is coming soon
-          </h3>
+          <h3 className="font-bold text-lg">Coming soon</h3>
           <p>
             In the meantime, you can edit these in the
             <a
@@ -131,7 +129,7 @@ export const MetaFormModal = ({
               form.handleSubmit();
             }}
           >
-            <div>
+            {/* <div>
               <form.Field
                 name="name"
                 validators={{
@@ -190,7 +188,7 @@ export const MetaFormModal = ({
                   </>
                 )}
               />
-            </div>
+            </div> */}
 
             <div className="modal-action">
               {hash && (
@@ -228,7 +226,7 @@ export const MetaFormModal = ({
                       // }
                       disabled={true}
                     >
-                      Contribute
+                      Save
                     </button>
                   </>
                 )}
