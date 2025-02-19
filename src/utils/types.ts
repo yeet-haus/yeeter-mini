@@ -21,11 +21,21 @@ export type YeeterItem = {
 };
 
 export type RecordItem = {
+  createdAt: string;
+  createdBy: string;
   content: string;
   contentType: string;
+  tag: string;
+  table: string;
+  queryType: string;
   dao: {
+    id: string;
     name: string;
   };
+};
+
+export type RecordItemParsed = RecordItem & {
+  parsedContent?: Record<string, string>;
 };
 
 export type YeeterMetadata = {
@@ -191,7 +201,7 @@ export type ProposalItem = {
   processedBy: string;
   processed: boolean;
   processTxAt: string;
-  actionFailed: string;
+  actionFailed: boolean;
   passed: boolean;
   proposalOffering: string;
   maxTotalSharesAndLootAtYesVote: string;
@@ -264,4 +274,14 @@ export type TokenBalance = {
   balance: string;
   ethValue: string;
   timestamp: string;
+};
+
+export type StatusRecord = {
+  id: string;
+  createdAt: string;
+  parsedContent: {
+    description: string;
+    link: string;
+    name: string;
+  };
 };

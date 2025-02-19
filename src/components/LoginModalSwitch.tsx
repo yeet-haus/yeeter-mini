@@ -18,19 +18,19 @@ export const LoginModalSwitch = ({
 
   const { login } = useLogin({
     onComplete: (
-      user,
-      isNewUser,
-      wasAlreadyAuthenticated,
-      loginMethod,
-      linkedAccount
+      // user,
+      // isNewUser,
+      wasAlreadyAuthenticated
+      // loginMethod,
+      // linkedAccount
     ) => {
-      console.log(
-        user,
-        isNewUser,
-        wasAlreadyAuthenticated,
-        loginMethod,
-        linkedAccount
-      );
+      // console.log(
+      //   user,
+      //   isNewUser,
+      //   wasAlreadyAuthenticated,
+      //   loginMethod,
+      //   linkedAccount
+      // );
 
       if (!wasAlreadyAuthenticated) {
         // @ts-expect-error fix unknown

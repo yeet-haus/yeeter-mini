@@ -3,42 +3,31 @@ import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import {
-  LIST_ALL_DAO_PROPOSALS,
-  LIST_FUNDING_DAO_PROPOSALS,
-  LIST_MEMBER_DAO_PROPOSALS,
-  LIST_SIGNAL_DAO_PROPOSALS,
-} from "../utils/graphQueries";
-import {
-  ProposalItem,
+  RecordItem,
+  RecordItemParsed,
   SubgraphQueryOrderPaginationOptions,
 } from "../utils/types";
 import { getGraphUrl } from "../utils/endpoints";
 import { DaoHooksContext } from "../providers/DaoHooksProvider";
+import { LIST_RECORDS } from "../utils/graphQueries";
+import { addParsedContent } from "../utils/yeetDataHelpers";
 
-const QUERIES: Record<string, string> = {
-  all: LIST_ALL_DAO_PROPOSALS,
-  signal: LIST_SIGNAL_DAO_PROPOSALS,
-  member: LIST_MEMBER_DAO_PROPOSALS,
-  funding: LIST_FUNDING_DAO_PROPOSALS,
-};
-
-export const useDaoProposals = ({
+export const useDaoListRecords = ({
   chainid,
   daoid,
   queryOptions,
-  filter,
+  table,
 }: {
   chainid?: string;
   daoid?: string;
+  table: string;
   queryOptions?: SubgraphQueryOrderPaginationOptions;
-  filter?: string;
 }) => {
   const hookContext = useContext(DaoHooksContext);
 
   if (!hookContext || !hookContext.config.graphKey) {
-    // throw new Error("DaoHooksContext must be used within a DaoHooksProvider");
-    console.log(
-      "useDaoProposals: DaoHooksContext must be used within a DaoHooksProvider"
+    console.error(
+      "useDaoListRecords: DaoHooksContext must be used within a DaoHooksProvider"
     );
   }
 
@@ -50,37 +39,45 @@ export const useDaoProposals = ({
 
   const graphQLClient = new GraphQLClient(dhUrl);
 
-  const filterKey = filter || "all";
-  const query = QUERIES[filterKey];
-  // const variables = filter !== "all" ? { now } : undefined;
+  console.log(chainid, daoid);
 
   const { data, ...rest } = useQuery({
     queryKey: [
-      `list-proposals-${chainid}-${daoid}-${filterKey}`,
-      { chainid, daoid },
+      `list-records-${chainid}-${daoid}-${table}`,
+      { chainid, daoid, table },
     ],
     enabled: Boolean(chainid && daoid),
     queryFn: async (): Promise<{
-      proposals: ProposalItem[];
+      records: RecordItemParsed[];
     }> => {
-      const res = (await graphQLClient.request(query, {
+      const res = (await graphQLClient.request(LIST_RECORDS, {
         first: queryOptions?.first || 100,
         skip: queryOptions?.skip || 0,
         orderBy: queryOptions?.orderBy || "createdAt",
         orderDirection: queryOptions?.orderDirection || "desc",
-        daoid,
+        daoid: daoid?.toLowerCase(),
+        table,
       })) as {
-        proposals: ProposalItem[];
+        records: RecordItem[];
       };
 
+      console.log("RECORDS res", res);
+
+      const parsedRecords = res.records.map((r) => {
+        return {
+          ...r,
+          parsedContent: addParsedContent<Record<string, string>>(r),
+        };
+      });
+
       return {
-        proposals: res.proposals,
+        records: parsedRecords,
       };
     },
   });
 
   return {
-    proposals: data?.proposals,
+    records: data?.records,
     ...rest,
   };
 };
