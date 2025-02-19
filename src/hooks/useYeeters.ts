@@ -29,12 +29,15 @@ export const useYeeters = ({
   const hookContext = useContext(DaoHooksContext);
 
   if (!hookContext || !hookContext.config.graphKey) {
-    throw new Error("DaoHooksContext must be used within a DaoHooksProvider");
+    // throw new Error("DaoHooksContext must be used within a DaoHooksProvider");
+    console.log(
+      "useYeeter: DaoHooksContext must be used within a DaoHooksProvider"
+    );
   }
 
   const yeeterUrl = getGraphUrl({
-    chainid,
-    graphKey: hookContext.config.graphKey,
+    chainid: chainid || "",
+    graphKey: hookContext?.config.graphKey || "",
     subgraphKey: "YEETER",
   });
 
@@ -48,6 +51,7 @@ export const useYeeters = ({
 
   const { data, ...rest } = useQuery({
     queryKey: [`get-yeeters-${chainid}-${filter}`, { chainid, filter }],
+    enabled: Boolean(chainid),
     queryFn: (): Promise<{
       yeeters: YeeterItem[];
     }> => graphQLClient.request(query, variables),
