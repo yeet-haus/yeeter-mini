@@ -1,6 +1,6 @@
 import { useDaoProposals } from "../hooks/useDaoProposals";
 import { useYeeter } from "../hooks/useYeeter";
-import { StatusUpdateForm } from "./StatusUpdateForm";
+import { StatusUpdateModal } from "./StatusUpdateModal";
 
 export const ProjectUpdates = ({
   chainid,
@@ -36,7 +36,7 @@ export const ProjectUpdates = ({
           team here.
         </div>
         {onProjectTeam && (
-          <StatusUpdateForm
+          <StatusUpdateModal
             yeeterid={yeeterid}
             chainid={chainid}
             daoid={daoid}
@@ -44,7 +44,7 @@ export const ProjectUpdates = ({
         )}
 
         <div className="font-bold text-xl">Status updates</div>
-        <div className="font-bold text-xl">Funfing requests</div>
+        <div className="font-bold text-xl">Funding requests</div>
       </div>
     </div>
   );

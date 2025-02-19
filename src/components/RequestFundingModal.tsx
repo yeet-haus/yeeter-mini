@@ -5,11 +5,23 @@ import { useYeeter } from "../hooks/useYeeter";
 import { EXPLORER_URL } from "../utils/constants";
 
 import { FieldInfo } from "./FieldInfo";
-import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { usePrivy } from "@privy-io/react-auth";
 import { LoginModalSwitch } from "./LoginModalSwitch";
+import { useDao } from "../hooks/useDao";
+import { TX } from "../utils/tx-prepper/tx";
+import { prepareTX } from "../utils/tx-prepper/tx-prepper";
+import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
+import { useDaoTokenBalances } from "../hooks/useDaoTokenBalances";
+import { toWholeUnits } from "../utils/helpers";
+import { isEthAddress } from "../utils/tx-prepper/typeguards";
+import { parseUnits } from "viem";
 
 export const RequestFundingModal = ({
   yeeterid,
@@ -26,18 +38,67 @@ export const RequestFundingModal = ({
   });
   const { ready, authenticated } = usePrivy();
   const queryClient = useQueryClient();
+  const { dao } = useDao({
+    chainid,
+    daoid,
+  });
+  const { address } = useAccount();
+  const { tokens } = useDaoTokenBalances({
+    chainid,
+    safeAddress: dao?.safeAddress,
+  });
 
   const {
-    // writeContract,
+    writeContract,
     data: hash,
     isError,
     isPending: isSendTxPending,
+    reset: resetWrite,
   } = useWriteContract();
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
       hash,
     });
+
+  const form = useForm({
+    defaultValues: {
+      tokenAmount: "",
+      recipient: "",
+      description: "",
+      link: "",
+    },
+    onSubmit: async ({ value }) => {
+      console.log("values", value);
+      if (!yeeter || !dao || !address) return;
+
+      const tx = TX.REQUEST_FUNDING_ETH;
+
+      const wholeState = {
+        formValues: {
+          ...value,
+          tokenAmount: parseUnits(value.tokenAmount || "0", 18).toString(),
+        },
+        senderAddress: address,
+        daoId: daoid,
+        localABIs: {},
+      };
+
+      const txPrep = await prepareTX({
+        tx,
+        chainId: chainid as ValidNetwork,
+        safeId: dao.safeAddress,
+        appState: wholeState,
+        argCallbackRecord: {},
+        localABIs: {},
+      });
+
+      console.log("txPrep", txPrep);
+      if (!txPrep) return;
+
+      writeContract(txPrep);
+    },
+  });
 
   useEffect(() => {
     const reset = async () => {
@@ -51,67 +112,54 @@ export const RequestFundingModal = ({
     }
   }, [isConfirmed, queryClient, yeeterid, chainid]);
 
-  // TODO: LINKS
+  const displayEthBalance = () => {
+    if (!tokens) return "Unknown";
+    const ethBalance =
+      tokens.find((token) => !token.tokenAddress)?.balance || "0";
 
-  const form = useForm({
-    defaultValues: {
-      name: "",
-      description: "",
-      link: "",
-      amount: "",
-      address: "",
-    },
-    onSubmit: async ({ value }) => {
-      console.log("values", value);
-      // if (!yeeter) return;
-
-      // console.log("prep yeet", value);
-      // setSubmittedAmount(toBaseUnits(value.amount));
-
-      // writeContract({
-      //   address: yeeter.id as `0x${string}`,
-      //   abi: yeeterAbi,
-      //   functionName: "contributeEth",
-      //   value: BigInt(toBaseUnits(value.amount)),
-      //   args: [value.message],
-      // });
-    },
-  });
+    return `${toWholeUnits(ethBalance)} ETH`;
+  };
 
   if (!yeeter) return;
 
   const showLoading = isSendTxPending || isConfirming;
   const needsAuth = !ready || !authenticated;
 
-  console.log("needsAuth", needsAuth);
-
   return (
     <>
       <p
-        onClick={() =>
+        onClick={() => {
           // @ts-expect-error fix unknown
-          document.getElementById("funding-form-modal").showModal()
-        }
+          document.getElementById("funding-form-modal").showModal();
+          resetWrite();
+          form.reset();
+        }}
         className="underline text-primary"
       >
-        Request Funds ⟶
+        Request funds ⟶
       </p>
       <dialog
         id="funding-form-modal"
         className="modal modal-bottom sm:modal-middle"
       >
         <div className="modal-box">
-          <h3 className="font-bold text-lg">Coming soon</h3>
-          <p>
-            In the meantime, you can use the
+          <h3 className="font-bold text-lg">Request funds</h3>
+          <p className="text-sm my-3">
+            This will create a proposal to send treasury funds to the address
+            you provide. Once submitted you will need to visit the
             <a
               className="link link-primary"
-              href={`https://admin.daohaus.club/#/molochv3/${chainid}/${daoid}/new-proposal?formLego=TRANSFER_NETWORK_TOKEN`}
+              href={`https://admin.daohaus.club/#/molochv3/${chainid}/${daoid}/proposals`}
               target="_blank"
             >
               {" "}
               DAOhaus admin app
-            </a>
+            </a>{" "}
+            to vote on and execute the proposal.
+          </p>
+
+          <p className="text-base font-bold">
+            Current treasury balance: ${displayEthBalance()}
           </p>
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
@@ -120,230 +168,208 @@ export const RequestFundingModal = ({
           </form>
 
           {isConfirmed && (
-            <div className="text-lg font-bold mt-5">Success!</div>
+            <>
+              <h4 className="font-bold text-lg mt-5 text-primary">Success!</h4>
+              <p className="text-sm">
+                Vote on and execute the proposal in the
+                <a
+                  className="link link-primary"
+                  href={`https://admin.daohaus.club/#/molochv3/${chainid}/${daoid}/proposals`}
+                  target="_blank"
+                >
+                  {" "}
+                  DAOhaus admin app
+                </a>{" "}
+              </p>
+            </>
           )}
           <div className="divider divider-secondary"></div>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              form.handleSubmit();
-            }}
-          >
-            <div>
-              <form.Field
-                name="name"
-                validators={{
-                  onChange: ({ value }) => {
-                    if (!value) return "Required";
+          {!isConfirmed && (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                form.handleSubmit();
+              }}
+            >
+              <div>
+                <form.Field
+                  name="tokenAmount"
+                  validators={{
+                    onChange: ({ value }) => {
+                      if (!value) return "Required";
 
-                    return undefined;
-                  },
-                }}
-                children={(field) => (
-                  <>
-                    <label className="form-control w-full max-w-xs">
-                      <div className="label">
-                        <span className="label-text">Title</span>
-                      </div>
-                      <input
-                        type="number"
-                        // placeholder="Project Name"
-                        // disabled={showLoading || isConfirmed}
-                        disabled={true}
-                        className="input input-bordered input-primary w-full max-w-xs rounded-sm"
-                        id={field.name}
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
+                      return undefined;
+                    },
+                  }}
+                  children={(field) => (
+                    <>
+                      <label className="form-control w-full max-w-xs">
+                        <div className="label">
+                          <span className="label-text">
+                            How much ETH are you requesting?
+                          </span>
+                        </div>
+                        <input
+                          type="number"
+                          placeholder="0"
+                          disabled={showLoading || isConfirmed}
+                          className="input input-bordered input-primary w-full max-w-xs rounded-sm"
+                          id={field.name}
+                          name={field.name}
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                        />
+                      </label>
+                      <FieldInfo field={field} />
+                    </>
+                  )}
+                />
+              </div>
+
+              <div>
+                <form.Field
+                  name="recipient"
+                  validators={{
+                    onChange: ({ value }) => {
+                      if (!isEthAddress(value))
+                        return "Valid ETH Address is Required";
+                      return undefined;
+                    },
+                  }}
+                  children={(field) => (
+                    <>
+                      <label className="form-control w-full max-w-xs">
+                        <div className="label">
+                          <span className="label-text">
+                            Destination Address
+                          </span>
+                        </div>
+                        <input
+                          placeholder="0x0..."
+                          disabled={showLoading || isConfirmed}
+                          className="input input-bordered input-primary w-full max-w-xs rounded-sm"
+                          id={field.name}
+                          name={field.name}
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                        />
+                      </label>
+                      <FieldInfo field={field} />
+                    </>
+                  )}
+                />
+              </div>
+
+              <div>
+                <form.Field
+                  name="description"
+                  validators={{
+                    onChange: ({ value }) => {
+                      if (!value) return "Required";
+
+                      return undefined;
+                    },
+                  }}
+                  children={(field) => (
+                    <>
+                      <label className="form-control">
+                        <div className="label">
+                          <span className="label-text">
+                            Let funders know what these funds will be used for
+                          </span>
+                        </div>
+                        <textarea
+                          className="textarea textarea-bordered textarea-primary h-24 rounded-sm"
+                          placeholder="Description"
+                          disabled={showLoading || isConfirmed}
+                          id={field.name}
+                          name={field.name}
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                        ></textarea>
+                      </label>
+                      <FieldInfo field={field} />
+                    </>
+                  )}
+                />
+              </div>
+
+              <div>
+                <form.Field
+                  name="link"
+                  children={(field) => (
+                    <>
+                      <label className="form-control w-full max-w-xs">
+                        <div className="label">
+                          <span className="label-text">Link for more info</span>
+                        </div>
+                        <input
+                          placeholder="Url to more details"
+                          disabled={showLoading || isConfirmed}
+                          className="input input-bordered input-primary w-full max-w-xs rounded-sm"
+                          id={field.name}
+                          name={field.name}
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                        />
+                      </label>
+                      <FieldInfo
+                        field={field}
+                        message="Ensure you input a valid url"
                       />
-                    </label>
-                    <FieldInfo field={field} />
-                  </>
-                )}
-              />
-            </div>
+                    </>
+                  )}
+                />
+              </div>
 
-            <div>
-              <form.Field
-                name="description"
-                children={(field) => (
-                  <>
-                    <label className="form-control">
-                      <div className="label">
-                        <span className="label-text">
-                          Let funders know what these funds will be used for
-                        </span>
-                      </div>
-                      <textarea
-                        className="textarea textarea-bordered textarea-primary h-24 rounded-sm"
-                        // placeholder="Description"
-                        // disabled={showLoading || isConfirmed}
-                        disabled={true}
-                        id={field.name}
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                      ></textarea>
-                    </label>
-                  </>
-                )}
-              />
-            </div>
-
-            <div>
-              <form.Field
-                name="link"
-                validators={{
-                  onChange: ({ value }) => {
-                    if (!value) return "Required";
-
-                    return undefined;
-                  },
-                }}
-                children={(field) => (
-                  <>
-                    <label className="form-control w-full max-w-xs">
-                      <div className="label">
-                        <span className="label-text">Link for more info</span>
-                      </div>
-                      <input
-                        type="number"
-                        // placeholder="Project Name"
-                        // disabled={showLoading || isConfirmed}
-                        disabled={true}
-                        className="input input-bordered input-primary w-full max-w-xs rounded-sm"
-                        id={field.name}
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                      />
-                    </label>
-                    <FieldInfo field={field} />
-                  </>
-                )}
-              />
-            </div>
-
-            <div>
-              <form.Field
-                name="address"
-                validators={{
-                  onChange: ({ value }) => {
-                    if (!value) return "Required";
-
-                    return undefined;
-                  },
-                }}
-                children={(field) => (
-                  <>
-                    <label className="form-control w-full max-w-xs">
-                      <div className="label">
-                        <span className="label-text">Destination Address</span>
-                      </div>
-                      <input
-                        type="number"
-                        // placeholder="Project Name"
-                        // disabled={showLoading || isConfirmed}
-                        disabled={true}
-                        className="input input-bordered input-primary w-full max-w-xs rounded-sm"
-                        id={field.name}
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                      />
-                    </label>
-                    <FieldInfo field={field} />
-                  </>
-                )}
-              />
-            </div>
-
-            <div>
-              <form.Field
-                name="amount"
-                validators={{
-                  onChange: ({ value }) => {
-                    if (!value) return "Required";
-
-                    return undefined;
-                  },
-                }}
-                children={(field) => (
-                  <>
-                    <label className="form-control w-full max-w-xs">
-                      <div className="label">
-                        <span className="label-text">
-                          How much ETH are you requesting?
-                        </span>
-                      </div>
-                      <input
-                        type="number"
-                        // placeholder="Project Name"
-                        // disabled={showLoading || isConfirmed}
-                        disabled={true}
-                        className="input input-bordered input-primary w-full max-w-xs rounded-sm"
-                        id={field.name}
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                      />
-                    </label>
-                    <FieldInfo field={field} />
-                  </>
-                )}
-              />
-            </div>
-
-            <div className="modal-action">
-              {hash && (
-                <div className="mt-1">
-                  <a
-                    className="link link-primary text-sm"
-                    href={`${EXPLORER_URL[chainid]}/tx/${hash}`}
-                    target="_blank"
-                  >
-                    TX Details ⟶
-                  </a>
-                </div>
-              )}
-              {isError && (
-                <div className="text-sm text-error flex items-center">
-                  Tx Error
-                </div>
-              )}
-
-              {showLoading && (
-                <span className="loading loading-bars loading-sm"></span>
-              )}
-
-              <LoginModalSwitch targetChainId={chainid} />
-
-              <form.Subscribe
-                selector={(state) => [state.canSubmit, state.isSubmitting]}
-                // children={([canSubmit]) => (
-                children={() => (
-                  <>
-                    <button
-                      className="btn btn-sm btn-primary"
-                      // disabled={
-                      //   showLoading || !canSubmit || needsAuth || isConfirmed
-                      // }
-                      disabled={true}
+              <div className="modal-action">
+                {hash && (
+                  <div className="mt-1">
+                    <a
+                      className="link link-primary text-sm"
+                      href={`${EXPLORER_URL[chainid]}/tx/${hash}`}
+                      target="_blank"
                     >
-                      Contribute
-                    </button>
-                  </>
+                      TX Details ⟶
+                    </a>
+                  </div>
                 )}
-              />
-            </div>
-          </form>
+                {isError && (
+                  <div className="text-sm text-error flex items-center">
+                    Tx Error
+                  </div>
+                )}
+
+                {showLoading && (
+                  <span className="loading loading-bars loading-sm"></span>
+                )}
+
+                <LoginModalSwitch targetChainId={chainid} />
+
+                <form.Subscribe
+                  selector={(state) => [state.canSubmit, state.isSubmitting]}
+                  children={([canSubmit]) => (
+                    <>
+                      <button
+                        className="btn btn-sm btn-primary"
+                        disabled={
+                          showLoading || !canSubmit || needsAuth || isConfirmed
+                        }
+                      >
+                        Submit Proposal
+                      </button>
+                    </>
+                  )}
+                />
+              </div>
+            </form>
+          )}
         </div>
       </dialog>
     </>

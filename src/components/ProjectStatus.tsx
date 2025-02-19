@@ -3,7 +3,7 @@ import { useYeeter } from "../hooks/useYeeter";
 import { AddProjectMemberModal } from "./AddProjectMemberModal";
 import { ExitForm } from "./ExitForm";
 import { RequestFundingModal } from "./RequestFundingModal";
-import { StatusUpdateForm } from "./StatusUpdateForm";
+import { StatusUpdateModal } from "./StatusUpdateModal";
 
 export const ProjectStatus = ({
   chainid,
@@ -71,7 +71,7 @@ export const ProjectStatus = ({
           <div className="flex flex-col gap-1">
             <div className="text-base font-bold">Project Team</div>
             <div className="text-base">Create updates for your funders.</div>
-            <StatusUpdateForm
+            <StatusUpdateModal
               yeeterid={yeeterid}
               chainid={chainid}
               daoid={daoid}
@@ -104,7 +104,7 @@ export const ProjectStatus = ({
           <div className="flex flex-col gap-1">
             <div className="text-base font-bold">Project Team</div>
             <div className="text-base">Create updates for your funders.</div>
-            <StatusUpdateForm
+            <StatusUpdateModal
               yeeterid={yeeterid}
               chainid={chainid}
               daoid={daoid}
