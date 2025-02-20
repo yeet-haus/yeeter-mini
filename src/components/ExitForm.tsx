@@ -6,19 +6,24 @@ import { EXPLORER_URL } from "../utils/constants";
 
 import {
   useAccount,
+  useChainId,
+  useChains,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { usePrivy } from "@privy-io/react-auth";
-import { LoginModalSwitch } from "./LoginModalSwitch";
 import { useDao } from "../hooks/useDao";
 import { TX } from "../utils/tx-prepper/tx";
 import { prepareTX } from "../utils/tx-prepper/tx-prepper";
 import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
 import { useMember } from "../hooks/useMember";
-import { memberTokenBalanceShare, toWholeUnits } from "../utils/helpers";
+import {
+  memberTokenBalanceShare,
+  nativeCurrencySymbol,
+  toWholeUnits,
+} from "../utils/helpers";
 import { useDaoTokenBalances } from "../hooks/useDaoTokenBalances";
 
 export const ExitForm = ({
@@ -36,6 +41,9 @@ export const ExitForm = ({
   });
   const { ready, authenticated } = usePrivy();
   const { address } = useAccount();
+  const chainId = useChainId();
+  const chains = useChains();
+  const activeChain = chains.find((c) => c.id === chainId);
   const { dao } = useDao({
     chainid,
     daoid,
@@ -120,7 +128,7 @@ export const ExitForm = ({
       "0",
       member.loot,
       18
-    ).toFixed(5)} ETH`;
+    ).toFixed(5)} ${nativeCurrencySymbol(activeChain)}`;
   };
 
   if (!yeeter) return;
@@ -198,8 +206,6 @@ export const ExitForm = ({
               {showLoading && (
                 <span className="loading loading-bars loading-sm"></span>
               )}
-
-              <LoginModalSwitch targetChainId={chainid} />
 
               <form.Subscribe
                 selector={(state) => [state.canSubmit, state.isSubmitting]}

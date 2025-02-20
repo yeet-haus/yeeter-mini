@@ -39,8 +39,6 @@ export const useDaoListRecords = ({
 
   const graphQLClient = new GraphQLClient(dhUrl);
 
-  console.log(chainid, daoid);
-
   const { data, ...rest } = useQuery({
     queryKey: [
       `list-records-${chainid}-${daoid}-${table}`,
@@ -60,8 +58,6 @@ export const useDaoListRecords = ({
       })) as {
         records: RecordItem[];
       };
-
-      console.log("RECORDS res", res);
 
       const parsedRecords = res.records.map((r) => {
         return {

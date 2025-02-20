@@ -1,5 +1,7 @@
+import { usePrivy } from "@privy-io/react-auth";
 import { useYeeter } from "../hooks/useYeeter";
 import { GoalProgress } from "./GoalProgress";
+import { LoginModalSwitch } from "./LoginModalSwitch";
 import { RaiseStats } from "./RaiseStats";
 import { YeetModal } from "./YeetModal";
 
@@ -14,6 +16,7 @@ export const ActiveYeeter = ({
     chainid,
     yeeterid,
   });
+  const { authenticated } = usePrivy();
 
   if (!yeeterid || !chainid || !yeeter) return;
 
@@ -21,11 +24,21 @@ export const ActiveYeeter = ({
     <>
       <GoalProgress yeeter={yeeter} />
       <RaiseStats yeeter={yeeter} />
-      <YeetModal
-        buttonClass="btn btn-lg btn-outline btn-primary rounded-sm w-full my-5"
-        yeeterid={yeeterid}
-        chainid={chainid}
-      />
+      {authenticated && (
+        <YeetModal
+          buttonClass="btn btn-lg btn-outline btn-primary rounded-sm w-full my-5"
+          yeeterid={yeeterid}
+          chainid={chainid}
+        />
+      )}
+
+      {!authenticated && (
+        <LoginModalSwitch
+          targetChainId={chainid}
+          buttonClass="btn btn-lg btn-outline btn-primary rounded-sm w-full my-5"
+          buttonLabel="Login to Contribute"
+        />
+      )}
     </>
   );
 };

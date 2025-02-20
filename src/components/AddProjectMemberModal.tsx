@@ -7,13 +7,14 @@ import { EXPLORER_URL } from "../utils/constants";
 import { FieldInfo } from "./FieldInfo";
 import {
   useAccount,
+  useChainId,
+  useChains,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { usePrivy } from "@privy-io/react-auth";
-import { LoginModalSwitch } from "./LoginModalSwitch";
 import { prepareTX } from "../utils/tx-prepper/tx-prepper";
 import { TX } from "../utils/tx-prepper/tx";
 import { useDao } from "../hooks/useDao";
@@ -40,6 +41,9 @@ export const AddProjectMemberModal = ({
   const { ready, authenticated } = usePrivy();
   const { address } = useAccount();
   const queryClient = useQueryClient();
+  const chainId = useChainId();
+  const chains = useChains();
+  const activeChain = chains.find((c) => c.id === chainId);
 
   const {
     writeContract,
@@ -212,7 +216,9 @@ export const AddProjectMemberModal = ({
                   validators={{
                     onChange: ({ value }) => {
                       if (!isEthAddress(value))
-                        return "Valid ETH Address is Required";
+                        return `Valid ${
+                          activeChain?.name || "ETH"
+                        } Address is Required`;
                       return undefined;
                     },
                   }}
@@ -260,8 +266,6 @@ export const AddProjectMemberModal = ({
                 {showLoading && (
                   <span className="loading loading-bars loading-sm"></span>
                 )}
-
-                <LoginModalSwitch targetChainId={chainid} />
 
                 <form.Subscribe
                   selector={(state) => [state.canSubmit, state.isSubmitting]}

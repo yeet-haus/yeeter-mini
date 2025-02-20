@@ -46,25 +46,30 @@ export const useYeetersForAddress = ({
     }> => graphQLClient.request(LIST_YEETS_FOR_ADDRESS, { address }),
   });
 
-  const uniqYeeters = data?.yeets.reduce(
-    (
-      acc: { ids: Record<string, true>; yeeters: YeeterItem[] },
-      yeet: YeetsWithYeeter
-    ) => {
-      if (acc.ids[yeet.yeeter.id]) {
+  const organizedYeeters = data?.yeets.reduce(
+    (acc: { yeeters: Record<string, YeeterItem> }, yeet: YeetsWithYeeter) => {
+      if (acc.yeeters[yeet.yeeter.id]) {
+        const existingYeets = acc.yeeters[yeet.yeeter.id].yeets || [];
+        acc.yeeters[yeet.yeeter.id].yeets = [...existingYeets, yeet];
         return acc;
       } else {
-        acc.ids[yeet.yeeter.id] = true;
-        acc.yeeters.push(yeet.yeeter);
-
+        acc.yeeters[yeet.yeeter.id] = { ...yeet.yeeter, yeets: [yeet] };
         return acc;
       }
     },
-    { ids: {}, yeeters: [] }
+    { yeeters: {} }
   );
 
+  const yeeters =
+    organizedYeeters &&
+    Object.keys(organizedYeeters.yeeters).map((yeetid) => {
+      return {
+        ...organizedYeeters.yeeters[yeetid],
+      };
+    });
+
   return {
-    yeeters: uniqYeeters?.yeeters,
+    yeeters: yeeters,
     allYeets: data?.yeets,
     ...rest,
   };

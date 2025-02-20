@@ -10,12 +10,18 @@ import {
 import { FieldInfo } from "./FieldInfo";
 import { useEffect, useState } from "react";
 import { toBaseUnits } from "../utils/units";
-import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import {
+  useChainId,
+  useChains,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 
 import yeeterAbi from "../utils/tx-prepper/abi/yeeterShaman.json";
 import { usePrivy } from "@privy-io/react-auth";
-import { LoginModalSwitch } from "./LoginModalSwitch";
+import { FundWalletSwitch } from "./FundWalletSwitch";
+import { nativeCurrencySymbol } from "../utils/helpers";
 
 export const YeetModal = ({
   buttonClass,
@@ -32,6 +38,9 @@ export const YeetModal = ({
   });
   const { ready, authenticated } = usePrivy();
   const queryClient = useQueryClient();
+  const chainId = useChainId();
+  const chains = useChains();
+  const activeChain = chains.find((c) => c.id === chainId);
 
   const [fieldMessages, setFieldMessages] = useState<Record<string, string>>({
     amount: "",
@@ -114,10 +123,13 @@ export const YeetModal = ({
           </form>
 
           {!isConfirmed && (
-            <div className="text-lg font-bold mt-5">
-              Receive {formatLootForMin(yeeter)} loot tokens per{" "}
-              {formatMinContribution(yeeter)} ETH contributed
-            </div>
+            <>
+              <div className="text-lg font-bold mt-5">
+                Receive {formatLootForMin(yeeter)} loot tokens per{" "}
+                {formatMinContribution(yeeter)} $
+                {nativeCurrencySymbol(activeChain)} contributed
+              </div>
+            </>
           )}
 
           {isConfirmed && (
@@ -173,7 +185,9 @@ export const YeetModal = ({
                       </div>
                       <input
                         type="number"
-                        placeholder="Amount in ETH"
+                        placeholder={`Amount in ${nativeCurrencySymbol(
+                          activeChain
+                        )}`}
                         disabled={showLoading || isConfirmed}
                         className="input input-bordered input-primary w-full max-w-xs rounded-sm"
                         id={field.name}
@@ -217,6 +231,12 @@ export const YeetModal = ({
               />
             </div>
 
+            <FundWalletSwitch
+              targetAmount={1000000n}
+              message="You will needs fund for the transaction fee"
+              redirect={true}
+            />
+
             <div className="modal-action">
               {hash && (
                 <div className="mt-1">
@@ -238,8 +258,6 @@ export const YeetModal = ({
               {showLoading && (
                 <span className="loading loading-bars loading-sm"></span>
               )}
-
-              <LoginModalSwitch targetChainId={chainid} />
 
               <form.Subscribe
                 selector={(state) => [state.canSubmit, state.isSubmitting]}

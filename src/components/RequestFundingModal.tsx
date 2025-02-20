@@ -7,19 +7,20 @@ import { EXPLORER_URL } from "../utils/constants";
 import { FieldInfo } from "./FieldInfo";
 import {
   useAccount,
+  useChainId,
+  useChains,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { usePrivy } from "@privy-io/react-auth";
-import { LoginModalSwitch } from "./LoginModalSwitch";
 import { useDao } from "../hooks/useDao";
 import { TX } from "../utils/tx-prepper/tx";
 import { prepareTX } from "../utils/tx-prepper/tx-prepper";
 import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
 import { useDaoTokenBalances } from "../hooks/useDaoTokenBalances";
-import { toWholeUnits } from "../utils/helpers";
+import { nativeCurrencySymbol, toWholeUnits } from "../utils/helpers";
 import { isEthAddress } from "../utils/tx-prepper/typeguards";
 import { parseUnits } from "viem";
 
@@ -47,6 +48,10 @@ export const RequestFundingModal = ({
     chainid,
     safeAddress: dao?.safeAddress,
   });
+
+  const chainId = useChainId();
+  const chains = useChains();
+  const activeChain = chains.find((c) => c.id === chainId);
 
   const {
     writeContract,
@@ -117,7 +122,7 @@ export const RequestFundingModal = ({
     const ethBalance =
       tokens.find((token) => !token.tokenAddress)?.balance || "0";
 
-    return `${toWholeUnits(ethBalance)} ETH`;
+    return `${toWholeUnits(ethBalance)} ${nativeCurrencySymbol(activeChain)}`;
   };
 
   if (!yeeter) return;
@@ -208,7 +213,8 @@ export const RequestFundingModal = ({
                       <label className="form-control w-full max-w-xs">
                         <div className="label">
                           <span className="label-text">
-                            How much ETH are you requesting?
+                            How much {nativeCurrencySymbol(activeChain)} are you
+                            requesting?
                           </span>
                         </div>
                         <input
@@ -235,7 +241,9 @@ export const RequestFundingModal = ({
                   validators={{
                     onChange: ({ value }) => {
                       if (!isEthAddress(value))
-                        return "Valid ETH Address is Required";
+                        return `Valid ${
+                          activeChain?.name || "ETH"
+                        } Address is Required`;
                       return undefined;
                     },
                   }}
@@ -349,8 +357,6 @@ export const RequestFundingModal = ({
                 {showLoading && (
                   <span className="loading loading-bars loading-sm"></span>
                 )}
-
-                <LoginModalSwitch targetChainId={chainid} />
 
                 <form.Subscribe
                   selector={(state) => [state.canSubmit, state.isSubmitting]}

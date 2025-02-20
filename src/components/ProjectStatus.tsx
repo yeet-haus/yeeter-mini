@@ -21,7 +21,6 @@ export const ProjectStatus = ({
     chainid,
     yeeterid,
   });
-
   if (!yeeter || !chainid) return;
 
   const goalReached = Number(yeeter.balance) > Number(yeeter.goal);

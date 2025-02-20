@@ -1,4 +1,4 @@
-import { formatEther, formatUnits } from "viem";
+import { Chain, formatEther, formatUnits } from "viem";
 
 export const nowInSeconds = (): number => new Date().getTime() / 1000;
 
@@ -32,6 +32,7 @@ export const isJSON = (obj: unknown) => {
     JSON.parse(obj as string);
     return true;
   } catch (e) {
+    console.log("parse error", e);
     return false;
   }
 };
@@ -66,4 +67,8 @@ export const memberTokenBalanceShare = (
 
   const memberSharesWei = Number(tokenBalance) * ratio;
   return memberSharesWei / 10 ** Number(decimals);
+};
+
+export const nativeCurrencySymbol = (chain: Chain | undefined) => {
+  return chain?.nativeCurrency.symbol || "ETH";
 };
