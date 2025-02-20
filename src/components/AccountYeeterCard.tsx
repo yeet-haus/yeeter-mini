@@ -1,23 +1,27 @@
 import { Link } from "react-router-dom";
 import { YeetsItem } from "../utils/types";
 import { useYeeter } from "../hooks/useYeeter";
-import { fromWei } from "../utils/helpers";
+import { fromWei, nativeCurrencySymbol } from "../utils/helpers";
 import { formatValueTo } from "../utils/units";
 import { formatDateFromSeconds } from "../utils/dates";
+import { useChainId, useChains } from "wagmi";
 
 export const AccountYeeterCard = ({
   yeeterid,
-  chainId,
+  chainid,
   accountYeets,
 }: {
   yeeterid: string;
-  chainId: string;
+  chainid: string;
   accountYeets?: YeetsItem[];
 }) => {
   const { yeeter, metadata } = useYeeter({
     yeeterid: yeeterid,
-    chainid: chainId,
+    chainid,
   });
+  const chainId = useChainId();
+  const chains = useChains();
+  const activeChain = chains.find((c) => c.id === chainId);
 
   if (!yeeter) return null;
 
@@ -47,7 +51,7 @@ export const AccountYeeterCard = ({
                         decimals: 3,
                         format: "numberShort",
                       }
-                    )} ETH`}</div>
+                    )} ${nativeCurrencySymbol(activeChain)}`}</div>
                   </div>
                 </div>
               );
@@ -55,7 +59,7 @@ export const AccountYeeterCard = ({
         </div>
 
         <div className="flex flex-col justify-center w-full">
-          <Link to={`/yeeter/${chainId}/${yeeterid}`}>
+          <Link to={`/yeeter/${chainid}/${yeeterid}`}>
             <button className="btn btn-neutral rounded-sm w-full">
               View Project
             </button>

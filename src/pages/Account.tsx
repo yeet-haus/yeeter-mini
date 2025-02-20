@@ -5,7 +5,7 @@ import { Login } from "../components/Login";
 
 export const Account = () => {
   return (
-    <div className="flex flex-col justify-center items-center gap-10">
+    <div className="flex flex-col justify-center items-center gap-5">
       <h2 className="text-2xl text-primary">Account</h2>
 
       <Login />

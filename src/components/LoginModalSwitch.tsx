@@ -5,43 +5,19 @@ import { useChainId, useSwitchChain } from "wagmi";
 import LoginIcon from "../assets/icons/login.svg";
 import { WAGMI_CHAIN_OBJS } from "../utils/constants";
 
-// if not connected
-
 export const LoginModalSwitch = ({
   targetChainId,
+  buttonClass,
+  buttonLabel,
 }: {
   targetChainId: string;
+  buttonClass: string;
+  buttonLabel: string;
 }) => {
   const { ready, authenticated } = usePrivy();
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
-
-  const { login } = useLogin({
-    onComplete: (
-      // user,
-      // isNewUser,
-      wasAlreadyAuthenticated
-      // loginMethod,
-      // linkedAccount
-    ) => {
-      // console.log(
-      //   user,
-      //   isNewUser,
-      //   wasAlreadyAuthenticated,
-      //   loginMethod,
-      //   linkedAccount
-      // );
-
-      if (!wasAlreadyAuthenticated) {
-        // @ts-expect-error fix unknown
-        document.getElementById("yeet-modal").showModal();
-      }
-    },
-    onError: (error) => {
-      console.log(error);
-      // Any logic you'd like to execute after a user exits the login flow or there is an error
-    },
-  });
+  const { login } = useLogin();
 
   useEffect(() => {
     if (
@@ -55,7 +31,6 @@ export const LoginModalSwitch = ({
   }, [chainId, targetChainId, ready, authenticated, switchChain]);
 
   const handleLogin = () => {
-    // document.getElementById("yeet-modal").hideModal();
     login();
   };
 
@@ -63,15 +38,10 @@ export const LoginModalSwitch = ({
 
   return (
     <>
-      <form method="dialog">
-        <button
-          className="btn btn-sm btn-primary"
-          onClick={() => handleLogin()}
-        >
-          <img src={LoginIcon} width="18" />
-          Login
-        </button>
-      </form>
+      <button className={buttonClass} onClick={() => handleLogin()}>
+        <img src={LoginIcon} width="18" />
+        {buttonLabel}
+      </button>
     </>
   );
 };
