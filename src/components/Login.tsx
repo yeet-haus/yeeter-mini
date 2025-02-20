@@ -5,7 +5,7 @@ import LoginIcon from "../assets/icons/login.svg";
 import LogoutIcon from "../assets/icons/logout.svg";
 
 export const Login = () => {
-  const { ready, authenticated, logout, login } = usePrivy();
+  const { ready, authenticated, login, logout } = usePrivy();
 
   return (
     <>

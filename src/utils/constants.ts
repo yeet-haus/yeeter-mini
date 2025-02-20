@@ -62,7 +62,6 @@ export const EXPLORER_URL: KEYCHAIN = {
 export const YEETER_DAO_REFERRER = "DHOnboarderShamanSummoner";
 
 export const DEFAULT_CHAIN_ID = "0xaa36a7";
-// export const DEFAULT_CHAIN_ID = "0x2105";
 
 export const YEETER_CONTRACTS: KeychainList = {
   ONBOARDER_SUMMONER: {

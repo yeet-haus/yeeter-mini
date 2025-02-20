@@ -10,7 +10,6 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
 
   useLayoutEffect(() => {
-    console.log("scrolling");
     scrollToTop();
   }, [location.pathname]);
 

@@ -42,14 +42,10 @@ export const ProjectUpdates = ({
     table: "yeetProjectUpdate",
   }) as { records: StatusRecord[] | undefined };
 
-  console.log("records", records);
-
   const now = nowInSeconds();
   const passedOrActiveProps = proposals?.filter(
     (p) => p.passed || Number(p.graceEnds) > now
   );
-
-  console.log("memberProposals", memberProposals);
 
   if (!yeeter || !chainid) return;
 

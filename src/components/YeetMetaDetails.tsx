@@ -10,10 +10,15 @@ import { useAccount } from "wagmi";
 import { MetaFormModal } from "./MetaFormModal";
 import { ProjectUpdates } from "./ProjectUpdates";
 
+import FarcastleIcon from "../assets/gate-large.svg";
+import { usePrivy } from "@privy-io/react-auth";
+
 type LinkObj = {
   url: string;
   label: string;
 };
+
+const warpcastBaseUrl = `https://warpcast.com/~/compose?text=&embeds[]=https://frames.yeet.haus/yeeter`;
 
 export const YeetMetaDetails = ({
   metadata,
@@ -27,10 +32,11 @@ export const YeetMetaDetails = ({
   yeeterid: string;
 }) => {
   const { address } = useAccount();
+  const { authenticated } = usePrivy();
   const { member } = useMember({
     daoid,
     chainid,
-    memberaddress: address,
+    memberaddress: authenticated ? address : undefined,
   });
   const linkList = useMemo(() => {
     if (!metadata || !metadata.links) return;
@@ -52,8 +58,10 @@ export const YeetMetaDetails = ({
 
   if (!metadata || !chainid) return;
 
-  const onProjectTeam = address && member && Number(member.shares) > 0;
-  const isFunder = address && member && Number(member.loot) > 0;
+  const onProjectTeam =
+    authenticated && address && member && Number(member.shares) > 0;
+  const isFunder =
+    authenticated && address && member && Number(member.loot) > 0;
 
   return (
     <>
@@ -155,6 +163,19 @@ export const YeetMetaDetails = ({
           className="tab-content bg-base-100 border-base-300 rounded-box p-6"
         >
           <div className="flex flex-col gap-3 text-left break-words">
+            {chainid !== "0xaa36a7" && (
+              <div className="flex flex-row gap-2 items-center">
+                <img src={FarcastleIcon} width="30px" />
+                <a
+                  className="link link-primary"
+                  href={`${warpcastBaseUrl}/${yeeterid}`}
+                  target="_blank"
+                >
+                  Cast Yeet from Frames ⟶
+                </a>
+              </div>
+            )}
+
             {linkList &&
               linkList.map((link) => {
                 return (

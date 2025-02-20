@@ -15,7 +15,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import yeeterAbi from "../utils/tx-prepper/abi/yeeterShaman.json";
 import { usePrivy } from "@privy-io/react-auth";
-import { LoginModalSwitch } from "./LoginModalSwitch";
+import { FundWalletSwitch } from "./FundWalletSwitch";
 
 export const YeetModal = ({
   buttonClass,
@@ -114,10 +114,12 @@ export const YeetModal = ({
           </form>
 
           {!isConfirmed && (
-            <div className="text-lg font-bold mt-5">
-              Receive {formatLootForMin(yeeter)} loot tokens per{" "}
-              {formatMinContribution(yeeter)} ETH contributed
-            </div>
+            <>
+              <div className="text-lg font-bold mt-5">
+                Receive {formatLootForMin(yeeter)} loot tokens per{" "}
+                {formatMinContribution(yeeter)} ETH contributed
+              </div>
+            </>
           )}
 
           {isConfirmed && (
@@ -217,6 +219,12 @@ export const YeetModal = ({
               />
             </div>
 
+            <FundWalletSwitch
+              targetAmount={1000000n}
+              message="You will needs fund for the transaction fee"
+              redirect={true}
+            />
+
             <div className="modal-action">
               {hash && (
                 <div className="mt-1">
@@ -238,8 +246,6 @@ export const YeetModal = ({
               {showLoading && (
                 <span className="loading loading-bars loading-sm"></span>
               )}
-
-              <LoginModalSwitch targetChainId={chainid} />
 
               <form.Subscribe
                 selector={(state) => [state.canSubmit, state.isSubmitting]}

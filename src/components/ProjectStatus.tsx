@@ -1,3 +1,4 @@
+import { usePrivy } from "@privy-io/react-auth";
 import { useYeeter } from "../hooks/useYeeter";
 import { AddProjectMemberModal } from "./AddProjectMemberModal";
 import { ExitForm } from "./ExitForm";
@@ -21,7 +22,6 @@ export const ProjectStatus = ({
     chainid,
     yeeterid,
   });
-
   if (!yeeter || !chainid) return;
 
   const goalReached = Number(yeeter.balance) > Number(yeeter.goal);

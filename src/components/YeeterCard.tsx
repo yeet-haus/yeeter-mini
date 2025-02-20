@@ -3,6 +3,8 @@ import { useYeeter } from "../hooks/useYeeter";
 import { toWholeUnits } from "../utils/helpers";
 import { YeetModal } from "./YeetModal";
 import { formatShortDateTimeFromSeconds } from "../utils/dates";
+import { usePrivy } from "@privy-io/react-auth";
+import { LoginModalSwitch } from "./LoginModalSwitch";
 
 export const YeeterCard = ({
   yeeterid,
@@ -15,6 +17,7 @@ export const YeeterCard = ({
     yeeterid: yeeterid,
     chainid: chainId,
   });
+  const { authenticated } = usePrivy();
 
   if (!yeeter) return null;
 
@@ -79,11 +82,19 @@ export const YeeterCard = ({
               Learn More
             </button>
           </Link>
-          {yeeter.isActive && (
+          {yeeter.isActive && authenticated && (
             <YeetModal
               buttonClass="btn btn-neutral rounded-sm w-full"
               yeeterid={yeeterid}
               chainid={chainId}
+            />
+          )}
+
+          {yeeter.isActive && !authenticated && (
+            <LoginModalSwitch
+              targetChainId={chainId}
+              buttonClass="btn btn-neutral rounded-sm w-full"
+              buttonLabel="Login to Contribute"
             />
           )}
         </div>

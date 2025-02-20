@@ -12,6 +12,7 @@ import { toBaseUnits } from "../utils/units";
 import {
   useAccount,
   useChains,
+  useSwitchChain,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
@@ -23,17 +24,18 @@ import yeeterSummonerAbi from "../utils/tx-prepper/abi/yeeterSummoner.json";
 import { assembleYeeterSummonerArgs } from "../utils/summonTx";
 import { nowInSeconds } from "../utils/helpers";
 import { NavLink } from "react-router-dom";
+import { LoginModalSwitch } from "./LoginModalSwitch";
+import { FundWalletSwitch } from "./FundWalletSwitch";
 
 export const LaunchForm = () => {
   const { ready, authenticated } = usePrivy();
   const { address } = useAccount();
 
   const queryClient = useQueryClient();
+  const { switchChain } = useSwitchChain();
   const chainId = useChainId();
   const chains = useChains();
   const chainid = toHex(chainId);
-
-  console.log("chains", chains);
 
   const {
     writeContract,
@@ -112,6 +114,7 @@ export const LaunchForm = () => {
 
   const showLoading = isSendTxPending || isConfirming;
   const needsAuth = !ready || !authenticated;
+  const activeChain = chains.find((c) => c.id === chainId);
 
   return (
     <>
@@ -292,19 +295,60 @@ export const LaunchForm = () => {
           <span className="loading loading-bars loading-sm"></span>
         )}
 
-        <form.Subscribe
-          selector={(state) => [state.canSubmit, state.isSubmitting]}
-          children={([canSubmit]) => (
-            <>
-              <button
-                className="btn btn-lg btn-outline btn-primary rounded-sm w-full mt-5"
-                disabled={showLoading || !canSubmit || needsAuth || isConfirmed}
+        {authenticated && (
+          <>
+            {activeChain && (
+              <select
+                className="select select-sm select-accent"
+                defaultValue={chainId}
+                onChange={(e) => {
+                  switchChain({ chainId: Number(e.target.value) });
+                }}
               >
-                Launch
-              </button>
-            </>
-          )}
-        />
+                <option disabled>Select Chain</option>
+
+                {chains.map((chain) => {
+                  return (
+                    <option value={chain.id} key={chain.id}>
+                      Launch on {chain.name}
+                    </option>
+                  );
+                })}
+              </select>
+            )}
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+              children={([canSubmit]) => (
+                <>
+                  <button
+                    className="btn btn-lg btn-outline btn-primary rounded-sm w-full mt-5"
+                    disabled={
+                      showLoading || !canSubmit || needsAuth || isConfirmed
+                    }
+                  >
+                    Launch
+                  </button>
+                </>
+              )}
+            />
+          </>
+        )}
+
+        {authenticated && (
+          <FundWalletSwitch
+            targetAmount={1000000n}
+            message="You will needs fund for the transaction fee"
+            hideBalance={true}
+          />
+        )}
+
+        {!authenticated && (
+          <LoginModalSwitch
+            targetChainId={chainid}
+            buttonClass="btn btn-lg btn-outline btn-primary rounded-sm w-full my-5"
+            buttonLabel="Login to Launch"
+          />
+        )}
       </form>
     </>
   );
