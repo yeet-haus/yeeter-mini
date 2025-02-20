@@ -1,4 +1,3 @@
-import { usePrivy } from "@privy-io/react-auth";
 import { useYeeter } from "../hooks/useYeeter";
 import { AddProjectMemberModal } from "./AddProjectMemberModal";
 import { ExitForm } from "./ExitForm";

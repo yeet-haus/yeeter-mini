@@ -9,7 +9,6 @@ import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 
 // import { usePrivy } from "@privy-io/react-auth";
-import { LoginModalSwitch } from "./LoginModalSwitch";
 
 export const MetaFormModal = ({
   yeeterid,
@@ -209,8 +208,6 @@ export const MetaFormModal = ({
               {showLoading && (
                 <span className="loading loading-bars loading-sm"></span>
               )}
-
-              <LoginModalSwitch targetChainId={chainid} />
 
               <form.Subscribe
                 selector={(state) => [state.canSubmit, state.isSubmitting]}

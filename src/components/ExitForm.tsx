@@ -14,7 +14,6 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 
 import { usePrivy } from "@privy-io/react-auth";
-import { LoginModalSwitch } from "./LoginModalSwitch";
 import { useDao } from "../hooks/useDao";
 import { TX } from "../utils/tx-prepper/tx";
 import { prepareTX } from "../utils/tx-prepper/tx-prepper";
@@ -207,8 +206,6 @@ export const ExitForm = ({
               {showLoading && (
                 <span className="loading loading-bars loading-sm"></span>
               )}
-
-              <LoginModalSwitch targetChainId={chainid} />
 
               <form.Subscribe
                 selector={(state) => [state.canSubmit, state.isSubmitting]}
