@@ -7,6 +7,8 @@ import { EXPLORER_URL } from "../utils/constants";
 import { FieldInfo } from "./FieldInfo";
 import {
   useAccount,
+  useChainId,
+  useChains,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
@@ -39,6 +41,9 @@ export const AddProjectMemberModal = ({
   const { ready, authenticated } = usePrivy();
   const { address } = useAccount();
   const queryClient = useQueryClient();
+  const chainId = useChainId();
+  const chains = useChains();
+  const activeChain = chains.find((c) => c.id === chainId);
 
   const {
     writeContract,
@@ -211,7 +216,9 @@ export const AddProjectMemberModal = ({
                   validators={{
                     onChange: ({ value }) => {
                       if (!isEthAddress(value))
-                        return "Valid ETH Address is Required";
+                        return `Valid ${
+                          activeChain?.name || "ETH"
+                        } Address is Required`;
                       return undefined;
                     },
                   }}

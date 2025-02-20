@@ -10,12 +10,18 @@ import {
 import { FieldInfo } from "./FieldInfo";
 import { useEffect, useState } from "react";
 import { toBaseUnits } from "../utils/units";
-import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import {
+  useChainId,
+  useChains,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 
 import yeeterAbi from "../utils/tx-prepper/abi/yeeterShaman.json";
 import { usePrivy } from "@privy-io/react-auth";
 import { FundWalletSwitch } from "./FundWalletSwitch";
+import { nativeCurrencySymbol } from "../utils/helpers";
 
 export const YeetModal = ({
   buttonClass,
@@ -32,6 +38,9 @@ export const YeetModal = ({
   });
   const { ready, authenticated } = usePrivy();
   const queryClient = useQueryClient();
+  const chainId = useChainId();
+  const chains = useChains();
+  const activeChain = chains.find((c) => c.id === chainId);
 
   const [fieldMessages, setFieldMessages] = useState<Record<string, string>>({
     amount: "",
@@ -117,7 +126,8 @@ export const YeetModal = ({
             <>
               <div className="text-lg font-bold mt-5">
                 Receive {formatLootForMin(yeeter)} loot tokens per{" "}
-                {formatMinContribution(yeeter)} ETH contributed
+                {formatMinContribution(yeeter)} $
+                {nativeCurrencySymbol(activeChain)} contributed
               </div>
             </>
           )}
@@ -175,7 +185,9 @@ export const YeetModal = ({
                       </div>
                       <input
                         type="number"
-                        placeholder="Amount in ETH"
+                        placeholder={`Amount in ${nativeCurrencySymbol(
+                          activeChain
+                        )}`}
                         disabled={showLoading || isConfirmed}
                         className="input input-bordered input-primary w-full max-w-xs rounded-sm"
                         id={field.name}

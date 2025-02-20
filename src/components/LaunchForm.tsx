@@ -22,7 +22,7 @@ import { toHex } from "viem";
 import { usePrivy } from "@privy-io/react-auth";
 import yeeterSummonerAbi from "../utils/tx-prepper/abi/yeeterSummoner.json";
 import { assembleYeeterSummonerArgs } from "../utils/summonTx";
-import { nowInSeconds } from "../utils/helpers";
+import { nativeCurrencySymbol, nowInSeconds } from "../utils/helpers";
 import { NavLink } from "react-router-dom";
 import { LoginModalSwitch } from "./LoginModalSwitch";
 import { FundWalletSwitch } from "./FundWalletSwitch";
@@ -220,7 +220,9 @@ export const LaunchForm = () => {
                   </div>
                   <input
                     type="number"
-                    placeholder="Amount in ETH"
+                    placeholder={`Amount in ${nativeCurrencySymbol(
+                      activeChain
+                    )}`}
                     disabled={showLoading || isConfirmed}
                     className="input input-bordered input-primary w-full max-w-xs rounded-sm"
                     id={field.name}

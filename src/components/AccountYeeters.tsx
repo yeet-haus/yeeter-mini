@@ -33,16 +33,13 @@ export const AccountYeeters = () => {
           setActiveChain(Number(e.target.value));
           switchChain({ chainId: Number(e.target.value) });
         }}
+        value={activeChain}
       >
         <option disabled>Select Chain</option>
 
         {chains.map((chain) => {
           return (
-            <option
-              value={chain.id}
-              selected={activeChain === chain.id}
-              key={chain.id}
-            >
+            <option value={chain.id} key={chain.id}>
               On {chain.name}
             </option>
           );
@@ -61,7 +58,7 @@ export const AccountYeeters = () => {
             return (
               <AccountYeeterCard
                 yeeterid={yeeter.id}
-                chainId={DEFAULT_CHAIN_ID}
+                chainid={toHex(activeChain)}
                 key={yeeter.id}
                 accountYeets={yeeter.yeets}
               />

@@ -1,30 +1,34 @@
 import { Link } from "react-router-dom";
 import { useYeeter } from "../hooks/useYeeter";
-import { toWholeUnits } from "../utils/helpers";
+import { nativeCurrencySymbol, toWholeUnits } from "../utils/helpers";
 import { YeetModal } from "./YeetModal";
 import { formatShortDateTimeFromSeconds } from "../utils/dates";
 import { usePrivy } from "@privy-io/react-auth";
 import { LoginModalSwitch } from "./LoginModalSwitch";
+import { useChainId, useChains } from "wagmi";
 
 export const YeeterCard = ({
   yeeterid,
-  chainId,
+  chainid,
 }: {
   yeeterid: string;
-  chainId: string;
+  chainid: string;
 }) => {
   const { yeeter, metadata } = useYeeter({
     yeeterid: yeeterid,
-    chainid: chainId,
+    chainid: chainid,
   });
   const { authenticated } = usePrivy();
+  const chainId = useChainId();
+  const chains = useChains();
+  const activeChain = chains.find((c) => c.id === chainId);
 
   if (!yeeter) return null;
 
   const hero = metadata?.icon && metadata?.icon !== "" && metadata?.icon;
 
   return (
-    <div className="card bg-primary shadow-xs rounded min-w-full">
+    <div className="card bg-primary shadow-xs rounded min-w-full max-w-full">
       <figure>
         {hero && <img src={hero} width={250} className="rounded-full mt-5" />}
       </figure>
@@ -37,11 +41,14 @@ export const YeeterCard = ({
             {!yeeter.isComingSoon && (
               <>
                 <div className="stat-title text-bold">Raised</div>
-                <div className="stat-value text-white">
-                  {`${toWholeUnits(yeeter?.balance)} ETH`}
+                <div className="stat-value text-white truncate">
+                  {`${Number(toWholeUnits(yeeter?.balance)).toFixed(
+                    5
+                  )} ${nativeCurrencySymbol(activeChain)}`}
                 </div>
                 <div className="stat-desc">
-                  {toWholeUnits(yeeter?.goal)} ETH goal
+                  {toWholeUnits(yeeter?.goal)}{" "}
+                  {nativeCurrencySymbol(activeChain)} goal
                 </div>
               </>
             )}
@@ -49,7 +56,9 @@ export const YeeterCard = ({
               <>
                 <div className="stat-title text-bold">Raising</div>
                 <div className="stat-value text-white">
-                  {`${toWholeUnits(yeeter?.goal)} ETH`}
+                  {`${toWholeUnits(yeeter?.goal)} ${nativeCurrencySymbol(
+                    activeChain
+                  )}`}
                 </div>
               </>
             )}
@@ -77,7 +86,7 @@ export const YeeterCard = ({
         )}
 
         <div className="flex flex-col gap-5 justify-center w-full">
-          <Link to={`/yeeter/${chainId}/${yeeterid}`}>
+          <Link to={`/yeeter/${chainid}/${yeeterid}`}>
             <button className="btn btn-neutral rounded-sm w-full">
               Learn More
             </button>
@@ -86,13 +95,13 @@ export const YeeterCard = ({
             <YeetModal
               buttonClass="btn btn-neutral rounded-sm w-full"
               yeeterid={yeeterid}
-              chainid={chainId}
+              chainid={chainid}
             />
           )}
 
           {yeeter.isActive && !authenticated && (
             <LoginModalSwitch
-              targetChainId={chainId}
+              targetChainId={chainid}
               buttonClass="btn btn-neutral rounded-sm w-full"
               buttonLabel="Login to Contribute"
             />

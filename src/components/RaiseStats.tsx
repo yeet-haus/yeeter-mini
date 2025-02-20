@@ -9,7 +9,7 @@ export const RaiseStats = ({ yeeter }: { yeeter: YeeterItem }) => {
       <div className="stat place-items-center">
         <div className="stat-title">Raised</div>
         <div className="stat-value font-header">
-          {toWholeUnits(yeeter?.balance)}
+          {Number(toWholeUnits(yeeter?.balance)).toFixed(5)}
         </div>
         <div className="stat-desc">ETH</div>
       </div>

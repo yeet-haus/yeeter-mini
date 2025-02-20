@@ -31,6 +31,7 @@ export const Explore = () => {
           setActiveChain(Number(e.target.value));
           switchChain({ chainId: Number(e.target.value) });
         }}
+        value={activeChain}
       >
         <option disabled>Select Chain</option>
 
@@ -74,7 +75,7 @@ export const Explore = () => {
             return (
               <YeeterCard
                 yeeterid={yeeter.id}
-                chainId={toHex(activeChain)}
+                chainid={toHex(activeChain)}
                 key={yeeter.id}
               />
             );

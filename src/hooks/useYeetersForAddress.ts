@@ -59,6 +59,7 @@ export const useYeetersForAddress = ({
     },
     { yeeters: {} }
   );
+
   const yeeters =
     organizedYeeters &&
     Object.keys(organizedYeeters.yeeters).map((yeetid) => {

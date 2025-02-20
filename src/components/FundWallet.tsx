@@ -12,10 +12,9 @@ export const FundWallet = () => {
   const { data, isFetched } = useBalance({
     address: user?.wallet?.address as `0x${string}`,
   });
+  const location = useLocation();
   const chainId = useChainId();
   const chains = useChains();
-  const location = useLocation();
-
   const activeChain = chains.find((c) => c.id === chainId);
 
   // https://docs.privy.io/guide/react/wallets/usage/funding/prompting#callbacks
@@ -52,12 +51,11 @@ export const FundWallet = () => {
         <img src={Fund} width="24" />
         Fund Wallet on {activeChain?.name}
       </button>
+      {chainId === 100 && (
+        <p className="text-xs text-accent">
+          *Credit card funding not available on Gnosis Chain
+        </p>
+      )}
     </div>
   );
 };
-
-// component to check balance vs supplied amount
-// // if nothing or too little ntoe and show fund wallet - but will have issues with modals.. maybe just route to account
-// use url param to open funding
-// how to show chain in/on this thing
-// https://docs.privy.io/guide/react/wallets/usage/funding/prompting#in-code

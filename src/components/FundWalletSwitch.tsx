@@ -65,10 +65,17 @@ export const FundWalletSwitch = ({
           )}
 
           {!redirect && (
-            <button className="btn" onClick={handleFunding}>
-              <img src={Fund} width="24" />
-              Fund Wallet on {activeChain?.name}
-            </button>
+            <>
+              <button className="btn" onClick={handleFunding}>
+                <img src={Fund} width="24" />
+                Fund Wallet on {activeChain?.name}
+              </button>
+              {chainId === 100 && (
+                <p className="text-xs text-accent">
+                  *Credit card funding not available on Gnosis Chain
+                </p>
+              )}
+            </>
           )}
         </>
       )}
