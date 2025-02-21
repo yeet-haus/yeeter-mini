@@ -8,7 +8,7 @@ export const Header = () => {
         <div className="flex flex-col items-center">
           <h1 className="text-6xl uppercase">
             {APP_THEME.title}
-            <p className="text-right font-sans text-sm lowercase font-bold">
+            <p className="text-right font-sans text-sm lowercase font-bold text-accent">
               a mini yeeter
             </p>
           </h1>
