@@ -41,13 +41,9 @@ export const Footer = () => {
             )}
 
             {step === 1 && (
-              <a
-                href="https://yeet.haus/faq"
-                target="_blank"
-                className="link link-neutral text-xs"
-              >
-                Learn more about decentralized fundraising
-              </a>
+              <Link to="/about" className="link link-neutral text-xs">
+                About
+              </Link>
             )}
           </li>
           {step === 0 && (
@@ -62,6 +58,18 @@ export const Footer = () => {
                   )}
                 </div>
               </Link>
+            </li>
+          )}
+
+          {step === 1 && (
+            <li>
+              <a
+                href="https://discord.gg/rE33sawCMz"
+                target="_blank"
+                className="link link-neutral text-xs"
+              >
+                Yeeter Discord ⟶
+              </a>
             </li>
           )}
 

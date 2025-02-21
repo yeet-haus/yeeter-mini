@@ -126,7 +126,7 @@ export const YeetModal = ({
             <>
               <div className="text-lg font-bold mt-5">
                 Receive {formatLootForMin(yeeter)} loot tokens per{" "}
-                {formatMinContribution(yeeter)} $
+                {formatMinContribution(yeeter)}
                 {nativeCurrencySymbol(activeChain)} contributed
               </div>
             </>
