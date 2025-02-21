@@ -11,21 +11,21 @@ export const Home = () => {
 
       <div className="flex flex-col gap-4 items-center justify-center w-full">
         <div className="px-7 py-5 bg-primary text-white grid w-full place-content-center rounded">
-          <h3 className="text-2xl">I'm a wee babe!</h3>
+          <h3 className="text-2xl">I'm a Wee Babe!</h3>
           <p>
             Crowdfunding reimagined with web3 transparency and community
             protection.
           </p>
         </div>
         <div className="px-7 py-5 bg-primary text-white  grid w-full place-content-center rounded">
-          <h3 className="text-2xl">Wee raise funds together</h3>
+          <h3 className="text-2xl">Wee Raise Funds Together</h3>
           <p>
             Launch your project on-chain with easy campaign tools for both
             crypto natives and newcomers.
           </p>
         </div>
         <div className="px-7 py-5 bg-primary text-white  grid w-full place-content-center rounded">
-          <h3 className="text-2xl">Wee don't rug</h3>
+          <h3 className="text-2xl">Wee Don't Rug</h3>
           <p>
             Unlike traditional platforms, funders retain exit rights if project
             milestones aren't met.
