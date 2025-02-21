@@ -5,7 +5,6 @@ type KEYCHAIN = {
 };
 type KeychainList = Record<string, KEYCHAIN>;
 
-// export const DEFAULT_CHAIN_ID = "0xaa36a7";
 export const DEFAULT_CHAIN_ID = "0x2105";
 
 export const WAGMI_CHAIN_OBJS: Record<string, Chain> = {
@@ -90,10 +89,8 @@ export const DEFAULT_YEETER_VALUES = {
   minTribute: "5000000000000000",
 };
 export const DEFAULT_SUMMON_VALUES = {
-  votingPeriodInSeconds: 120,
-  // votingPeriodInSeconds: 43200,
-  gracePeriodInSeconds: 60,
-  // gracePeriodInSeconds: 21600,
+  votingPeriodInSeconds: import.meta.env.VITE_DEV_ENV === "local" ? 120 : 43200,
+  gracePeriodInSeconds: import.meta.env.VITE_DEV_ENV === "local" ? 60 : 21600,
   newOffering: "0",
   quorum: "0",
   sponsorThreshold: "1000000000000000000",
