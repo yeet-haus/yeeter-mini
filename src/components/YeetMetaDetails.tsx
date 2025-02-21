@@ -191,6 +191,13 @@ export const YeetMetaDetails = ({
               })}
             <a
               className="link link-primary"
+              href={`https://admin.daohaus.club/#/molochv3/${chainid}/${daoid}/safes`}
+              target="_blank"
+            >
+              Project treasury ⟶
+            </a>
+            <a
+              className="link link-primary"
               href={`https://admin.daohaus.club/#/molochv3/${chainid}/${daoid}`}
               target="_blank"
             >

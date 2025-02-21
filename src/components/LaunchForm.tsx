@@ -168,7 +168,7 @@ export const LaunchForm = () => {
                     onChange={(e) => field.handleChange(e.target.value)}
                   />
                 </label>
-                <FieldInfo field={field} />
+                <FieldInfo field={field} message="Editable later" />
               </>
             )}
           />
@@ -194,7 +194,7 @@ export const LaunchForm = () => {
                     onChange={(e) => field.handleChange(e.target.value)}
                   ></textarea>
                 </label>
-                <FieldInfo field={field} />
+                <FieldInfo field={field} message="Editable later" />
               </>
             )}
           />
@@ -232,7 +232,7 @@ export const LaunchForm = () => {
                     onChange={(e) => field.handleChange(e.target.value)}
                   />
                 </label>
-                <FieldInfo field={field} />
+                <FieldInfo field={field} message="Cannot be changed" />
               </>
             )}
           />
@@ -272,7 +272,7 @@ export const LaunchForm = () => {
                     <option value="2628000">1 Month</option>
                   </select>
                 </label>
-                <FieldInfo field={field} />
+                <FieldInfo field={field} message="Cannot be changed" />
               </>
             )}
           />
