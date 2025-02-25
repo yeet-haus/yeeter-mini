@@ -18,11 +18,10 @@ type MemberModalProps = {
   hash?: string;
   chainid: string;
   daoid: string;
+  modalid: string;
   handleSubmit: (values: Record<string, string>) => void;
   resetWrite: () => void;
 };
-
-const modalid = "add-member-modal";
 
 export const AddMemberFormModal = ({
   isEmbedded,
@@ -34,6 +33,7 @@ export const AddMemberFormModal = ({
   chainid,
   daoid,
   isError,
+  modalid,
   handleSubmit,
   resetWrite,
 }: MemberModalProps) => {

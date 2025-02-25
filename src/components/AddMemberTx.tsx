@@ -15,15 +15,18 @@ import { TX } from "../utils/tx-prepper/tx";
 import { useDao } from "../hooks/useDao";
 import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
 import { AddMemberFormModal } from "./AddMemberFormModal";
+import { checkIfEmbeddedWalletIsConnected } from "../utils/helpers";
 
 export const AddMemberTx = ({
   yeeterid,
   chainid,
   daoid,
+  modalid,
 }: {
   yeeterid: string;
   chainid: string;
   daoid: string;
+  modalid: string;
 }) => {
   const { yeeter } = useYeeter({
     chainid,
@@ -83,10 +86,10 @@ export const AddMemberTx = ({
 
   useEffect(() => {
     if (walletsReady && authenticated) {
-      const isEmbedded = wallets.find((w) => w.connectorType === "embedded");
-      setIsEmbedded(Boolean(isEmbedded));
+      const embed = checkIfEmbeddedWalletIsConnected({ wallets, address });
+      setIsEmbedded(embed);
     }
-  }, [walletsReady, authenticated, wallets]);
+  }, [walletsReady, authenticated, wallets, address]);
 
   useEffect(() => {
     const reset = async () => {
@@ -103,20 +106,19 @@ export const AddMemberTx = ({
   if (!yeeter) return;
 
   return (
-    <>
-      <AddMemberFormModal
-        yeeter={yeeter}
-        daoid={daoid}
-        isEmbedded={isEmbedded}
-        isConfirmed={isConfirmed}
-        showLoading={isSendTxPending || isConfirming}
-        needsAuth={!ready || !authenticated}
-        chainid={chainid}
-        isError={isError}
-        hash={hash}
-        handleSubmit={handleSubmit}
-        resetWrite={resetWrite}
-      />
-    </>
+    <AddMemberFormModal
+      yeeter={yeeter}
+      daoid={daoid}
+      isEmbedded={isEmbedded}
+      isConfirmed={isConfirmed}
+      showLoading={isSendTxPending || isConfirming}
+      needsAuth={!ready || !authenticated}
+      chainid={chainid}
+      isError={isError}
+      hash={hash}
+      modalid={modalid}
+      handleSubmit={handleSubmit}
+      resetWrite={resetWrite}
+    />
   );
 };

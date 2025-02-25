@@ -29,6 +29,7 @@ export const ActiveYeeter = ({
           buttonClass="btn btn-lg btn-outline btn-primary rounded-sm w-full my-5"
           yeeterid={yeeterid}
           chainid={chainid}
+          modalid="yeet-page-modal"
         />
       )}
 

@@ -1,26 +1,29 @@
 import { useEffect, useState } from "react";
 import { useYeeter } from "../hooks/useYeeter";
-import { toBaseUnits } from "../utils/units";
 import {
   useAccount,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
-import yeeterAbi from "../utils/tx-prepper/abi/yeeterShaman.json";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
-import { YeetFormModal } from "./YeetFormModal";
+import { useDao } from "../hooks/useDao";
+import { TX } from "../utils/tx-prepper/tx";
+import { prepareTX } from "../utils/tx-prepper/tx-prepper";
+import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
+import { parseUnits } from "viem";
+import { RequestFundingModal } from "./RequestFundingModal";
 import { checkIfEmbeddedWalletIsConnected } from "../utils/helpers";
 
-export const YeetTx = ({
-  buttonClass,
+export const RequestFundingTx = ({
   yeeterid,
   chainid,
+  daoid,
   modalid,
 }: {
-  buttonClass: string;
   yeeterid: string;
   chainid: string;
+  daoid: string;
   modalid: string;
 }) => {
   const { yeeter } = useYeeter({
@@ -28,8 +31,12 @@ export const YeetTx = ({
     yeeterid,
   });
   const { ready, authenticated } = usePrivy();
-  const { address } = useAccount();
   const queryClient = useQueryClient();
+  const { dao } = useDao({
+    chainid,
+    daoid,
+  });
+  const { address } = useAccount();
   const { wallets, ready: walletsReady } = useWallets();
   const [isEmbedded, setIsEmbedded] = useState<boolean>(false);
 
@@ -46,6 +53,36 @@ export const YeetTx = ({
       hash,
     });
 
+  const handleSubmit = async (values: Record<string, string>) => {
+    if (!yeeter || !dao || !address) return;
+
+    const tx = TX.REQUEST_FUNDING_ETH;
+
+    const wholeState = {
+      formValues: {
+        ...values,
+        tokenAmount: parseUnits(values.tokenAmount || "0", 18).toString(),
+      },
+      senderAddress: address,
+      daoId: daoid,
+      localABIs: {},
+    };
+
+    const txPrep = await prepareTX({
+      tx,
+      chainId: chainid as ValidNetwork,
+      safeId: dao.safeAddress,
+      appState: wholeState,
+      argCallbackRecord: {},
+      localABIs: {},
+    });
+
+    console.log("txPrep", txPrep);
+    if (!txPrep) return;
+
+    writeContract(txPrep);
+  };
+
   useEffect(() => {
     if (walletsReady && authenticated) {
       const embed = checkIfEmbeddedWalletIsConnected({ wallets, address });
@@ -58,14 +95,6 @@ export const YeetTx = ({
       queryClient.refetchQueries({
         queryKey: ["yeeter", { chainid, yeeterid }],
       });
-
-      queryClient.refetchQueries({
-        queryKey: ["yeets", { yeeterid }],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["yeeters", { chainid }],
-      });
     };
     if (isConfirmed) {
       console.log("INVALIDATING/REFETCH");
@@ -73,36 +102,22 @@ export const YeetTx = ({
     }
   }, [isConfirmed, queryClient, yeeterid, chainid]);
 
-  const handleSubmit = (values: Record<string, string>) => {
-    if (!yeeter) return;
-
-    writeContract({
-      address: yeeter.id as `0x${string}`,
-      abi: yeeterAbi,
-      functionName: "contributeEth",
-      value: BigInt(toBaseUnits(values.amount)),
-      args: [values.message],
-    });
-  };
-
   if (!yeeter) return;
 
   return (
-    <>
-      <YeetFormModal
-        handleSubmit={handleSubmit}
-        yeeter={yeeter}
-        isEmbedded={isEmbedded}
-        isConfirmed={isConfirmed}
-        showLoading={isSendTxPending || isConfirming}
-        needsAuth={!ready || !authenticated}
-        chainid={chainid}
-        isError={isError}
-        hash={hash}
-        modalid={modalid}
-        buttonClass={buttonClass}
-        resetWrite={resetWrite}
-      />
-    </>
+    <RequestFundingModal
+      yeeter={yeeter}
+      daoid={daoid}
+      isEmbedded={isEmbedded}
+      isConfirmed={isConfirmed}
+      showLoading={isSendTxPending || isConfirming}
+      needsAuth={!ready || !authenticated}
+      chainid={chainid}
+      isError={isError}
+      hash={hash}
+      modalid={modalid}
+      handleSubmit={handleSubmit}
+      resetWrite={resetWrite}
+    />
   );
 };

@@ -1,8 +1,8 @@
 import { useYeeter } from "../hooks/useYeeter";
 import { AddMemberTx } from "./AddMemberTx";
-import { ExitForm } from "./ExitForm";
-import { RequestFundingModal } from "./RequestFundingModal";
-import { StatusUpdateModal } from "./StatusUpdateModal";
+import { ExitTx } from "./ExitTx";
+import { RequestFundingTx } from "./RequestFundingTx";
+import { StatusUpdateTx } from "./StatusUpdateTx";
 
 export const ProjectStatus = ({
   chainid,
@@ -50,7 +50,12 @@ export const ProjectStatus = ({
             You're on the project team
           </div>
           <div className="text-lg font-bold">Project Team</div>
-          <AddMemberTx yeeterid={yeeterid} chainid={chainid} daoid={daoid} />
+          <AddMemberTx
+            yeeterid={yeeterid}
+            chainid={chainid}
+            daoid={daoid}
+            modalid="add-member-modal"
+          />
         </>
       )}
 
@@ -59,19 +64,20 @@ export const ProjectStatus = ({
           {onProjectTeam && (
             <div className="flex flex-col gap-1">
               <div className="text-base">Create updates for your funders.</div>
-              <StatusUpdateModal
+              <StatusUpdateTx
                 yeeterid={yeeterid}
                 chainid={chainid}
                 daoid={daoid}
-                modalId="status-form-modal"
+                modalid="status-form-modal"
               />
               <div className="text-base">
                 Request funds by creating a proposal
               </div>
-              <RequestFundingModal
+              <RequestFundingTx
                 yeeterid={yeeterid}
                 chainid={chainid}
                 daoid={daoid}
+                modalid="funding-form-modal"
               />
             </div>
           )}
@@ -86,7 +92,12 @@ export const ProjectStatus = ({
                 If you disagree with how the funds are being spent, you can exit
                 with yor funds (minus protocol fees)
               </div>
-              <ExitForm yeeterid={yeeterid} chainid={chainid} daoid={daoid} />
+              <ExitTx
+                yeeterid={yeeterid}
+                chainid={chainid}
+                daoid={daoid}
+                modalid="exit-funder-modal"
+              />
             </div>
           )}
         </>
@@ -96,11 +107,11 @@ export const ProjectStatus = ({
         <>
           <div className="flex flex-col gap-1">
             <div className="text-base">Create updates for your funders.</div>
-            <StatusUpdateModal
+            <StatusUpdateTx
               yeeterid={yeeterid}
               chainid={chainid}
               daoid={daoid}
-              modalId="status-form--fail-modal"
+              modalid="status-form--fail-modal"
             />
           </div>
           {isFunder && (
@@ -111,7 +122,12 @@ export const ProjectStatus = ({
                 project team might consider moving forward with the funds
                 raised. Look for updates here.
               </div>
-              <ExitForm yeeterid={yeeterid} chainid={chainid} daoid={daoid} />
+              <ExitTx
+                yeeterid={yeeterid}
+                chainid={chainid}
+                daoid={daoid}
+                modalid="exit-goal-modal"
+              />
             </div>
           )}
         </>

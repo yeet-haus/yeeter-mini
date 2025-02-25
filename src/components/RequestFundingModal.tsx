@@ -1,49 +1,46 @@
-import { useEffect } from "react";
 import { useForm } from "@tanstack/react-form";
-
-import { useYeeter } from "../hooks/useYeeter";
 import { EXPLORER_URL } from "../utils/constants";
-
 import { FieldInfo } from "./FieldInfo";
-import {
-  useAccount,
-  useChainId,
-  useChains,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from "wagmi";
-import { useQueryClient } from "@tanstack/react-query";
-
-import { usePrivy } from "@privy-io/react-auth";
+import { useChainId, useChains } from "wagmi";
 import { useDao } from "../hooks/useDao";
-import { TX } from "../utils/tx-prepper/tx";
-import { prepareTX } from "../utils/tx-prepper/tx-prepper";
-import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
 import { useDaoTokenBalances } from "../hooks/useDaoTokenBalances";
 import { nativeCurrencySymbol, toWholeUnits } from "../utils/helpers";
 import { isEthAddress } from "../utils/tx-prepper/typeguards";
-import { parseUnits } from "viem";
+import { YeeterItem } from "../utils/types";
 
-export const RequestFundingModal = ({
-  yeeterid,
-  chainid,
-  daoid,
-}: {
-  yeeterid: string;
+type FundingModalProps = {
+  yeeter: YeeterItem;
+  isEmbedded: boolean;
+  isConfirmed: boolean;
+  showLoading: boolean;
+  needsAuth: boolean;
+  isError: boolean;
+  hash?: string;
   chainid: string;
   daoid: string;
-}) => {
-  const { yeeter } = useYeeter({
-    chainid,
-    yeeterid,
-  });
-  const { ready, authenticated } = usePrivy();
-  const queryClient = useQueryClient();
+  modalid: string;
+  handleSubmit: (values: Record<string, string>) => void;
+  resetWrite: () => void;
+};
+
+export const RequestFundingModal = ({
+  isEmbedded,
+  yeeter,
+  isConfirmed,
+  showLoading,
+  hash,
+  needsAuth,
+  chainid,
+  daoid,
+  isError,
+  modalid,
+  handleSubmit,
+  resetWrite,
+}: FundingModalProps) => {
   const { dao } = useDao({
     chainid,
     daoid,
   });
-  const { address } = useAccount();
   const { tokens } = useDaoTokenBalances({
     chainid,
     safeAddress: dao?.safeAddress,
@@ -53,19 +50,6 @@ export const RequestFundingModal = ({
   const chains = useChains();
   const activeChain = chains.find((c) => c.id === chainId);
 
-  const {
-    writeContract,
-    data: hash,
-    isError,
-    isPending: isSendTxPending,
-    reset: resetWrite,
-  } = useWriteContract();
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash,
-    });
-
   const form = useForm({
     defaultValues: {
       tokenAmount: "",
@@ -74,48 +58,15 @@ export const RequestFundingModal = ({
       link: "",
     },
     onSubmit: async ({ value }) => {
-      console.log("values", value);
-      if (!yeeter || !dao || !address) return;
+      if (isEmbedded) {
+        // @ts-expect-error fix unknown
+        document.getElementById(modalid).close();
+        form.reset();
+      }
 
-      const tx = TX.REQUEST_FUNDING_ETH;
-
-      const wholeState = {
-        formValues: {
-          ...value,
-          tokenAmount: parseUnits(value.tokenAmount || "0", 18).toString(),
-        },
-        senderAddress: address,
-        daoId: daoid,
-        localABIs: {},
-      };
-
-      const txPrep = await prepareTX({
-        tx,
-        chainId: chainid as ValidNetwork,
-        safeId: dao.safeAddress,
-        appState: wholeState,
-        argCallbackRecord: {},
-        localABIs: {},
-      });
-
-      console.log("txPrep", txPrep);
-      if (!txPrep) return;
-
-      writeContract(txPrep);
+      handleSubmit(value);
     },
   });
-
-  useEffect(() => {
-    const reset = async () => {
-      queryClient.refetchQueries({
-        queryKey: ["yeeter", { chainid, yeeterid }],
-      });
-    };
-    if (isConfirmed) {
-      console.log("INVALIDATING/REFETCH");
-      reset();
-    }
-  }, [isConfirmed, queryClient, yeeterid, chainid]);
 
   const displayEthBalance = () => {
     if (!tokens) return "Unknown";
@@ -127,15 +78,12 @@ export const RequestFundingModal = ({
 
   if (!yeeter) return;
 
-  const showLoading = isSendTxPending || isConfirming;
-  const needsAuth = !ready || !authenticated;
-
   return (
     <>
       <p
         onClick={() => {
           // @ts-expect-error fix unknown
-          document.getElementById("funding-form-modal").showModal();
+          document.getElementById(modalid).showModal();
           resetWrite();
           form.reset();
         }}
@@ -143,10 +91,7 @@ export const RequestFundingModal = ({
       >
         Request funds ⟶
       </p>
-      <dialog
-        id="funding-form-modal"
-        className="modal modal-bottom sm:modal-middle"
-      >
+      <dialog id={modalid} className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Request funds</h3>
           <p className="text-sm my-3">

@@ -23,11 +23,10 @@ type YeetModalProps = {
   hash?: string;
   chainid: string;
   buttonClass: string;
+  modalid: string;
   handleSubmit: (values: Record<string, string>) => void;
   resetWrite: () => void;
 };
-
-const modalid = "yeet-modal";
 
 export const YeetFormModal = ({
   isEmbedded,
@@ -39,6 +38,7 @@ export const YeetFormModal = ({
   chainid,
   isError,
   buttonClass,
+  modalid,
   handleSubmit,
   resetWrite,
 }: YeetModalProps) => {

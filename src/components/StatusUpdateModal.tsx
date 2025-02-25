@@ -1,60 +1,35 @@
-import { useEffect } from "react";
 import { useForm } from "@tanstack/react-form";
-
-import { useYeeter } from "../hooks/useYeeter";
 import { EXPLORER_URL } from "../utils/constants";
-
 import { FieldInfo } from "./FieldInfo";
-import {
-  useAccount,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from "wagmi";
-import { useQueryClient } from "@tanstack/react-query";
+import { YeeterItem } from "../utils/types";
 
-import { usePrivy } from "@privy-io/react-auth";
-import { TX } from "../utils/tx-prepper/tx";
-import { useDao } from "../hooks/useDao";
-import { prepareTX } from "../utils/tx-prepper/tx-prepper";
-import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
+type StatusModalProps = {
+  yeeter: YeeterItem;
+  isEmbedded: boolean;
+  isConfirmed: boolean;
+  showLoading: boolean;
+  needsAuth: boolean;
+  isError: boolean;
+  hash?: string;
+  chainid: string;
+  modalid: string;
+  handleSubmit: (values: Record<string, string>) => void;
+  resetWrite: () => void;
+};
 
 export const StatusUpdateModal = ({
-  yeeterid,
+  isEmbedded,
+  yeeter,
+  isConfirmed,
+  showLoading,
+  hash,
+  needsAuth,
   chainid,
-  daoid,
-  modalId,
-}: {
-  yeeterid: string;
-  chainid: string;
-  daoid: string;
-  modalId: string;
-}) => {
-  const { yeeter } = useYeeter({
-    chainid,
-    yeeterid,
-  });
-  const { ready, authenticated } = usePrivy();
-  const { address } = useAccount();
-  const { dao } = useDao({
-    chainid,
-    daoid,
-  });
-
-  const queryClient = useQueryClient();
-
-  const {
-    writeContract,
-    data: hash,
-    isError,
-    isPending: isSendTxPending,
-    reset: resetWrite,
-  } = useWriteContract();
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash,
-    });
-
+  isError,
+  modalid,
+  handleSubmit,
+  resetWrite,
+}: StatusModalProps) => {
   const form = useForm({
     defaultValues: {
       name: "",
@@ -62,59 +37,24 @@ export const StatusUpdateModal = ({
       link: "",
     },
     onSubmit: async ({ value }) => {
-      console.log("values", value);
-      if (!yeeter || !dao || !address) return;
+      if (isEmbedded) {
+        // @ts-expect-error fix unknown
+        document.getElementById(modalid).close();
+        form.reset();
+      }
 
-      const tx = TX.POST_PROJECT_UPDATE;
-
-      const wholeState = {
-        formValues: {
-          ...value,
-        },
-        senderAddress: address,
-        daoId: daoid,
-        localABIs: {},
-      };
-
-      const txPrep = await prepareTX({
-        tx,
-        chainId: chainid as ValidNetwork,
-        safeId: dao.safeAddress,
-        appState: wholeState,
-        argCallbackRecord: {},
-        localABIs: {},
-      });
-
-      console.log("txPrep", txPrep);
-      if (!txPrep) return;
-
-      writeContract(txPrep);
+      handleSubmit(value);
     },
   });
 
-  useEffect(() => {
-    const reset = async () => {
-      queryClient.refetchQueries({
-        queryKey: ["yeeter", { chainid, yeeterid }],
-      });
-    };
-    if (isConfirmed) {
-      console.log("INVALIDATING/REFETCH");
-      reset();
-    }
-  }, [isConfirmed, queryClient, yeeterid, chainid]);
-
   if (!yeeter) return;
-
-  const showLoading = isSendTxPending || isConfirming;
-  const needsAuth = !ready || !authenticated;
 
   return (
     <>
       <p
         onClick={() => {
           // @ts-expect-error fix unknown
-          document.getElementById(modalId).showModal();
+          document.getElementById(modalid).showModal();
           resetWrite();
           form.reset();
         }}
@@ -122,7 +62,7 @@ export const StatusUpdateModal = ({
       >
         Add an update ⟶
       </p>
-      <dialog id={modalId} className="modal modal-bottom sm:modal-middle">
+      <dialog id={modalid} className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Add an update</h3>
 
