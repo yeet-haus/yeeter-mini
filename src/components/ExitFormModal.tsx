@@ -1,23 +1,7 @@
-import { useEffect } from "react";
 import { useForm } from "@tanstack/react-form";
-
-import { useYeeter } from "../hooks/useYeeter";
 import { EXPLORER_URL } from "../utils/constants";
-
-import {
-  useAccount,
-  useChainId,
-  useChains,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from "wagmi";
-import { useQueryClient } from "@tanstack/react-query";
-
-import { usePrivy } from "@privy-io/react-auth";
+import { useAccount, useChainId, useChains } from "wagmi";
 import { useDao } from "../hooks/useDao";
-import { TX } from "../utils/tx-prepper/tx";
-import { prepareTX } from "../utils/tx-prepper/tx-prepper";
-import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
 import { useMember } from "../hooks/useMember";
 import {
   memberTokenBalanceShare,
@@ -25,21 +9,37 @@ import {
   toWholeUnits,
 } from "../utils/helpers";
 import { useDaoTokenBalances } from "../hooks/useDaoTokenBalances";
+import { YeeterItem } from "../utils/types";
 
-export const ExitForm = ({
-  yeeterid,
-  chainid,
-  daoid,
-}: {
-  yeeterid: string;
+type ExitModalProps = {
+  yeeter: YeeterItem;
+  isEmbedded: boolean;
+  isConfirmed: boolean;
+  showLoading: boolean;
+  needsAuth: boolean;
+  isError: boolean;
+  hash?: string;
   chainid: string;
   daoid: string;
-}) => {
-  const { yeeter } = useYeeter({
-    chainid,
-    yeeterid,
-  });
-  const { ready, authenticated } = usePrivy();
+  modalid: string;
+  handleSubmit: () => void;
+  resetWrite: () => void;
+};
+
+export const ExitFormModal = ({
+  isEmbedded,
+  yeeter,
+  isConfirmed,
+  showLoading,
+  hash,
+  needsAuth,
+  chainid,
+  daoid,
+  isError,
+  modalid,
+  handleSubmit,
+  resetWrite,
+}: ExitModalProps) => {
   const { address } = useAccount();
   const chainId = useChainId();
   const chains = useChains();
@@ -57,64 +57,6 @@ export const ExitForm = ({
     chainid,
     safeAddress: dao?.safeAddress,
   });
-  const queryClient = useQueryClient();
-
-  const {
-    writeContract,
-    data: hash,
-    isError,
-    isPending: isSendTxPending,
-    reset: resetWrite,
-  } = useWriteContract();
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash,
-    });
-
-  const form = useForm({
-    onSubmit: async () => {
-      if (!yeeter || !dao || !address || !member) return;
-
-      const tx = TX.RAGEQUIT;
-
-      const wholeState = {
-        formValues: {
-          lootToBurn: member.loot,
-          to: address,
-        },
-        senderAddress: address,
-        daoId: daoid,
-        localABIs: {},
-      };
-
-      const txPrep = await prepareTX({
-        tx,
-        chainId: chainid as ValidNetwork,
-        safeId: dao.safeAddress,
-        appState: wholeState,
-        argCallbackRecord: {},
-        localABIs: {},
-      });
-
-      console.log("txPrep", txPrep);
-      if (!txPrep) return;
-
-      writeContract(txPrep);
-    },
-  });
-
-  useEffect(() => {
-    const reset = async () => {
-      queryClient.refetchQueries({
-        queryKey: ["yeeter", { chainid, yeeterid }],
-      });
-    };
-    if (isConfirmed) {
-      console.log("INVALIDATING/REFETCH");
-      reset();
-    }
-  }, [isConfirmed, queryClient, yeeterid, chainid]);
 
   const displayTokenReturn = () => {
     if (!tokens || !dao || !member) return;
@@ -131,17 +73,27 @@ export const ExitForm = ({
     ).toFixed(5)} ${nativeCurrencySymbol(activeChain)}`;
   };
 
-  if (!yeeter) return;
+  const form = useForm({
+    onSubmit: async () => {
+      console.log("modalid", modalid);
+      if (isEmbedded) {
+        // @ts-expect-error fix unknown
+        document.getElementById(modalid).close();
+        form.reset();
+      }
 
-  const showLoading = isSendTxPending || isConfirming;
-  const needsAuth = !ready || !authenticated;
+      handleSubmit();
+    },
+  });
+
+  if (!yeeter) return;
 
   return (
     <>
       <p
         onClick={() => {
           // @ts-expect-error fix unknown
-          document.getElementById("exit-form-modal").showModal();
+          document.getElementById(modalid).showModal();
           resetWrite();
           form.reset();
         }}
@@ -149,10 +101,7 @@ export const ExitForm = ({
       >
         Exit funds ⟶
       </p>
-      <dialog
-        id="exit-form-modal"
-        className="modal modal-bottom sm:modal-middle"
-      >
+      <dialog id={modalid} className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Exit funds</h3>
 

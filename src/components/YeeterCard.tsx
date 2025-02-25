@@ -96,6 +96,7 @@ export const YeeterCard = ({
               buttonClass="btn btn-neutral rounded-sm w-full"
               yeeterid={yeeterid}
               chainid={chainid}
+              modalid="yeet-card-modal"
             />
           )}
 

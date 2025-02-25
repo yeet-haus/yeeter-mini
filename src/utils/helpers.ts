@@ -1,3 +1,4 @@
+import { ConnectedWallet } from "@privy-io/react-auth";
 import { Chain, formatEther, formatUnits } from "viem";
 
 export const nowInSeconds = (): number => new Date().getTime() / 1000;
@@ -71,4 +72,16 @@ export const memberTokenBalanceShare = (
 
 export const nativeCurrencySymbol = (chain: Chain | undefined) => {
   return chain?.nativeCurrency.symbol || "ETH";
+};
+
+export const checkIfEmbeddedWalletIsConnected = ({
+  wallets,
+  address,
+}: {
+  wallets: ConnectedWallet[];
+  address: `0x${string}` | undefined;
+}): boolean => {
+  if (!address) return false;
+  const hasEmbedded = wallets.find((w) => w.connectorType === "embedded");
+  return Boolean(hasEmbedded) && hasEmbedded?.address === address;
 };
