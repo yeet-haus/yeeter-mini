@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useChainId } from "wagmi";
 import { usePrivy, useLogin, useWallets } from "@privy-io/react-auth";
-import { useSetActiveWallet } from "@privy-io/wagmi";
 
 import LoginIcon from "../assets/icons/login.svg";
 import { WAGMI_CHAIN_OBJS } from "../utils/constants";
