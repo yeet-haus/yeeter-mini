@@ -7,13 +7,30 @@ import { ClosedYeeter } from "../components/ClosedYeeter";
 import { YeetMetaDetails } from "../components/YeetMetaDetails";
 import { Timeline } from "../components/Timeline";
 import { YeetMessages } from "../components/YeetMessages";
+import { useEffect } from "react";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { useChainId } from "wagmi";
+import { fromHex, toHex } from "viem";
 
 export const Yeeter = () => {
+  const { ready, authenticated } = usePrivy();
+  const { wallets } = useWallets();
+  const chainId = useChainId();
+
   const { yeeterid, chainid } = useParams();
   const { yeeter, metadata, isLoading } = useYeeter({
     chainid,
     yeeterid,
   });
+
+  useEffect(() => {
+    const chainMatch = toHex(chainId) === chainid;
+    if (ready && authenticated && chainid && !chainMatch && wallets.length) {
+      const wallet = wallets[0];
+      const chainNumber = fromHex(chainid as `0x${string}`, "number");
+      wallet.switchChain(chainNumber);
+    }
+  }, [ready, authenticated, chainId, chainid, wallets]);
 
   if (!yeeterid || !chainid) return;
 

@@ -1,7 +1,7 @@
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 
 import { useYeetersForAddress } from "../hooks/useYeetersForAddress";
-import { useAccount, useChains, useSwitchChain } from "wagmi";
+import { useAccount, useChains } from "wagmi";
 import { DEFAULT_CHAIN_ID } from "../utils/constants";
 import { YeeterItem } from "../utils/types";
 import { AccountYeeterCard } from "./AccountYeeterCard";
@@ -14,7 +14,8 @@ export const AccountYeeters = () => {
   );
   const { ready, authenticated } = usePrivy();
   const { address } = useAccount();
-  const { switchChain } = useSwitchChain();
+  const { wallets } = useWallets();
+
   const chains = useChains();
   const { yeeters, isLoading } = useYeetersForAddress({
     chainid: toHex(activeChain),
@@ -31,7 +32,8 @@ export const AccountYeeters = () => {
         className="select select-sm select-primary w-44"
         onChange={(e) => {
           setActiveChain(Number(e.target.value));
-          switchChain({ chainId: Number(e.target.value) });
+          const wallet = wallets[0];
+          wallet.switchChain(Number(e.target.value));
         }}
         value={activeChain}
       >

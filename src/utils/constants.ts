@@ -51,6 +51,20 @@ export const HAUS_GRAPH_URL: KEYCHAIN = {
   }/subgraphs/id/7yh4eHJ4qpHEiLPAk9BXhL5YgYrTrRE6gWy8x4oHyAqW`,
 };
 
+export const HAUS_RPC_DEFAULTS: KEYCHAIN = {
+  "0x64": "https://rpc.gnosischain.com/",
+  "0xa": `https://opt-mainnet.g.alchemy.com/v2/${
+    import.meta.env.VITE_ALCHEMY_API_KEY
+  }`,
+  "0xa4b1": `https://arb-mainnet.g.alchemy.com/v2/${
+    import.meta.env.VITE_ALCHEMY_API_KEY
+  }`,
+  "0xaa36a7": "https://eth-sepolia.g.alchemy.com/v2/demo",
+  "0x2105": `https://base-mainnet.g.alchemy.com/v2/${
+    import.meta.env.VITE_ALCHEMY_API_KEY
+  }`,
+};
+
 export const EXPLORER_URL: KEYCHAIN = {
   "0x1": "https://etherscan.io",
   "0x64": "https://gnosisscan.io",

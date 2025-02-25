@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 import { useYeeter } from "../hooks/useYeeter";
 import { nativeCurrencySymbol, toWholeUnits } from "../utils/helpers";
-import { YeetModal } from "./YeetModal";
 import { formatShortDateTimeFromSeconds } from "../utils/dates";
 import { usePrivy } from "@privy-io/react-auth";
 import { LoginModalSwitch } from "./LoginModalSwitch";
 import { useChainId, useChains } from "wagmi";
+import { YeetTx } from "./YeetTx";
 
 export const YeeterCard = ({
   yeeterid,
@@ -92,7 +92,7 @@ export const YeeterCard = ({
             </button>
           </Link>
           {yeeter.isActive && authenticated && (
-            <YeetModal
+            <YeetTx
               buttonClass="btn btn-neutral rounded-sm w-full"
               yeeterid={yeeterid}
               chainid={chainid}
