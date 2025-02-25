@@ -23,15 +23,15 @@ export const About = () => {
             <ul className="list-disc px-5">
               <li>Project name (editable later)</li>
               <li>Description (editable later)</li>
-              <li>Fundraising goal (cannot be changed))</li>
+              <li>Fundraising goal in ETH (cannot be changed))</li>
               <li>Campaign duration (cannot be changed)</li>
             </ul>
-            <p>
-              And selecting your chain: Base, Optimism, Arbitrum, or Gnosis
-              Chain
-            </p>
+            <p>Select your chain: Base, Optimism, Arbitrum, or Gnosis Chain</p>
 
-            <p>This will deploy your project and campaign smart contracts.</p>
+            <p>
+              Execute the launch transaction that will deploy your project and
+              campaign smart contracts.
+            </p>
             <div className="w-full text-center">
               <Link to="/launch">
                 <button className="btn btn-accent btn-primary rounded-sm w-52">
@@ -180,8 +180,8 @@ export const About = () => {
                 conferences, or community meetups with transparent spending
               </li>
               <li>
-                <b>Micro-projects</b> Yes, even that beer run for your pizza
-                party can benefit from our trust-building tools!
+                <b>Micro-projects</b> Yes, even that beer run or pizza party can
+                benefit from our trust-building tools!
               </li>
             </ul>
           </div>
@@ -217,7 +217,7 @@ export const About = () => {
             </ul>
             <p className="font-bold">Wee Share the Success</p>
             <ul className="list-disc px-5 mb-2">
-              <li>Automated Reward distribution system for project funders</li>
+              <li>Automated reward distribution system for project funders</li>
             </ul>
             <p className="font-bold">Wee Connect Communities </p>
             <ul className="list-disc px-5 mb-2">

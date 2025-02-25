@@ -12,6 +12,7 @@ export const Account = () => {
       <h2 className="text-2xl text-primary">Account</h2>
 
       <Login />
+      <AccountDisplay />
 
       {!ready ||
         (!authenticated && (
@@ -20,8 +21,6 @@ export const Account = () => {
             <p>No problem. Create one with just an email.</p>
           </div>
         ))}
-
-      <AccountDisplay />
 
       <FundWallet />
 

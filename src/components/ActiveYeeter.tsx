@@ -3,7 +3,7 @@ import { useYeeter } from "../hooks/useYeeter";
 import { GoalProgress } from "./GoalProgress";
 import { LoginModalSwitch } from "./LoginModalSwitch";
 import { RaiseStats } from "./RaiseStats";
-import { YeetModal } from "./YeetModal";
+import { YeetTx } from "./YeetTx";
 
 export const ActiveYeeter = ({
   yeeterid,
@@ -25,7 +25,7 @@ export const ActiveYeeter = ({
       <GoalProgress yeeter={yeeter} />
       <RaiseStats yeeter={yeeter} />
       {authenticated && (
-        <YeetModal
+        <YeetTx
           buttonClass="btn btn-lg btn-outline btn-primary rounded-sm w-full my-5"
           yeeterid={yeeterid}
           chainid={chainid}

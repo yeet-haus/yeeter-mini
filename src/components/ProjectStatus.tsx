@@ -1,5 +1,5 @@
 import { useYeeter } from "../hooks/useYeeter";
-import { AddProjectMemberModal } from "./AddProjectMemberModal";
+import { AddMemberTx } from "./AddMemberTx";
 import { ExitForm } from "./ExitForm";
 import { RequestFundingModal } from "./RequestFundingModal";
 import { StatusUpdateModal } from "./StatusUpdateModal";
@@ -50,11 +50,7 @@ export const ProjectStatus = ({
             You're on the project team
           </div>
           <div className="text-lg font-bold">Project Team</div>
-          <AddProjectMemberModal
-            yeeterid={yeeterid}
-            chainid={chainid}
-            daoid={daoid}
-          />
+          <AddMemberTx yeeterid={yeeterid} chainid={chainid} daoid={daoid} />
         </>
       )}
 

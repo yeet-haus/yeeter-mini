@@ -1,6 +1,5 @@
+import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
-
-import { useYeeter } from "../hooks/useYeeter";
 import { EXPLORER_URL } from "../utils/constants";
 import {
   formatLootForAmount,
@@ -8,76 +7,51 @@ import {
   formatMinContribution,
 } from "../utils/yeetDataHelpers";
 import { FieldInfo } from "./FieldInfo";
-import { useEffect, useState } from "react";
 import { toBaseUnits } from "../utils/units";
-import {
-  useChainId,
-  useChains,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from "wagmi";
-import { useQueryClient } from "@tanstack/react-query";
-
-import yeeterAbi from "../utils/tx-prepper/abi/yeeterShaman.json";
-import { usePrivy } from "@privy-io/react-auth";
+import { useAccount, useBalance, useChainId, useChains } from "wagmi";
 import { FundWalletSwitch } from "./FundWalletSwitch";
 import { nativeCurrencySymbol } from "../utils/helpers";
+import { YeeterItem } from "../utils/types";
 
-export const YeetModal = ({
-  buttonClass,
-  yeeterid,
-  chainid,
-}: {
-  buttonClass: string;
-  yeeterid: string;
+type YeetModalProps = {
+  yeeter: YeeterItem;
+  isEmbedded: boolean;
+  isConfirmed: boolean;
+  showLoading: boolean;
+  needsAuth: boolean;
+  isError: boolean;
+  hash?: string;
   chainid: string;
-}) => {
-  const { yeeter } = useYeeter({
-    chainid,
-    yeeterid,
-  });
-  const { ready, authenticated } = usePrivy();
-  const queryClient = useQueryClient();
+  buttonClass: string;
+  handleSubmit: (values: Record<string, string>) => void;
+  resetWrite: () => void;
+};
+
+const modalid = "yeet-modal";
+
+export const YeetFormModal = ({
+  isEmbedded,
+  yeeter,
+  isConfirmed,
+  showLoading,
+  hash,
+  needsAuth,
+  chainid,
+  isError,
+  buttonClass,
+  handleSubmit,
+  resetWrite,
+}: YeetModalProps) => {
   const chainId = useChainId();
   const chains = useChains();
   const activeChain = chains.find((c) => c.id === chainId);
+  const { address } = useAccount();
+  const { data } = useBalance({ address });
 
   const [fieldMessages, setFieldMessages] = useState<Record<string, string>>({
     amount: "",
   });
   const [submittedAmount, setSubmittedAmount] = useState<string>("0");
-
-  const {
-    writeContract,
-    data: hash,
-    isError,
-    isPending: isSendTxPending,
-  } = useWriteContract();
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash,
-    });
-
-  useEffect(() => {
-    const reset = async () => {
-      queryClient.refetchQueries({
-        queryKey: ["yeeter", { chainid, yeeterid }],
-      });
-
-      queryClient.refetchQueries({
-        queryKey: ["yeets", { yeeterid }],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["yeeters", { chainid }],
-      });
-    };
-    if (isConfirmed) {
-      console.log("INVALIDATING/REFETCH");
-      reset();
-    }
-  }, [isConfirmed, queryClient, yeeterid, chainid]);
 
   const form = useForm({
     defaultValues: {
@@ -85,36 +59,31 @@ export const YeetModal = ({
       message: "",
     },
     onSubmit: async ({ value }) => {
-      if (!yeeter) return;
+      if (isEmbedded) {
+        // @ts-expect-error fix unknown
+        document.getElementById(modalid).close();
+      }
 
-      console.log("prep yeet", value);
       setSubmittedAmount(toBaseUnits(value.amount));
 
-      writeContract({
-        address: yeeter.id as `0x${string}`,
-        abi: yeeterAbi,
-        functionName: "contributeEth",
-        value: BigInt(toBaseUnits(value.amount)),
-        args: [value.message],
-      });
+      handleSubmit(value);
     },
   });
-
-  if (!yeeter) return;
-
-  const showLoading = isSendTxPending || isConfirming;
-  const needsAuth = !ready || !authenticated;
 
   return (
     <>
       <button
         className={buttonClass}
-        // @ts-expect-error fix unknown
-        onClick={() => document.getElementById("yeet-modal").showModal()}
+        onClick={() => {
+          // @ts-expect-error fix unknown
+          document.getElementById(modalid).showModal();
+          resetWrite();
+          form.reset();
+        }}
       >
         Contribute
       </button>
-      <dialog id="yeet-modal" className="modal modal-bottom sm:modal-middle">
+      <dialog id={modalid} className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
@@ -133,10 +102,13 @@ export const YeetModal = ({
           )}
 
           {isConfirmed && (
-            <div className="text-lg font-bold mt-5">
-              You got {formatLootForAmount(yeeter, submittedAmount)} loot
-              tokens!
-            </div>
+            <>
+              <h4 className="text-xl text-primary">Success!</h4>
+              <div className="text-lg font-bold mt-5">
+                You got {formatLootForAmount(yeeter, submittedAmount)} loot
+                tokens!
+              </div>
+            </>
           )}
           <div className="divider divider-secondary"></div>
 
@@ -153,8 +125,14 @@ export const YeetModal = ({
                 validators={{
                   onChange: ({ value }) => {
                     if (!value) return "Required";
-                    if (toBaseUnits(value) < yeeter.minTribute)
+                    if (
+                      Number(toBaseUnits(value)) < Number(yeeter.minTribute)
+                    ) {
                       return `${formatMinContribution(yeeter)} minimum`;
+                    }
+                    if (Number(toBaseUnits(value)) > Number(data?.value)) {
+                      return "Exceeds account balance";
+                    }
                     return undefined;
                   },
                 }}

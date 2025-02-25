@@ -158,10 +158,6 @@ const assembleShamanParams = ({
   const feeRecipients = DEFAULT_YEETER_VALUES.feeRecipients;
   const feeAmounts = DEFAULT_YEETER_VALUES.feeAmounts;
 
-  console.log("yeeterSingleton", yeeterSingleton);
-
-  console.log("isNumberish(multiplier)", isNumberish(multiplier));
-
   if (
     !isNumberish(startTime) ||
     !isNumberish(endTime) ||
