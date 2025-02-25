@@ -1,0 +1,122 @@
+import { useEffect, useState } from "react";
+
+import { useYeeter } from "../hooks/useYeeter";
+
+import {
+  useAccount,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
+import { useQueryClient } from "@tanstack/react-query";
+
+import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { prepareTX } from "../utils/tx-prepper/tx-prepper";
+import { TX } from "../utils/tx-prepper/tx";
+import { useDao } from "../hooks/useDao";
+import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
+import { AddMemberFormModal } from "./AddMemberFormModal";
+
+export const AddMemberTx = ({
+  yeeterid,
+  chainid,
+  daoid,
+}: {
+  yeeterid: string;
+  chainid: string;
+  daoid: string;
+}) => {
+  const { yeeter } = useYeeter({
+    chainid,
+    yeeterid,
+  });
+  const { dao } = useDao({
+    chainid,
+    daoid,
+  });
+  const { ready, authenticated } = usePrivy();
+  const { address } = useAccount();
+  const queryClient = useQueryClient();
+  const { wallets, ready: walletsReady } = useWallets();
+  const [isEmbedded, setIsEmbedded] = useState<boolean>(false);
+
+  const {
+    writeContract,
+    data: hash,
+    isError,
+    isPending: isSendTxPending,
+    reset: resetWrite,
+  } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
+
+  const handleSubmit = async (values: Record<string, string>) => {
+    if (!yeeter || !dao || !address) return;
+
+    const tx = TX.ISSUE_SHARES;
+
+    const wholeState = {
+      formValues: {
+        ...values,
+      },
+      senderAddress: address,
+      daoId: daoid,
+      localABIs: {},
+    };
+
+    const txPrep = await prepareTX({
+      tx,
+      chainId: chainid as ValidNetwork,
+      safeId: dao.safeAddress,
+      appState: wholeState,
+      argCallbackRecord: {},
+      localABIs: {},
+    });
+
+    console.log("txPrep", txPrep);
+    if (!txPrep) return;
+
+    writeContract(txPrep);
+  };
+
+  useEffect(() => {
+    if (walletsReady && authenticated) {
+      const isEmbedded = wallets.find((w) => w.connectorType === "embedded");
+      setIsEmbedded(Boolean(isEmbedded));
+    }
+  }, [walletsReady, authenticated, wallets]);
+
+  useEffect(() => {
+    const reset = async () => {
+      queryClient.refetchQueries({
+        queryKey: ["yeeter", { chainid, yeeterid }],
+      });
+    };
+    if (isConfirmed) {
+      console.log("INVALIDATING/REFETCH");
+      reset();
+    }
+  }, [isConfirmed, queryClient, yeeterid, chainid]);
+
+  if (!yeeter) return;
+
+  return (
+    <>
+      <AddMemberFormModal
+        yeeter={yeeter}
+        daoid={daoid}
+        isEmbedded={isEmbedded}
+        isConfirmed={isConfirmed}
+        showLoading={isSendTxPending || isConfirming}
+        needsAuth={!ready || !authenticated}
+        chainid={chainid}
+        isError={isError}
+        hash={hash}
+        handleSubmit={handleSubmit}
+        resetWrite={resetWrite}
+      />
+    </>
+  );
+};

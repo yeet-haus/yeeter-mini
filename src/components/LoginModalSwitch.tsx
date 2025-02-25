@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-import { usePrivy, useLogin } from "@privy-io/react-auth";
-import { useChainId, useSwitchChain } from "wagmi";
+import { useChainId } from "wagmi";
+import { usePrivy, useLogin, useWallets } from "@privy-io/react-auth";
+import { useSetActiveWallet } from "@privy-io/wagmi";
 
 import LoginIcon from "../assets/icons/login.svg";
 import { WAGMI_CHAIN_OBJS } from "../utils/constants";
@@ -15,8 +16,8 @@ export const LoginModalSwitch = ({
   buttonLabel: string;
 }) => {
   const { ready, authenticated } = usePrivy();
+  const { wallets } = useWallets();
   const chainId = useChainId();
-  const { switchChain } = useSwitchChain();
   const { login } = useLogin();
 
   useEffect(() => {
@@ -25,10 +26,10 @@ export const LoginModalSwitch = ({
       authenticated &&
       chainId !== WAGMI_CHAIN_OBJS[targetChainId].id
     ) {
-      console.log("swiiiiitch");
-      switchChain({ chainId: WAGMI_CHAIN_OBJS[targetChainId].id });
+      const wallet = wallets[0];
+      wallet.switchChain(WAGMI_CHAIN_OBJS[targetChainId].id);
     }
-  }, [chainId, targetChainId, ready, authenticated, switchChain]);
+  }, [chainId, targetChainId, ready, authenticated, wallets]);
 
   const handleLogin = () => {
     login();

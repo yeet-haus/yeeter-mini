@@ -1,13 +1,33 @@
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useEffect, useLayoutEffect, useRef } from "react";
 
 import { Header } from "./Header";
 import { APP_THEME } from "../utils/content";
 import { Footer } from "./Footer";
 import { useLocation } from "react-router-dom";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { useSetActiveWallet } from "@privy-io/wagmi";
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const divRef = useRef(null);
   const location = useLocation();
+  const { ready, authenticated } = usePrivy();
+  const { wallets, ready: walletsReady } = useWallets();
+  const { setActiveWallet } = useSetActiveWallet();
+
+  useEffect(() => {
+    if (ready && authenticated && wallets.length > 0 && walletsReady) {
+      const isEmbedded = wallets.find((w) => w.connectorType === "embedded");
+
+      if (isEmbedded) {
+        console.log("switching active", isEmbedded);
+        setActiveWallet(isEmbedded);
+      } else {
+        console.log("setting injected", wallets[0]);
+        setActiveWallet(wallets[0]);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, authenticated, wallets, walletsReady]);
 
   useLayoutEffect(() => {
     scrollToTop();

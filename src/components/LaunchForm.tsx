@@ -12,14 +12,13 @@ import { toBaseUnits } from "../utils/units";
 import {
   useAccount,
   useChains,
-  useSwitchChain,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 import { useChainId } from "wagmi";
 import { toHex } from "viem";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 import yeeterSummonerAbi from "../utils/tx-prepper/abi/yeeterSummoner.json";
 import { assembleYeeterSummonerArgs } from "../utils/summonTx";
 import { nativeCurrencySymbol, nowInSeconds } from "../utils/helpers";
@@ -32,7 +31,7 @@ export const LaunchForm = () => {
   const { address } = useAccount();
 
   const queryClient = useQueryClient();
-  const { switchChain } = useSwitchChain();
+  const { wallets } = useWallets();
   const chainId = useChainId();
   const chains = useChains();
   const chainid = toHex(chainId);
@@ -41,6 +40,7 @@ export const LaunchForm = () => {
     writeContract,
     data: hash,
     isError,
+    error,
     isPending: isSendTxPending,
   } = useWriteContract();
 
@@ -71,7 +71,6 @@ export const LaunchForm = () => {
       duration: "0",
     },
     onSubmit: async ({ value }) => {
-      console.log("value", value);
       const now = nowInSeconds();
 
       const args = {
@@ -94,6 +93,8 @@ export const LaunchForm = () => {
         },
       };
 
+      console.log("args", args);
+
       const summonArgs = assembleYeeterSummonerArgs(args);
 
       console.log("summonArgs", summonArgs);
@@ -108,9 +109,6 @@ export const LaunchForm = () => {
       });
     },
   });
-
-  // if (!ready || !authenticated) return;
-  // todo connect message
 
   const showLoading = isSendTxPending || isConfirming;
   const needsAuth = !ready || !authenticated;
@@ -304,7 +302,8 @@ export const LaunchForm = () => {
                 className="select select-sm select-accent"
                 defaultValue={chainId}
                 onChange={(e) => {
-                  switchChain({ chainId: Number(e.target.value) });
+                  const wallet = wallets[0];
+                  wallet.switchChain(Number(e.target.value));
                 }}
               >
                 <option disabled>Select Chain</option>

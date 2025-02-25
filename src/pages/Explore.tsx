@@ -3,11 +3,13 @@ import { YeeterCard } from "../components/YeeterCard";
 import { useYeeters } from "../hooks/useYeeters";
 import { DEFAULT_CHAIN_ID } from "../utils/constants";
 import { YeeterItem } from "../utils/types";
-import { useChains, useSwitchChain } from "wagmi";
+import { useChains } from "wagmi";
 import { fromHex, toHex } from "viem";
+import { useWallets } from "@privy-io/react-auth";
 
 export const Explore = () => {
-  const { switchChain } = useSwitchChain();
+  const { wallets } = useWallets();
+  const chains = useChains();
 
   const [listType, setListType] = useState("open");
   const [activeChain, setActiveChain] = useState(
@@ -19,8 +21,6 @@ export const Explore = () => {
     filter: listType,
   });
 
-  const chains = useChains();
-
   return (
     <div className="flex flex-col justify-center items-center gap-1">
       <h2 className="text-2xl text-primary">Explore and Contribute</h2>
@@ -29,7 +29,8 @@ export const Explore = () => {
         className="select select-sm select-ghost"
         onChange={(e) => {
           setActiveChain(Number(e.target.value));
-          switchChain({ chainId: Number(e.target.value) });
+          const wallet = wallets[0];
+          wallet.switchChain(Number(e.target.value));
         }}
         value={activeChain}
       >

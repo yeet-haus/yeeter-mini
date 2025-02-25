@@ -1,62 +1,47 @@
-import { useEffect } from "react";
 import { useForm } from "@tanstack/react-form";
 
-import { useYeeter } from "../hooks/useYeeter";
 import { EXPLORER_URL } from "../utils/constants";
 
 import { FieldInfo } from "./FieldInfo";
-import {
-  useAccount,
-  useChainId,
-  useChains,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from "wagmi";
-import { useQueryClient } from "@tanstack/react-query";
-
-import { usePrivy } from "@privy-io/react-auth";
-import { prepareTX } from "../utils/tx-prepper/tx-prepper";
-import { TX } from "../utils/tx-prepper/tx";
-import { useDao } from "../hooks/useDao";
-import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
+import { useChainId, useChains } from "wagmi";
 import { isEthAddress } from "../utils/tx-prepper/typeguards";
+import { YeeterItem } from "../utils/types";
+import { useEffect } from "react";
 
-export const AddProjectMemberModal = ({
-  yeeterid,
-  chainid,
-  daoid,
-}: {
-  yeeterid: string;
+type MemberModalProps = {
+  yeeter: YeeterItem;
+  isEmbedded: boolean;
+  isConfirmed: boolean;
+  showLoading: boolean;
+  needsAuth: boolean;
+  isError: boolean;
+  hash?: string;
   chainid: string;
   daoid: string;
-}) => {
-  const { yeeter } = useYeeter({
-    chainid,
-    yeeterid,
-  });
-  const { dao } = useDao({
-    chainid,
-    daoid,
-  });
-  const { ready, authenticated } = usePrivy();
-  const { address } = useAccount();
-  const queryClient = useQueryClient();
+  handleSubmit: (values: Record<string, string>) => void;
+  resetWrite: () => void;
+};
+
+const modalid = "add-member-modal";
+
+export const AddMemberFormModal = ({
+  isEmbedded,
+  yeeter,
+  isConfirmed,
+  showLoading,
+  hash,
+  needsAuth,
+  chainid,
+  daoid,
+  isError,
+  handleSubmit,
+  resetWrite,
+}: MemberModalProps) => {
   const chainId = useChainId();
   const chains = useChains();
   const activeChain = chains.find((c) => c.id === chainId);
 
-  const {
-    writeContract,
-    data: hash,
-    isError,
-    isPending: isSendTxPending,
-    reset: resetWrite,
-  } = useWriteContract();
-
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash,
-    });
+  useEffect(() => {}, [isConfirmed]);
 
   const form = useForm({
     defaultValues: {
@@ -64,59 +49,24 @@ export const AddProjectMemberModal = ({
       recipient: "",
     },
     onSubmit: async ({ value }) => {
-      if (!yeeter || !dao || !address) return;
+      if (isEmbedded) {
+        // @ts-expect-error fix unknown
+        document.getElementById(modalid).close();
+        form.reset();
+      }
 
-      const tx = TX.ISSUE_SHARES;
-
-      const wholeState = {
-        formValues: {
-          ...value,
-        },
-        senderAddress: address,
-        daoId: daoid,
-        localABIs: {},
-      };
-
-      const txPrep = await prepareTX({
-        tx,
-        chainId: chainid as ValidNetwork,
-        safeId: dao.safeAddress,
-        appState: wholeState,
-        argCallbackRecord: {},
-        localABIs: {},
-      });
-
-      console.log("txPrep", txPrep);
-      if (!txPrep) return;
-
-      writeContract(txPrep);
+      handleSubmit(value);
     },
   });
 
-  useEffect(() => {
-    const reset = async () => {
-      queryClient.refetchQueries({
-        queryKey: ["yeeter", { chainid, yeeterid }],
-      });
-      form.reset();
-    };
-    if (isConfirmed) {
-      console.log("INVALIDATING/REFETCH");
-      reset();
-    }
-  }, [isConfirmed, queryClient, yeeterid, chainid, form]);
-
   if (!yeeter) return;
-
-  const showLoading = isSendTxPending || isConfirming;
-  const needsAuth = !ready || !authenticated;
 
   return (
     <>
       <p
         onClick={() => {
           // @ts-expect-error fix unknown
-          document.getElementById("member-form-modal").showModal();
+          document.getElementById(modalid).showModal();
           resetWrite();
           form.reset();
         }}
@@ -124,10 +74,7 @@ export const AddProjectMemberModal = ({
       >
         Add a team member ⟶
       </p>
-      <dialog
-        id="member-form-modal"
-        className="modal modal-bottom sm:modal-middle"
-      >
+      <dialog id={modalid} className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Add a project team member</h3>
           <p className="text-sm">
