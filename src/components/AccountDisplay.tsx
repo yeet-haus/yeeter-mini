@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useSetActiveWallet } from "@privy-io/wagmi";
 
 export const AccountDisplay = () => {
-  const { ready, authenticated } = usePrivy();
+  const { ready, authenticated, exportWallet } = usePrivy();
   const { address } = useAccount();
   const { wallets, ready: walletsReady } = useWallets();
   const { setActiveWallet } = useSetActiveWallet();
@@ -71,7 +71,7 @@ export const AccountDisplay = () => {
         </div>
       )}
 
-      {walletsReady && wallets.length > 1 && (
+      {walletsReady && wallets.length > 0 && (
         <div className="flex flex-col gap-1 justify-center items-center w-full">
           <div className="divider divider-primary">
             <p className="text-xs font-bold">Connected Accounts</p>
@@ -80,24 +80,43 @@ export const AccountDisplay = () => {
           {wallets.map((wallet) => {
             return (
               <div key={wallet.address} className="mb-3">
-                <div className="flex flex-row gap-1  items-center">
-                  <p className="text-sm font-bold mr-2">{wallet.meta.name} </p>
-                  <p className="text-sm">{truncateAddress(wallet.address)} </p>
-                  <img
-                    src={CopyIcon}
-                    width="14"
-                    className="hover:cursor-pointer"
-                    onClick={() => handleCopy(wallet.address)}
-                  />
-                  <button
-                    className="btn btn-xs btn-accent ml-2"
-                    disabled={address == wallet.address}
-                    onClick={() => {
-                      setActiveWallet(wallet);
-                    }}
-                  >
-                    {address == wallet.address ? "Is Active" : "Make Active"}
-                  </button>
+                <div className="flex flex-col items-center">
+                  <div>
+                    <div className="flex flex-row gap-1  items-center">
+                      <p className="text-sm font-bold mr-2">
+                        {wallet.meta.name}{" "}
+                      </p>
+                      <p className="text-sm">
+                        {truncateAddress(wallet.address)}{" "}
+                      </p>
+                      <img
+                        src={CopyIcon}
+                        width="14"
+                        className="hover:cursor-pointer"
+                        onClick={() => handleCopy(wallet.address)}
+                      />
+                    </div>
+                    <button
+                      className="btn btn-xs btn-accent ml-2"
+                      disabled={address == wallet.address}
+                      onClick={() => {
+                        setActiveWallet(wallet);
+                      }}
+                    >
+                      {address == wallet.address ? "Is Active" : "Make Active"}
+                    </button>
+                    {wallet.connectorType === "embedded" &&
+                      wallet.walletClientType === "privy" && (
+                        <button
+                          className="btn btn-xs btn-neutral ml-2"
+                          onClick={() => {
+                            exportWallet();
+                          }}
+                        >
+                          Export Private Key
+                        </button>
+                      )}
+                  </div>
                 </div>
               </div>
             );

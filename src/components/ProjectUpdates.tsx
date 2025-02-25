@@ -6,6 +6,7 @@ import { StatusRecord } from "../utils/types";
 import { ProposalUpdateCard } from "./ProposalUpdateCard";
 import { StatusUpdateCard } from "./StatusUpdateCard";
 import { StatusUpdateModal } from "./StatusUpdateModal";
+import { StatusUpdateTx } from "./StatusUpdateTx";
 
 export const ProjectUpdates = ({
   chainid,
@@ -57,11 +58,11 @@ export const ProjectUpdates = ({
           team here.
         </div>
         {onProjectTeam && (
-          <StatusUpdateModal
+          <StatusUpdateTx
             yeeterid={yeeterid}
             chainid={chainid}
             daoid={daoid}
-            modalId="status-updates-form-modal"
+            modalid="status-updates-form-modal"
           />
         )}
 
