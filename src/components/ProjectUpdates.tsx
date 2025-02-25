@@ -5,7 +5,6 @@ import { nowInSeconds } from "../utils/helpers";
 import { StatusRecord } from "../utils/types";
 import { ProposalUpdateCard } from "./ProposalUpdateCard";
 import { StatusUpdateCard } from "./StatusUpdateCard";
-import { StatusUpdateModal } from "./StatusUpdateModal";
 import { StatusUpdateTx } from "./StatusUpdateTx";
 
 export const ProjectUpdates = ({
