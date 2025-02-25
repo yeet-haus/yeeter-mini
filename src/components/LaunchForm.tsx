@@ -40,7 +40,6 @@ export const LaunchForm = () => {
     writeContract,
     data: hash,
     isError,
-    error,
     isPending: isSendTxPending,
   } = useWriteContract();
 
