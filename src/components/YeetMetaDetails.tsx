@@ -65,12 +65,12 @@ export const YeetMetaDetails = ({
 
   return (
     <>
-      <div role="tablist" className="tabs tabs-lifted w-full">
+      <div role="tablist" className="tabs tabs-bordered md:w-full">
         <input
           type="radio"
           name="my_tabs_2"
           role="tab"
-          className="tab text-lg"
+          className="tab"
           aria-label="Status"
           defaultChecked
         />
@@ -78,20 +78,63 @@ export const YeetMetaDetails = ({
           role="tabpanel"
           className="tab-content bg-base-100 border-base-300 rounded-box p-6 text-left break-words"
         >
-          <ProjectStatus
+          {/* <ProjectStatus
             chainid={chainid}
             yeeterid={yeeterid}
             daoid={daoid}
             isFunder={isFunder}
             onProjectTeam={onProjectTeam}
-          />
+          /> */}
+          <p>status and updates</p>
         </div>
 
         <input
           type="radio"
           name="my_tabs_2"
           role="tab"
-          className="tab text-lg"
+          className="tab"
+          aria-label="Team"
+        />
+        <div
+          role="tabpanel"
+          className="tab-content bg-base-100 border-base-300 rounded-box p-6 text-left break-words"
+        >
+          {/* <ProjectStatus
+            chainid={chainid}
+            yeeterid={yeeterid}
+            daoid={daoid}
+            isFunder={isFunder}
+            onProjectTeam={onProjectTeam}
+          /> */}
+          <p>team list and actions</p>
+        </div>
+
+        <input
+          type="radio"
+          name="my_tabs_2"
+          role="tab"
+          className="tab"
+          aria-label="Funders"
+        />
+        <div
+          role="tabpanel"
+          className="tab-content bg-base-100 border-base-300 rounded-box p-6 text-left break-words"
+        >
+          {/* <ProjectStatus
+            chainid={chainid}
+            yeeterid={yeeterid}
+            daoid={daoid}
+            isFunder={isFunder}
+            onProjectTeam={onProjectTeam}
+          /> */}
+          <p>funder actions </p>
+        </div>
+
+        {/* <input
+          type="radio"
+          name="my_tabs_2"
+          role="tab"
+          className="tab"
           aria-label="Updates"
         />
         <div
@@ -107,13 +150,13 @@ export const YeetMetaDetails = ({
               onProjectTeam={onProjectTeam}
             />
           </div>
-        </div>
+        </div> */}
 
         <input
           type="radio"
           name="my_tabs_2"
           role="tab"
-          className="tab text-lg"
+          className="tab"
           aria-label="About"
         />
         <div
@@ -155,7 +198,7 @@ export const YeetMetaDetails = ({
           type="radio"
           name="my_tabs_2"
           role="tab"
-          className="tab text-lg"
+          className="tab"
           aria-label="Links"
         />
         <div
