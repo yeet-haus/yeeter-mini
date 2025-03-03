@@ -46,7 +46,7 @@ export const getTokenIndexerUrl = ({
   return url;
 };
 
-const SEQUENCE_API: KEYCAIN = {
+const SEQUENCE_API: KEYCHAIN = {
   "0x1": "https://mainnet-indexer.sequence.app",
   "0x64": "https://gnosis-indexer.sequence.app",
   "0x89": "https://polygon-indexer.sequence.app",
