@@ -1,9 +1,9 @@
 import { useDaoMembers } from "../hooks/useDaoMembers";
 import { useYeeter } from "../hooks/useYeeter";
 import { AddMemberTx } from "./AddMemberTx";
+import { ProjectAddressListItem } from "./ProjectAddressListItem";
 import { RequestFundingTx } from "./RequestFundingTx";
 import { StatusUpdateTx } from "./StatusUpdateTx";
-import { TeamMemberItem } from "./TeamMemberItem";
 
 export const ProjectTeam = ({
   chainid,
@@ -78,7 +78,9 @@ export const ProjectTeam = ({
       <div>
         {members &&
           members.map((member) => {
-            return <TeamMemberItem memberAddress={member.memberAddress} />;
+            return (
+              <ProjectAddressListItem memberAddress={member.memberAddress} />
+            );
           })}
       </div>
     </div>

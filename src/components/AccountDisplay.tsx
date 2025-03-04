@@ -18,8 +18,6 @@ export const AccountDisplay = () => {
   const onlyPrivyDisconnected =
     wallets.length && address && (!ready || !authenticated);
 
-  console.log("wallets", wallets);
-
   const handleCopy = (textToCopy: string) => {
     copyToClipboard(textToCopy).then((success) => {
       if (success) {

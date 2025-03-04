@@ -1,5 +1,7 @@
+import { useDaoExits } from "../hooks/useDaoExits";
 import { useYeeter } from "../hooks/useYeeter";
 import { ExitTx } from "./ExitTx";
+import { ProjectAddressListItem } from "./ProjectAddressListItem";
 
 export const ProjectFunders = ({
   chainid,
@@ -15,6 +17,10 @@ export const ProjectFunders = ({
   const { yeeter } = useYeeter({
     chainid,
     yeeterid,
+  });
+  const { exits } = useDaoExits({
+    chainid,
+    daoid,
   });
   if (!yeeter || !chainid) return;
 
@@ -75,6 +81,19 @@ export const ProjectFunders = ({
         daoid={daoid}
         modalid="exit-goal-modal"
       />
+
+      <div className="text-base font-bold mt-3">Exits</div>
+      <div>
+        {exits &&
+          exits.map((exit) => {
+            return (
+              <ProjectAddressListItem
+                memberAddress={exit.member.memberAddress}
+                exit={exit}
+              />
+            );
+          })}
+      </div>
     </div>
   );
 };
