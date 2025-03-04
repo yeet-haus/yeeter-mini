@@ -12,6 +12,7 @@ import FarcastleIcon from "../assets/gate-large.svg";
 import { usePrivy } from "@privy-io/react-auth";
 import { ProjectTeam } from "./ProjectTeam";
 import { ProjectFunders } from "./ProjectFunders";
+import { ProjectContracts } from "./ProjectContracts";
 
 type LinkObj = {
   url: string;
@@ -177,8 +178,9 @@ export const YeetMetaDetails = ({
         />
         <div
           role="tabpanel"
-          className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+          className="tab-content bg-base-100 border-base-300 rounded-box p-6 text-left"
         >
+          <div className="font-bold text-xl mb-2">Project Links</div>
           <div className="flex flex-col gap-3 text-left break-words">
             {chainid !== "0xaa36a7" && (
               <div className="flex flex-row gap-2 items-center">
@@ -238,6 +240,12 @@ export const YeetMetaDetails = ({
                 />
               </div>
             )}
+
+            <ProjectContracts
+              chainid={chainid}
+              daoid={daoid}
+              yeeterid={yeeterid}
+            />
           </div>
         </div>
       </div>
