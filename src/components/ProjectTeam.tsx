@@ -30,8 +30,6 @@ export const ProjectTeam = ({
   const canMakeFundingProposal =
     goalReached || (!goalReached && yeeter.isEnded);
 
-  console.log("members", members);
-
   return (
     <div className="flex flex-col gap-3">
       <div className="text-lg font-bold">Project Team</div>

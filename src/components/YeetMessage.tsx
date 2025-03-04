@@ -24,7 +24,7 @@ export const YeetMessage = ({ yeet }: { yeet: YeetsItem }) => {
   return (
     <div className="chat chat-start">
       <ContributorProfile name={name} />
-      <div className="chat-bubble chat-bubble-accent text-left">
+      <div className="chat-bubble chat-bubble-accent text-left w-full">
         <p>{yeet.message || "yeet"}</p>
         <div className="flex flex-wrap items-center justify-between gap-5 mt-1">
           <p className="text-base font-bold">{`${formatValueTo({
