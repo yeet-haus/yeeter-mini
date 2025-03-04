@@ -56,14 +56,6 @@ export const ProjectUpdates = ({
           Funders can find status updates and funding reuests from the project
           team here.
         </div>
-        {onProjectTeam && (
-          <StatusUpdateTx
-            yeeterid={yeeterid}
-            chainid={chainid}
-            daoid={daoid}
-            modalid="status-updates-form-modal"
-          />
-        )}
 
         <div className="font-bold text-xl mt-4">Status updates</div>
         {records &&
@@ -72,6 +64,16 @@ export const ProjectUpdates = ({
           })}
 
         {!records || (records.length < 1 && <p>No updates</p>)}
+
+        {onProjectTeam && (
+          <StatusUpdateTx
+            yeeterid={yeeterid}
+            chainid={chainid}
+            daoid={daoid}
+            modalid="project-updates-status-form-modal"
+          />
+        )}
+
         <div className="font-bold text-xl mt-3">Funding requests</div>
         {passedOrActiveProps &&
           passedOrActiveProps.map((p) => {

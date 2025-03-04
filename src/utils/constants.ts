@@ -52,6 +52,9 @@ export const HAUS_GRAPH_URL: KEYCHAIN = {
 };
 
 export const HAUS_RPC_DEFAULTS: KEYCHAIN = {
+  "0x1": `https://eth-mainnet.g.alchemy.com/v2/${
+    import.meta.env.VITE_ALCHEMY_API_KEY
+  }`,
   "0x64": "https://rpc.gnosischain.com/",
   "0xa": `https://opt-mainnet.g.alchemy.com/v2/${
     import.meta.env.VITE_ALCHEMY_API_KEY

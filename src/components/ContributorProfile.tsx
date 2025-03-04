@@ -3,11 +3,12 @@ import { http, createConfig, useEnsAvatar } from "wagmi";
 import { mainnet } from "wagmi/chains";
 import { APP_THEME } from "../utils/content";
 import { GetEnsNameReturnType } from "wagmi/actions";
+import { HAUS_RPC_DEFAULTS } from "../utils/constants";
 
 const config = createConfig({
   chains: [mainnet],
   transports: {
-    [mainnet.id]: http(),
+    [mainnet.id]: http(HAUS_RPC_DEFAULTS["0x1"]),
   },
 });
 

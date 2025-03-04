@@ -93,15 +93,23 @@ export const AddMemberTx = ({
 
   useEffect(() => {
     const reset = async () => {
-      queryClient.refetchQueries({
-        queryKey: ["yeeter", { chainid, yeeterid }],
+      queryClient.invalidateQueries({
+        queryKey: ["get-yeeter", { chainid, yeeterid }],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["list-active-proposals", { chainid, daoid }],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["get-dao", { chainid, daoid }],
       });
     };
     if (isConfirmed) {
       console.log("INVALIDATING/REFETCH");
       reset();
     }
-  }, [isConfirmed, queryClient, yeeterid, chainid]);
+  }, [isConfirmed, queryClient, yeeterid, chainid, daoid]);
 
   if (!yeeter) return;
 

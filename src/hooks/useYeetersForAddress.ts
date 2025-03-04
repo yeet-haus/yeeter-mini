@@ -36,10 +36,7 @@ export const useYeetersForAddress = ({
   };
 
   const { data, ...rest } = useQuery({
-    queryKey: [
-      `get-yeeters-address-${chainid}-${address}`,
-      { chainid, address },
-    ],
+    queryKey: [`get-yeeters-address`, { chainid, address }],
     enabled: Boolean(chainid && address),
     queryFn: (): Promise<{
       yeets: YeetsWithYeeter[];

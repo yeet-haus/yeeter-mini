@@ -55,16 +55,16 @@ export const YeetTx = ({
 
   useEffect(() => {
     const reset = async () => {
-      queryClient.refetchQueries({
-        queryKey: ["yeeter", { chainid, yeeterid }],
-      });
-
-      queryClient.refetchQueries({
-        queryKey: ["yeets", { yeeterid }],
+      queryClient.invalidateQueries({
+        queryKey: ["get-yeeter", { chainid, yeeterid }],
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["yeeters", { chainid }],
+        queryKey: ["list-yeets", { yeeterid }],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["list-yeeters", { chainid }],
       });
     };
     if (isConfirmed) {
