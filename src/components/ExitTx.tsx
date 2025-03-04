@@ -99,7 +99,11 @@ export const ExitTx = ({
   useEffect(() => {
     const reset = async () => {
       queryClient.refetchQueries({
-        queryKey: ["yeeter", { chainid, yeeterid }],
+        queryKey: ["get-member", { chainid, yeeterid, address }],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["get-dao", { chainid, daoid }],
       });
     };
     if (isConfirmed) {

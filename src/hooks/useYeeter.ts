@@ -46,7 +46,7 @@ export const useYeeter = ({
   const hausGraphQLClient = new GraphQLClient(dhUrl);
 
   const { data, ...rest } = useQuery({
-    queryKey: [`get-yeeter-${chainid}-${yeeterid}`, { chainid, yeeterid }],
+    queryKey: [`get-yeeter`, { chainid, yeeterid }],
     enabled: Boolean(chainid && yeeterid),
     queryFn: async (): Promise<{
       yeeter: YeeterItem;

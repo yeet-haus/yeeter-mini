@@ -8,10 +8,10 @@ import { ProjectStatus } from "./ProjectStatus";
 import { useMember } from "../hooks/useMember";
 import { useAccount } from "wagmi";
 import { MetaFormModal } from "./MetaFormModal";
-import { ProjectUpdates } from "./ProjectUpdates";
-
 import FarcastleIcon from "../assets/gate-large.svg";
 import { usePrivy } from "@privy-io/react-auth";
+import { ProjectTeam } from "./ProjectTeam";
+import { ProjectFunders } from "./ProjectFunders";
 
 type LinkObj = {
   url: string;
@@ -65,12 +65,12 @@ export const YeetMetaDetails = ({
 
   return (
     <>
-      <div role="tablist" className="tabs tabs-lifted w-full">
+      <div role="tablist" className="tabs tabs-bordered md:w-full">
         <input
           type="radio"
           name="my_tabs_2"
           role="tab"
-          className="tab text-lg"
+          className="tab"
           aria-label="Status"
           defaultChecked
         />
@@ -91,29 +91,45 @@ export const YeetMetaDetails = ({
           type="radio"
           name="my_tabs_2"
           role="tab"
-          className="tab text-lg"
-          aria-label="Updates"
+          className="tab"
+          aria-label="Team"
         />
         <div
           role="tabpanel"
-          className="tab-content bg-base-100 border-base-300 rounded-box p-6"
+          className="tab-content bg-base-100 border-base-300 rounded-box p-6 text-left break-words"
         >
-          <div className="flex flex-col gap-4 text-left break-words">
-            <ProjectUpdates
-              chainid={chainid}
-              yeeterid={yeeterid}
-              daoid={daoid}
-              isFunder={isFunder}
-              onProjectTeam={onProjectTeam}
-            />
-          </div>
+          <ProjectTeam
+            chainid={chainid}
+            yeeterid={yeeterid}
+            daoid={daoid}
+            onProjectTeam={onProjectTeam}
+          />
         </div>
 
         <input
           type="radio"
           name="my_tabs_2"
           role="tab"
-          className="tab text-lg"
+          className="tab"
+          aria-label="Funders"
+        />
+        <div
+          role="tabpanel"
+          className="tab-content bg-base-100 border-base-300 rounded-box p-6 text-left break-words"
+        >
+          <ProjectFunders
+            chainid={chainid}
+            yeeterid={yeeterid}
+            daoid={daoid}
+            isFunder={isFunder}
+          />
+        </div>
+
+        <input
+          type="radio"
+          name="my_tabs_2"
+          role="tab"
+          className="tab"
           aria-label="About"
         />
         <div
@@ -146,6 +162,7 @@ export const YeetMetaDetails = ({
                 yeeterid={yeeterid}
                 chainid={chainid}
                 daoid={daoid}
+                modalid="about-meta-form"
               />
             )}
           </div>
@@ -155,7 +172,7 @@ export const YeetMetaDetails = ({
           type="radio"
           name="my_tabs_2"
           role="tab"
-          className="tab text-lg"
+          className="tab"
           aria-label="Links"
         />
         <div
@@ -210,6 +227,17 @@ export const YeetMetaDetails = ({
             >
               on Yeet.haus ⟶
             </a>
+
+            {onProjectTeam && (
+              <div className="mt-3">
+                <MetaFormModal
+                  yeeterid={yeeterid}
+                  chainid={chainid}
+                  daoid={daoid}
+                  modalid="links-meta-form"
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

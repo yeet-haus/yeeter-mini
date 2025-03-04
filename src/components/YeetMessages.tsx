@@ -15,6 +15,7 @@ export const YeetMessages = ({
 
   return (
     <div className="flex flex-col p-3 w-full border-accent text-xs rounded-sm">
+      <h4 className="text-primary text-xl">Yeets</h4>
       {yeets &&
         yeets?.map((yeet) => {
           return <YeetMessage yeet={yeet} key={yeet.id} />;

@@ -360,6 +360,26 @@ export const FIND_MEMBER = gql`
   }
 `;
 
+export const LIST_ALL_DAO_SHAREHOLDERS = gql`
+  query member(
+    $skip: Int!
+    $first: Int!
+    $orderBy: String!
+    $orderDirection: String!
+    $daoid: String!
+  ) {
+    members(
+      skip: $skip
+      first: $first
+      orderBy: $orderBy
+      orderDescription: $orderDescription,
+      where: { dao: $daoid, shares_gt: 0 }
+    ) {
+      ${memberFields}
+    }
+  }
+`;
+
 const daoFields = `
   id
   createdAt
@@ -476,6 +496,33 @@ export const LAST_RECORD = gql`
       where: { dao: $daoid, table: $table }
     ) {
       ${recordsFields}
+    }
+  }
+`;
+
+export const LIST_ALL_EXITS = gql`
+  query exits(
+    $skip: Int!
+    $first: Int!
+    $orderBy: String!
+    $orderDirection: String!
+    $daoid: String!
+  ) {
+    rageQuits(
+      skip: $skip
+      first: $first
+      orderBy: $orderBy
+      orderDescription: $orderDescription
+      where: { dao: $daoid }
+    ) {
+      id
+      createdAt
+      to
+      member {
+        memberAddress
+      }
+      loot
+      shares
     }
   }
 `;
