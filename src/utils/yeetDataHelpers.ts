@@ -43,7 +43,7 @@ export const calcYeetIsFull = (yeeter: YeeterItem) => {
 export const formatMinContribution = (yeeter: YeeterItem) => {
   return formatValueTo({
     value: fromWei(yeeter.minTribute),
-    decimals: 5,
+    decimals: 3,
     format: "number",
   });
 };

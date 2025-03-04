@@ -4,19 +4,22 @@ import { YeetsItem } from "../utils/types";
 import { ContributorProfile } from "./ContributorProfile";
 import { fromWei, truncateAddress } from "../utils/helpers";
 import { formatValueTo } from "../utils/units";
+import { HAUS_RPC_DEFAULTS } from "../utils/constants";
 
 const config = createConfig({
   chains: [mainnet],
   transports: {
-    [mainnet.id]: http(),
+    [mainnet.id]: http(HAUS_RPC_DEFAULTS["0x1"]),
   },
 });
 
 export const YeetMessage = ({ yeet }: { yeet: YeetsItem }) => {
-  const { data: name } = useEnsName({
+  const result = useEnsName({
     config,
     address: yeet.contributor as `0x${string}`,
   });
+
+  const name = result.data;
 
   return (
     <div className="chat chat-start">

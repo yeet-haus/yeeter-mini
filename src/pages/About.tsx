@@ -21,10 +21,10 @@ export const About = () => {
           <div className="collapse-content flex flex-col gap-3 text-sm text-left">
             <p>As easy as filling out just 4 fields:</p>
             <ul className="list-disc px-5">
-              <li>Project name (editable later)</li>
-              <li>Description (editable later)</li>
-              <li>Fundraising goal in ETH (cannot be changed))</li>
-              <li>Campaign duration (cannot be changed)</li>
+              <li>Project name</li>
+              <li>Description</li>
+              <li>Fundraising goal in ETH</li>
+              <li>Campaign duration</li>
             </ul>
             <p>Select your chain: Base, Optimism, Arbitrum, or Gnosis Chain</p>
 
@@ -206,13 +206,8 @@ export const About = () => {
             <p className="font-bold">Wee Frame It</p>
             <ul className="list-disc px-5 mb-2">
               <li>
-                {" "}
                 Warpcast frame implementation for seamless project discovery and
-                funding Enable direct contributions through social feeds
-              </li>
-              <li>
-                And selecting your chain: Base, Optimism, Arbitrum, or Gnosis
-                Chain
+                direct contributions through social feeds
               </li>
             </ul>
             <p className="font-bold">Wee Share the Success</p>

@@ -92,14 +92,14 @@ export const StatusUpdateTx = ({
   useEffect(() => {
     const reset = async () => {
       queryClient.refetchQueries({
-        queryKey: ["yeeter", { chainid, yeeterid }],
+        queryKey: ["list-records", { chainid, daoid }],
       });
     };
     if (isConfirmed) {
       console.log("INVALIDATING/REFETCH");
       reset();
     }
-  }, [isConfirmed, queryClient, yeeterid, chainid]);
+  }, [isConfirmed, queryClient, yeeterid, chainid, daoid]);
 
   if (!yeeter) return;
 

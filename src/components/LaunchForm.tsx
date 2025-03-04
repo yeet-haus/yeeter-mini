@@ -51,7 +51,7 @@ export const LaunchForm = () => {
   useEffect(() => {
     const reset = async () => {
       queryClient.invalidateQueries({
-        queryKey: ["yeeters", { chainid }],
+        queryKey: ["list-yeeters", { chainid }],
       });
     };
     if (isConfirmed) {

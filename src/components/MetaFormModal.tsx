@@ -14,10 +14,12 @@ export const MetaFormModal = ({
   yeeterid,
   chainid,
   daoid,
+  modalid,
 }: {
   yeeterid: string;
   chainid: string;
   daoid: string;
+  modalid: string;
 }) => {
   const { yeeter } = useYeeter({
     chainid,
@@ -86,15 +88,12 @@ export const MetaFormModal = ({
     <>
       <p
         // @ts-expect-error fix unknown
-        onClick={() => document.getElementById("meta-form-modal").showModal()}
+        onClick={() => document.getElementById(modalid).showModal()}
         className="underline text-primary"
       >
         Edit project details ⟶
       </p>
-      <dialog
-        id="meta-form-modal"
-        className="modal modal-bottom sm:modal-middle"
-      >
+      <dialog id={modalid} className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Coming soon</h3>
           <p>
