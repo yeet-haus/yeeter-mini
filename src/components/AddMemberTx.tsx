@@ -104,6 +104,10 @@ export const AddMemberTx = ({
       queryClient.invalidateQueries({
         queryKey: ["get-dao", { chainid, daoid }],
       });
+
+      queryClient.invalidateQueries({
+        queryKey: ["list-proposals", { chainid, daoid }],
+      });
     };
     if (isConfirmed) {
       console.log("INVALIDATING/REFETCH");

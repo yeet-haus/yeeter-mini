@@ -83,6 +83,17 @@ export const TX: Record<string, TXLego> = {
       nestInArray({ type: "static", value: NETWORK_TOKEN_ETH_ADDRESS }),
     ],
   },
+  VOTE: {
+    id: "VOTE",
+    contract: {
+      type: "static",
+      contractName: "Current DAO (Baal)",
+      abi: LOCAL_ABI.BAAL,
+      targetAddress: ".daoId",
+    },
+    method: "submitVote",
+    args: [".formValues.proposalid", ".formValues.approved"],
+  },
   POST_PROJECT_UPDATE: {
     id: "POST_PROJECT_UPDATE",
     contract: {

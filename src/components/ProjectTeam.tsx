@@ -77,7 +77,10 @@ export const ProjectTeam = ({
         {members &&
           members.map((member) => {
             return (
-              <ProjectAddressListItem memberAddress={member.memberAddress} />
+              <ProjectAddressListItem
+                memberAddress={member.memberAddress}
+                key={member.id}
+              />
             );
           })}
       </div>

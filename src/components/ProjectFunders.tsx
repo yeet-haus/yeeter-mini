@@ -90,6 +90,7 @@ export const ProjectFunders = ({
               <ProjectAddressListItem
                 memberAddress={exit.member.memberAddress}
                 exit={exit}
+                key={exit.id}
               />
             );
           })}
