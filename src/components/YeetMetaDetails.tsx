@@ -7,17 +7,12 @@ import { useMemo } from "react";
 import { ProjectStatus } from "./ProjectStatus";
 import { useMember } from "../hooks/useMember";
 import { useAccount } from "wagmi";
-import { MetaFormModal } from "./MetaFormModal";
 import FarcastleIcon from "../assets/gate-large.svg";
 import { usePrivy } from "@privy-io/react-auth";
 import { ProjectTeam } from "./ProjectTeam";
 import { ProjectFunders } from "./ProjectFunders";
 import { ProjectContracts } from "./ProjectContracts";
-
-type LinkObj = {
-  url: string;
-  label: string;
-};
+import { ProfileUpdateTx } from "./ProfileUpdateTx";
 
 const warpcastBaseUrl = `https://warpcast.com/~/compose?text=&embeds[]=https://frames.yeet.haus/yeeter`;
 
@@ -39,21 +34,6 @@ export const YeetMetaDetails = ({
     chainid,
     memberaddress: authenticated ? address : undefined,
   });
-  const linkList = useMemo(() => {
-    if (!metadata || !metadata.links) return;
-
-    const validLinks: LinkObj[] = [];
-
-    return metadata.links.reduce(
-      (links: LinkObj[], link: string): LinkObj[] => {
-        const parsedLink = JSON.parse(link);
-        if (!parsedLink.url) return links;
-        links = [...links, parsedLink];
-        return links;
-      },
-      validLinks
-    );
-  }, [metadata]);
 
   const hero = metadata?.icon && metadata?.icon !== "" && metadata?.icon;
 
@@ -159,7 +139,7 @@ export const YeetMetaDetails = ({
             </div>
 
             {onProjectTeam && (
-              <MetaFormModal
+              <ProfileUpdateTx
                 yeeterid={yeeterid}
                 chainid={chainid}
                 daoid={daoid}
@@ -195,14 +175,15 @@ export const YeetMetaDetails = ({
               </div>
             )}
 
-            {linkList &&
-              linkList.map((link) => {
+            {metadata.parsedLinks &&
+              metadata.parsedLinks.map((link, i) => {
+                if (!link.url) return null;
                 return (
                   <a
                     className="link link-primary"
                     href={link.url}
                     target="_blank"
-                    key={link.url}
+                    key={i}
                   >
                     {link.label} ⟶
                   </a>
@@ -232,7 +213,7 @@ export const YeetMetaDetails = ({
 
             {onProjectTeam && (
               <div className="mt-3">
-                <MetaFormModal
+                <ProfileUpdateTx
                   yeeterid={yeeterid}
                   chainid={chainid}
                   daoid={daoid}

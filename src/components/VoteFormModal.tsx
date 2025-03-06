@@ -4,6 +4,7 @@ import { useAccount } from "wagmi";
 import { useDao } from "../hooks/useDao";
 import { useMember } from "../hooks/useMember";
 import { FieldInfo } from "./FieldInfo";
+import { VoteItem } from "../utils/types";
 
 type VoteModalProps = {
   isEmbedded: boolean;
@@ -15,6 +16,7 @@ type VoteModalProps = {
   chainid: string;
   daoid: string;
   modalid: string;
+  vote: VoteItem;
   handleSubmit: (values: Record<string, boolean>) => void;
   resetWrite: () => void;
 };
@@ -29,6 +31,7 @@ export const VoteFormModal = ({
   daoid,
   isError,
   modalid,
+  vote,
   handleSubmit,
   resetWrite,
 }: VoteModalProps) => {
@@ -91,83 +94,93 @@ export const VoteFormModal = ({
             <h4 className="text-lg font-bold mt-5">Vote complete</h4>
           )}
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              form.handleSubmit();
-            }}
-          >
-            <div>
-              <form.Field
-                name="approved"
-                children={(field) => (
-                  <>
-                    <fieldset className="fieldset p-4 bg-base-100 border border-base-300 rounded-box w-64">
-                      <legend className="fieldset-legend">
-                        Should this proposal pass?
-                      </legend>
-                      <label
-                        className={`fieldset-label flex flex-row items-center gap-2 font-bold ${
-                          field.state.value ? "text-primary" : "text-neutral"
-                        }`}
-                      >
-                        <input
-                          type="checkbox"
-                          className="toggle toggle-primary"
-                          disabled={showLoading || isConfirmed}
-                          id={field.name}
-                          name={field.name}
-                          checked={field.state.value}
-                          onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.checked)}
-                        />
-                        {field.state.value ? "Yes" : "No"}
-                      </label>
-                    </fieldset>
+          {vote && (
+            <p className="text-primary font-bold text-xl my-5">
+              You Voted {vote.approved ? "Yes" : "No"}
+            </p>
+          )}
 
-                    <FieldInfo field={field} />
-                  </>
-                )}
-              />
-            </div>
-            <div className="modal-action">
-              {hash && (
-                <div className="mt-1">
-                  <a
-                    className="link link-primary text-sm"
-                    href={`${EXPLORER_URL[chainid]}/tx/${hash}`}
-                    target="_blank"
-                  >
-                    TX Details ⟶
-                  </a>
-                </div>
-              )}
-              {isError && (
-                <div className="text-sm text-error flex items-center">
-                  Tx Error
-                </div>
-              )}
+          {!vote && (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                form.handleSubmit();
+              }}
+            >
+              <div>
+                <form.Field
+                  name="approved"
+                  children={(field) => (
+                    <>
+                      <fieldset className="fieldset p-4 bg-base-100 border border-base-300 rounded-box w-64">
+                        <legend className="fieldset-legend">
+                          Should this proposal pass?
+                        </legend>
+                        <label
+                          className={`fieldset-label flex flex-row items-center gap-2 font-bold ${
+                            field.state.value ? "text-primary" : "text-neutral"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            className="toggle toggle-primary"
+                            disabled={showLoading || isConfirmed}
+                            id={field.name}
+                            name={field.name}
+                            checked={field.state.value}
+                            onBlur={field.handleBlur}
+                            onChange={(e) =>
+                              field.handleChange(e.target.checked)
+                            }
+                          />
+                          {field.state.value ? "Yes" : "No"}
+                        </label>
+                      </fieldset>
 
-              {showLoading && (
-                <span className="loading loading-bars loading-sm"></span>
-              )}
-
-              <form.Subscribe
-                selector={(state) => [state.canSubmit, state.isSubmitting]}
-                children={() => (
-                  <>
-                    <button
-                      className="btn btn-sm btn-primary"
-                      disabled={showLoading || needsAuth || isConfirmed}
+                      <FieldInfo field={field} />
+                    </>
+                  )}
+                />
+              </div>
+              <div className="modal-action">
+                {hash && (
+                  <div className="mt-1">
+                    <a
+                      className="link link-primary text-sm"
+                      href={`${EXPLORER_URL[chainid]}/tx/${hash}`}
+                      target="_blank"
                     >
-                      Vote
-                    </button>
-                  </>
+                      TX Details ⟶
+                    </a>
+                  </div>
                 )}
-              />
-            </div>
-          </form>
+                {isError && (
+                  <div className="text-sm text-error flex items-center">
+                    Tx Error
+                  </div>
+                )}
+
+                {showLoading && (
+                  <span className="loading loading-bars loading-sm"></span>
+                )}
+
+                <form.Subscribe
+                  selector={(state) => [state.canSubmit, state.isSubmitting]}
+                  children={() => (
+                    <>
+                      <button
+                        className="btn btn-sm btn-primary"
+                        disabled={showLoading || needsAuth || isConfirmed}
+                      >
+                        Vote
+                      </button>
+                    </>
+                  )}
+                />
+              </div>
+            </form>
+          )}
         </div>
       </dialog>
     </>

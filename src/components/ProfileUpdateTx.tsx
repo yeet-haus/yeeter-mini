@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useYeeter } from "../hooks/useYeeter";
 import {
   useAccount,
   useWaitForTransactionReceipt,
@@ -6,47 +7,38 @@ import {
 } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
-import { useDao } from "../hooks/useDao";
 import { TX } from "../utils/tx-prepper/tx";
+import { useDao } from "../hooks/useDao";
 import { prepareTX } from "../utils/tx-prepper/tx-prepper";
 import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
-import { useMember } from "../hooks/useMember";
 import { checkIfEmbeddedWalletIsConnected } from "../utils/helpers";
-import { VoteFormModal } from "./VoteFormModal";
-import { useDaoMemberVote } from "../hooks/useDaoMemberVote";
+import { ProfileUpdateModal } from "./ProfileUpdateModal ";
 
-export const VoteTx = ({
+export const ProfileUpdateTx = ({
+  yeeterid,
   chainid,
   daoid,
   modalid,
-  proposalid,
 }: {
+  yeeterid: string;
   chainid: string;
   daoid: string;
   modalid: string;
-  proposalid: string;
 }) => {
+  const { yeeter, metadata } = useYeeter({
+    chainid,
+    yeeterid,
+  });
   const { ready, authenticated } = usePrivy();
-  const { address } = useAccount();
   const { dao } = useDao({
     chainid,
     daoid,
   });
-  const { member } = useMember({
-    daoid,
-    chainid,
-    memberaddress: address,
-  });
-  const { vote } = useDaoMemberVote({
-    daoid,
-    chainid,
-    proposalid,
-    memberAddress: member?.memberAddress,
-  });
-
+  const { address } = useAccount();
   const { wallets, ready: walletsReady } = useWallets();
-  const queryClient = useQueryClient();
   const [isEmbedded, setIsEmbedded] = useState<boolean>(false);
+
+  const queryClient = useQueryClient();
 
   const {
     writeContract,
@@ -61,19 +53,19 @@ export const VoteTx = ({
       hash,
     });
 
-  const handleSubmit = async (values: Record<string, boolean>) => {
-    if (!dao || !address || !member) return;
+  const handleSubmit = async (values: Record<string, string>) => {
+    if (!yeeter || !dao || !address) return;
 
-    const tx = TX.VOTE;
+    const tx = TX.UPDATE_YEET_METADATA_SETTINGS;
 
     const wholeState = {
       formValues: {
-        proposalid,
         ...values,
+        yeeterid,
       },
       senderAddress: address,
       daoId: daoid,
-      localABIs: {},
+      yeeterid,
     };
 
     const txPrep = await prepareTX({
@@ -101,39 +93,24 @@ export const VoteTx = ({
   useEffect(() => {
     const reset = async () => {
       queryClient.refetchQueries({
-        queryKey: ["get-member", { chainid, daoid, address }],
+        queryKey: ["list-records", { chainid, daoid }],
       });
 
-      queryClient.invalidateQueries({
-        queryKey: ["get-dao", { chainid, daoid }],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["list-proposals", { chainid, daoid }],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["get-proposal", { chainid, daoid, proposalid }],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: [
-          "get-member-prop-vote",
-          { chainid, daoid, proposalid, memberAddress: member?.memberAddress },
-        ],
+      queryClient.refetchQueries({
+        queryKey: ["get-yeeter", { chainid, yeeterid }],
       });
     };
     if (isConfirmed) {
       console.log("INVALIDATING/REFETCH");
       reset();
     }
-  }, [isConfirmed, queryClient, chainid, address, daoid, proposalid, member]);
+  }, [isConfirmed, queryClient, yeeterid, chainid, daoid]);
 
-  if (!dao || !member) return;
+  if (!yeeter) return;
 
   return (
-    <VoteFormModal
-      daoid={daoid}
+    <ProfileUpdateModal
+      yeeter={yeeter}
       isEmbedded={isEmbedded}
       isConfirmed={isConfirmed}
       showLoading={isSendTxPending || isConfirming}
@@ -142,9 +119,9 @@ export const VoteTx = ({
       isError={isError}
       hash={hash}
       modalid={modalid}
+      currentProfile={metadata}
       handleSubmit={handleSubmit}
       resetWrite={resetWrite}
-      vote={vote}
     />
   );
 };

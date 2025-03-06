@@ -1,4 +1,4 @@
-import { RecordItem, YeeterItem } from "./types";
+import { RecordItem, YeeterItem, YeeterMetadata } from "./types";
 import { fromWei } from "./helpers";
 import { formatValueTo } from "./units";
 
@@ -82,10 +82,29 @@ export const addParsedContent = <T>(record?: RecordItem): T | undefined => {
   if (record?.contentType === "json") {
     try {
       const obj = JSON.parse(record.content);
+
       return obj;
     } catch (e) {
       console.log("err", e);
       return;
     }
   }
+};
+
+export const addParsedLinks = (
+  profile?: YeeterMetadata
+): YeeterMetadata | undefined => {
+  if (!profile) return;
+  const links =
+    profile.links &&
+    (profile.links.map((linkObj: string) => {
+      return typeof linkObj === "string" ? JSON.parse(linkObj) : {};
+    }) as {
+      url: string;
+      label: string;
+    }[]);
+  return {
+    ...profile,
+    parsedLinks: links,
+  };
 };

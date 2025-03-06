@@ -137,10 +137,53 @@ export const TX: Record<string, TXLego> = {
           name: ".formValues.name",
           projectDetails: ".formValues.projectDetails",
           missionStatement: ".formValues.missionStatement",
+          yeeterId: ".formValues.yeeterid",
           icon: ".formValues.icon",
           links: {
             type: "nestedArray",
             args: [
+              {
+                type: "JSONDetails",
+                jsonSchema: {
+                  url: ".formValues.discord",
+                  label: { type: "static", value: "Discord" },
+                },
+              },
+              {
+                type: "JSONDetails",
+                jsonSchema: {
+                  url: ".formValues.github",
+                  label: { type: "static", value: "Github" },
+                },
+              },
+              {
+                type: "JSONDetails",
+                jsonSchema: {
+                  url: ".formValues.blog",
+                  label: { type: "static", value: "Blog" },
+                },
+              },
+              {
+                type: "JSONDetails",
+                jsonSchema: {
+                  url: ".formValues.telegram",
+                  label: { type: "static", value: "Telegram" },
+                },
+              },
+              {
+                type: "JSONDetails",
+                jsonSchema: {
+                  url: ".formValues.twitter",
+                  label: { type: "static", value: "Twitter" },
+                },
+              },
+              {
+                type: "JSONDetails",
+                jsonSchema: {
+                  url: ".formValues.web",
+                  label: { type: "static", value: "Web" },
+                },
+              },
               {
                 type: "JSONDetails",
                 jsonSchema: {
