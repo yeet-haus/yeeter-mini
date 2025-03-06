@@ -84,6 +84,7 @@ export const ProjectUpdates = ({
                 chainid={chainid}
                 daoid={daoid}
                 proposalType="funding"
+                onProjectTeam={onProjectTeam}
               />
             );
           })}
@@ -101,6 +102,7 @@ export const ProjectUpdates = ({
                 chainid={chainid}
                 daoid={daoid}
                 proposalType="member"
+                onProjectTeam={onProjectTeam}
               />
             );
           })}

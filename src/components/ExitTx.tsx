@@ -99,7 +99,7 @@ export const ExitTx = ({
   useEffect(() => {
     const reset = async () => {
       queryClient.refetchQueries({
-        queryKey: ["get-member", { chainid, yeeterid, address }],
+        queryKey: ["get-member", { chainid, daoid, address }],
       });
 
       queryClient.invalidateQueries({
@@ -110,7 +110,7 @@ export const ExitTx = ({
       console.log("INVALIDATING/REFETCH");
       reset();
     }
-  }, [isConfirmed, queryClient, yeeterid, chainid]);
+  }, [isConfirmed, queryClient, yeeterid, chainid, address, daoid]);
 
   if (!yeeter) return;
 

@@ -7,15 +7,14 @@ import {
 } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
-import { useDao } from "../hooks/useDao";
 import { TX } from "../utils/tx-prepper/tx";
+import { useDao } from "../hooks/useDao";
 import { prepareTX } from "../utils/tx-prepper/tx-prepper";
 import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
-import { parseUnits } from "viem";
-import { RequestFundingModal } from "./RequestFundingModal";
 import { checkIfEmbeddedWalletIsConnected } from "../utils/helpers";
+import { ProfileUpdateModal } from "./ProfileUpdateModal ";
 
-export const RequestFundingTx = ({
+export const ProfileUpdateTx = ({
   yeeterid,
   chainid,
   daoid,
@@ -26,12 +25,11 @@ export const RequestFundingTx = ({
   daoid: string;
   modalid: string;
 }) => {
-  const { yeeter } = useYeeter({
+  const { yeeter, metadata } = useYeeter({
     chainid,
     yeeterid,
   });
   const { ready, authenticated } = usePrivy();
-  const queryClient = useQueryClient();
   const { dao } = useDao({
     chainid,
     daoid,
@@ -39,6 +37,8 @@ export const RequestFundingTx = ({
   const { address } = useAccount();
   const { wallets, ready: walletsReady } = useWallets();
   const [isEmbedded, setIsEmbedded] = useState<boolean>(false);
+
+  const queryClient = useQueryClient();
 
   const {
     writeContract,
@@ -56,16 +56,16 @@ export const RequestFundingTx = ({
   const handleSubmit = async (values: Record<string, string>) => {
     if (!yeeter || !dao || !address) return;
 
-    const tx = TX.REQUEST_FUNDING_ETH;
+    const tx = TX.UPDATE_YEET_METADATA_SETTINGS;
 
     const wholeState = {
       formValues: {
         ...values,
-        tokenAmount: parseUnits(values.tokenAmount || "0", 18).toString(),
+        yeeterid,
       },
       senderAddress: address,
       daoId: daoid,
-      localABIs: {},
+      yeeterid,
     };
 
     const txPrep = await prepareTX({
@@ -92,20 +92,12 @@ export const RequestFundingTx = ({
 
   useEffect(() => {
     const reset = async () => {
-      queryClient.invalidateQueries({
+      queryClient.refetchQueries({
+        queryKey: ["list-records", { chainid, daoid }],
+      });
+
+      queryClient.refetchQueries({
         queryKey: ["get-yeeter", { chainid, yeeterid }],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["list-active-proposals", { chainid, daoid }],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["get-dao", { chainid, daoid }],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["list-proposals", { chainid, daoid }],
       });
     };
     if (isConfirmed) {
@@ -117,9 +109,8 @@ export const RequestFundingTx = ({
   if (!yeeter) return;
 
   return (
-    <RequestFundingModal
+    <ProfileUpdateModal
       yeeter={yeeter}
-      daoid={daoid}
       isEmbedded={isEmbedded}
       isConfirmed={isConfirmed}
       showLoading={isSendTxPending || isConfirming}
@@ -128,6 +119,7 @@ export const RequestFundingTx = ({
       isError={isError}
       hash={hash}
       modalid={modalid}
+      currentProfile={metadata}
       handleSubmit={handleSubmit}
       resetWrite={resetWrite}
     />

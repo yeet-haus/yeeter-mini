@@ -28,6 +28,7 @@ export type RecordItem = {
   tag: string;
   table: string;
   queryType: string;
+  yeeterId: string;
   dao: {
     id: string;
     name: string;
@@ -42,6 +43,10 @@ export type YeeterMetadata = {
   daoId: string;
   icon?: string;
   links?: string[];
+  parsedLinks?: {
+    url: string;
+    label: string;
+  }[];
   missionStatement?: string;
   projectDetails?: string;
   name?: string;

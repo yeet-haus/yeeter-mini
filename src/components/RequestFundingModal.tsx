@@ -7,6 +7,7 @@ import { useDaoTokenBalances } from "../hooks/useDaoTokenBalances";
 import { nativeCurrencySymbol, toWholeUnits } from "../utils/helpers";
 import { isEthAddress } from "../utils/tx-prepper/typeguards";
 import { YeeterItem } from "../utils/types";
+import { useEffect, useState } from "react";
 
 type FundingModalProps = {
   yeeter: YeeterItem;
@@ -45,6 +46,7 @@ export const RequestFundingModal = ({
     chainid,
     safeAddress: dao?.safeAddress,
   });
+  const [ethBalance, setEthBalance] = useState<string>("0");
 
   const chainId = useChainId();
   const chains = useChains();
@@ -68,12 +70,18 @@ export const RequestFundingModal = ({
     },
   });
 
+  useEffect(() => {
+    if (tokens) {
+      const ethBalance =
+        tokens.find((token) => !token.tokenAddress)?.balance || "0";
+
+      setEthBalance(toWholeUnits(ethBalance));
+    }
+  }, [tokens]);
+
   const displayEthBalance = () => {
     if (!tokens) return "Unknown";
-    const ethBalance =
-      tokens.find((token) => !token.tokenAddress)?.balance || "0";
-
-    return `${toWholeUnits(ethBalance)} ${nativeCurrencySymbol(activeChain)}`;
+    return `${ethBalance} ${nativeCurrencySymbol(activeChain)}`;
   };
 
   if (!yeeter) return;
@@ -149,6 +157,8 @@ export const RequestFundingModal = ({
                   validators={{
                     onChange: ({ value }) => {
                       if (!value) return "Required";
+                      if (Number(value) > Number(ethBalance))
+                        return "Amount Exceeds Balance";
 
                       return undefined;
                     },
