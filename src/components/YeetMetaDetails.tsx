@@ -1,9 +1,6 @@
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
 import { YeeterMetadata } from "../utils/types";
-
-import { useMemo } from "react";
 import { ProjectStatus } from "./ProjectStatus";
 import { useMember } from "../hooks/useMember";
 import { useAccount } from "wagmi";

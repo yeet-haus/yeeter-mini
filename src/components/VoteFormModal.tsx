@@ -16,7 +16,7 @@ type VoteModalProps = {
   chainid: string;
   daoid: string;
   modalid: string;
-  vote: VoteItem;
+  vote?: VoteItem;
   handleSubmit: (values: Record<string, boolean>) => void;
   resetWrite: () => void;
 };
