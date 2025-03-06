@@ -221,7 +221,7 @@ export const LIST_ALL_DAO_PROPOSALS = gql`
       skip: $skip
       first: $first
       orderBy: $orderBy
-      orderDescription: $orderDescription,
+      orderDirection: $orderDirection,
       where: { dao: $daoid }
     ) {
       ${proposalFields}
@@ -241,7 +241,7 @@ export const LIST_SIGNAL_DAO_PROPOSALS = gql`
       skip: $skip
       first: $first
       orderBy: $orderBy
-      orderDescription: $orderDescription,
+      orderDirection: $orderDirection,
       where: { 
         dao: $daoid
         proposalType: "SIGNAL" 
@@ -267,7 +267,7 @@ export const LIST_MEMBER_DAO_PROPOSALS = gql`
       skip: $skip
       first: $first
       orderBy: $orderBy
-      orderDescription: $orderDescription,
+      orderDirection: $orderDirection,
       where: { 
         dao: $daoid
         proposalType: "ISSUE" 
@@ -293,7 +293,7 @@ export const LIST_FUNDING_DAO_PROPOSALS = gql`
       skip: $skip
       first: $first
       orderBy: $orderBy
-      orderDescription: $orderDescription,
+      orderDirection: $orderDirection,
       where: { 
         dao: $daoid
         proposalType_contains_nocase: "TRANSFER"
@@ -319,7 +319,7 @@ export const LIST_ACTIVE_DAO_PROPOSALS = gql`
       skip: $skip
       first: $first
       orderBy: $orderBy
-      orderDescription: $orderDescription,
+      orderDirection: $orderDirection,
       where: { 
         dao: $daoid           
         cancelled: false
@@ -372,7 +372,7 @@ export const LIST_ALL_DAO_SHAREHOLDERS = gql`
       skip: $skip
       first: $first
       orderBy: $orderBy
-      orderDescription: $orderDescription,
+      orderDirection: $orderDirection,
       where: { dao: $daoid, shares_gt: 0 }
     ) {
       ${memberFields}
@@ -512,7 +512,7 @@ export const LIST_ALL_EXITS = gql`
       skip: $skip
       first: $first
       orderBy: $orderBy
-      orderDescription: $orderDescription
+      orderDirection: $orderDirection
       where: { dao: $daoid }
     ) {
       id
@@ -523,6 +523,29 @@ export const LIST_ALL_EXITS = gql`
       }
       loot
       shares
+    }
+  }
+`;
+
+export const FIND_MEMBER_PROPOSAL_VOTE = gql`
+  query vote($daoid: String!, $proposalid: String!, $memberAddress: String!) {
+    votes(
+      where: {
+        daoAddress: $daoid
+        proposal_: { proposalId: $proposalid }
+        member_: { memberAddress: $memberAddress }
+      }
+    ) {
+      id
+      txHash
+      createdAt
+      daoAddress
+      approved
+      balance
+      member {
+        id
+        memberAddress
+      }
     }
   }
 `;

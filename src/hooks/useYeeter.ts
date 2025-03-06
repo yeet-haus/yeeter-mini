@@ -5,6 +5,7 @@ import { FIND_YEETER, FIND_YEETER_PROFILE } from "../utils/graphQueries";
 import { YeeterItem, YeeterMetadata, RecordItem } from "../utils/types";
 import {
   addParsedContent,
+  addParsedLinks,
   calcYeetIsActive,
   calcYeetIsComingSoon,
   calcYeetIsEnded,
@@ -67,6 +68,18 @@ export const useYeeter = ({
         };
       };
 
+      const profileMatch =
+        records.records.find((record) => {
+          // find "yeeterId":"
+          let recordYeeterId;
+          if (record.content.indexOf(`"yeeterId":"`) > -1) {
+            recordYeeterId = record.content
+              .split(`"yeeterId":"`)[1]
+              ?.split(`"`)[0];
+          }
+          return recordYeeterId === yeeterid;
+        }) || records.records[0];
+
       const yeeter = {
         ...yeeterRes.yeeter,
         isActive: yeeterRes.yeeter && calcYeetIsActive(yeeterRes.yeeter),
@@ -76,11 +89,15 @@ export const useYeeter = ({
         isFull: yeeterRes.yeeter && calcYeetIsFull(yeeterRes.yeeter),
       } as YeeterItem;
 
-      const metadata = addParsedContent<YeeterMetadata>(records?.records[0]);
+      const metadataOne = addParsedContent<YeeterMetadata>(profileMatch);
+      const metadata = addParsedLinks(metadataOne);
 
       return {
         yeeter: yeeter,
-        metadata: { ...metadata, name: records?.dao.name } as YeeterMetadata,
+        metadata: {
+          ...metadata,
+          name: metadata?.name || records?.dao.name,
+        } as YeeterMetadata,
       };
     },
   });

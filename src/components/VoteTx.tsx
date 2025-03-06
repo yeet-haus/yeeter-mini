@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useYeeter } from "../hooks/useYeeter";
 import {
   useAccount,
   useWaitForTransactionReceipt,
@@ -11,33 +10,42 @@ import { useDao } from "../hooks/useDao";
 import { TX } from "../utils/tx-prepper/tx";
 import { prepareTX } from "../utils/tx-prepper/tx-prepper";
 import { ValidNetwork } from "../utils/tx-prepper/prepper-types";
-import { parseUnits } from "viem";
-import { RequestFundingModal } from "./RequestFundingModal";
+import { useMember } from "../hooks/useMember";
 import { checkIfEmbeddedWalletIsConnected } from "../utils/helpers";
+import { VoteFormModal } from "./VoteFormModal";
+import { useDaoMemberVote } from "../hooks/useDaoMemberVote";
 
-export const RequestFundingTx = ({
-  yeeterid,
+export const VoteTx = ({
   chainid,
   daoid,
   modalid,
+  proposalid,
 }: {
-  yeeterid: string;
   chainid: string;
   daoid: string;
   modalid: string;
+  proposalid: string;
 }) => {
-  const { yeeter } = useYeeter({
-    chainid,
-    yeeterid,
-  });
   const { ready, authenticated } = usePrivy();
-  const queryClient = useQueryClient();
+  const { address } = useAccount();
   const { dao } = useDao({
     chainid,
     daoid,
   });
-  const { address } = useAccount();
+  const { member } = useMember({
+    daoid,
+    chainid,
+    memberaddress: address,
+  });
+  const { vote } = useDaoMemberVote({
+    daoid,
+    chainid,
+    proposalid,
+    memberAddress: member?.memberAddress,
+  });
+
   const { wallets, ready: walletsReady } = useWallets();
+  const queryClient = useQueryClient();
   const [isEmbedded, setIsEmbedded] = useState<boolean>(false);
 
   const {
@@ -53,15 +61,15 @@ export const RequestFundingTx = ({
       hash,
     });
 
-  const handleSubmit = async (values: Record<string, string>) => {
-    if (!yeeter || !dao || !address) return;
+  const handleSubmit = async (values: Record<string, boolean>) => {
+    if (!dao || !address || !member) return;
 
-    const tx = TX.REQUEST_FUNDING_ETH;
+    const tx = TX.VOTE;
 
     const wholeState = {
       formValues: {
+        proposalid,
         ...values,
-        tokenAmount: parseUnits(values.tokenAmount || "0", 18).toString(),
       },
       senderAddress: address,
       daoId: daoid,
@@ -92,12 +100,8 @@ export const RequestFundingTx = ({
 
   useEffect(() => {
     const reset = async () => {
-      queryClient.invalidateQueries({
-        queryKey: ["get-yeeter", { chainid, yeeterid }],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["list-active-proposals", { chainid, daoid }],
+      queryClient.refetchQueries({
+        queryKey: ["get-member", { chainid, daoid, address }],
       });
 
       queryClient.invalidateQueries({
@@ -107,18 +111,28 @@ export const RequestFundingTx = ({
       queryClient.invalidateQueries({
         queryKey: ["list-proposals", { chainid, daoid }],
       });
+
+      queryClient.invalidateQueries({
+        queryKey: ["get-proposal", { chainid, daoid, proposalid }],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [
+          "get-member-prop-vote",
+          { chainid, daoid, proposalid, memberAddress: member?.memberAddress },
+        ],
+      });
     };
     if (isConfirmed) {
       console.log("INVALIDATING/REFETCH");
       reset();
     }
-  }, [isConfirmed, queryClient, yeeterid, chainid, daoid]);
+  }, [isConfirmed, queryClient, chainid, address, daoid, proposalid, member]);
 
-  if (!yeeter) return;
+  if (!dao || !member) return;
 
   return (
-    <RequestFundingModal
-      yeeter={yeeter}
+    <VoteFormModal
       daoid={daoid}
       isEmbedded={isEmbedded}
       isConfirmed={isConfirmed}
@@ -130,6 +144,7 @@ export const RequestFundingTx = ({
       modalid={modalid}
       handleSubmit={handleSubmit}
       resetWrite={resetWrite}
+      vote={vote}
     />
   );
 };

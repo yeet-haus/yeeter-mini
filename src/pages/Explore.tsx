@@ -30,7 +30,9 @@ export const Explore = () => {
         onChange={(e) => {
           setActiveChain(Number(e.target.value));
           const wallet = wallets[0];
-          wallet.switchChain(Number(e.target.value));
+          if (wallet) {
+            wallet.switchChain(Number(e.target.value));
+          }
         }}
         value={activeChain}
       >
