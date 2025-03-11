@@ -77,6 +77,7 @@ export const useYeeter = ({
               .split(`"yeeterId":"`)[1]
               ?.split(`"`)[0];
           }
+
           return recordYeeterId === yeeterid;
         }) || records.records[0];
 
