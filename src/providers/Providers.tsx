@@ -7,10 +7,11 @@ import { HAUS_RPC_DEFAULTS } from "../utils/constants";
 import { http } from "wagmi";
 import { createConfig, WagmiProvider } from "@privy-io/wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import FarcasterFrameProvider from "./FarcasterFrameProvider";
 
 const supportedChains = [base, optimism, arbitrum, gnosis, sepolia];
 
-const config = createConfig({
+export const wagmiConfig = createConfig({
   // @ts-expect-error fix unknown
   chains: supportedChains,
   transports: {
@@ -33,11 +34,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       appId={import.meta.env.VITE_PRIVY_APP_ID}
       config={{
         loginMethods: ["email", "wallet", "farcaster"],
-        // appearance: {
-        //   theme: "light",
-        //   accentColor: "#676FFF",
-        //   logo: "https://your-logo-url",
-        // },
+
         embeddedWallets: {
           createOnLogin: "users-without-wallets",
         },
@@ -46,9 +43,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       }}
     >
       <QueryClientProvider client={queryClient}>
-        <WagmiProvider config={config}>
+        <WagmiProvider config={wagmiConfig}>
           <DaoHooksProvider keyConfig={daoHooksConfig}>
-            {children}
+            <FarcasterFrameProvider>{children}</FarcasterFrameProvider>
           </DaoHooksProvider>
         </WagmiProvider>
       </QueryClientProvider>
