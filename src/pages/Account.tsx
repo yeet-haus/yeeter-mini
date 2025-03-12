@@ -3,11 +3,14 @@ import { AccountDisplay } from "../components/AccountDisplay";
 import { AccountYeeters } from "../components/AccountYeeters";
 import { FundWallet } from "../components/FundWallet";
 import { Login } from "../components/Login";
+import { useAccount } from "wagmi";
 
 export const Account = () => {
   const { ready, authenticated, user } = usePrivy();
+  const { address } = useAccount();
 
   console.log("user", user);
+  console.log("useAccount address", address);
 
   return (
     <div className="flex flex-col justify-center items-center gap-5">
