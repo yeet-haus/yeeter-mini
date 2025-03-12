@@ -22,8 +22,8 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         console.log("switching active", isEmbedded);
         setActiveWallet(isEmbedded);
       } else {
-        console.log("setting injected", wallets[0]);
-        setActiveWallet(wallets[0]);
+        // console.log("setting injected", wallets[0]);
+        // setActiveWallet(wallets[0]);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
