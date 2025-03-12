@@ -4,10 +4,11 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useLoginToFrame } from "@privy-io/react-auth/farcaster";
 
 function FarcasterFrameProvider({ children }: PropsWithChildren) {
-  const { ready, authenticated } = usePrivy();
+  const { ready, authenticated, user } = usePrivy();
   const { initLoginToFrame, loginToFrame } = useLoginToFrame();
 
   useEffect(() => {
+    console.log("user", user);
     if (ready && !authenticated) {
       const login = async () => {
         // Initialize a new login attempt to get a nonce for the Farcaster wallet to sign
@@ -20,13 +21,13 @@ function FarcasterFrameProvider({ children }: PropsWithChildren) {
           message: result.message,
           signature: result.signature,
         });
-
-        setTimeout(() => {
-          frameSdk.actions.ready();
-        }, 500);
       };
       login();
     }
+
+    setTimeout(() => {
+      frameSdk.actions.ready();
+    }, 500);
   }, [ready, authenticated]);
 
   return <>{children}</>;
