@@ -28,6 +28,7 @@ function FarcasterFrameProvider({ children }: PropsWithChildren) {
     setTimeout(() => {
       frameSdk.actions.ready();
     }, 500);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, authenticated]);
 
   return <>{children}</>;
