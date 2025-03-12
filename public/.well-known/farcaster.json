@@ -5,12 +5,12 @@
     "signature": "MHhiMDg0YjMyYjcwYTM2YjM3Mjc4ODhhZGE0NTY1NzEzYmEwYjU2ZWJmYjIwMmNjZDk0YmViNDhkZmU1M2I1ODVlMmM3NzcyOGNjMWQ3YjY1MjU2ZjljZTFiZDU1MmIzMGNlNGJiMTJhNDJhZTcxYThmYTQ3ZjI4Y2VkNmExMjViNDFi"
   },
   "frame": {
-    "version": "1",
-    "name": "Example Frame",
+    "version": "2.0",
+    "name": "Wee Yeet",
     "iconUrl": "https://wee.yeet.haus/favicon-32x32.png",
     "homeUrl": "https://wee.yeet.haus/",
     "imageUrl": "https://wee.yeet.haus/preview.png",
-    "buttonTitle": "Check this out",
+    "buttonTitle": "YEET!",
     "splashImageUrl": "https://wee.yeet.haus/preview.png",
     "splashBackgroundColor": "#E8AE4C",
     "webhookUrl": "https://wee.yeet.haus/api/webhook"
