@@ -20,6 +20,10 @@ function FarcasterFrameProvider({ children }: PropsWithChildren) {
           message: result.message,
           signature: result.signature,
         });
+
+        setTimeout(() => {
+          frameSdk.actions.ready();
+        }, 500);
       };
       login();
     }
