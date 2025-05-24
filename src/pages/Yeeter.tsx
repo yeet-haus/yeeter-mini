@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useYeeter } from "../hooks/useYeeter";
 import { ActiveYeeter } from "../components/ActiveYeeter";
 import { UpcomingYeeter } from "../components/UpcomingYeeter";
-import { ClosedYeeter } from "../components/ClosedYeeter";
+// import { ClosedYeeter } from "../components/ClosedYeeter";
 import { YeetMetaDetails } from "../components/YeetMetaDetails";
 import { Timeline } from "../components/Timeline";
 import { YeetMessages } from "../components/YeetMessages";
@@ -47,9 +47,6 @@ export const Yeeter = () => {
           {yeeter?.isComingSoon && <UpcomingYeeter />}
           {yeeter?.isActive && (
             <ActiveYeeter yeeterid={yeeterid} chainid={chainid} />
-          )}
-          {yeeter?.isEnded && (
-            <ClosedYeeter yeeterid={yeeterid} chainid={chainid} />
           )}
 
           <div className="mb-5">
