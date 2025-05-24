@@ -11,7 +11,7 @@ import { ProjectFunders } from "./ProjectFunders";
 import { ProjectContracts } from "./ProjectContracts";
 import { ProfileUpdateTx } from "./ProfileUpdateTx";
 
-const warpcastBaseUrl = `https://warpcast.com/~/compose?text=&embeds[]=https://frames.yeet.haus/yeeter`;
+const warpcastBaseUrl = `https://farcaster.xyz/~/compose?text=&embeds[]=https://frames.yeet.haus/yeeter`;
 
 export const YeetMetaDetails = ({
   metadata,

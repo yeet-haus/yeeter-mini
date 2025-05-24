@@ -11,7 +11,7 @@ import FarcasterFrameProvider from "./FarcasterFrameProvider";
 
 const supportedChains = [base, optimism, arbitrum, gnosis, sepolia];
 
-export const wagmiConfig = createConfig({
+const wagmiConfig = createConfig({
   // @ts-expect-error fix unknown
   chains: supportedChains,
   transports: {
@@ -34,7 +34,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       appId={import.meta.env.VITE_PRIVY_APP_ID}
       config={{
         loginMethods: ["farcaster", "email", "wallet"],
-
         embeddedWallets: {
           createOnLogin: "users-without-wallets",
         },

@@ -108,7 +108,8 @@ export const About = () => {
               <li>Images and visuals</li>
             </ul>
             <p>
-              Share via Warpcast frames to accept contributions directly in-feed
+              Share via Farcaster frames to accept contributions directly
+              in-feed
             </p>
             <p>Grow the team</p>
             <ul className="list-disc px-5">
@@ -271,8 +272,8 @@ export const About = () => {
             <p className="font-bold">Wee Frame It</p>
             <ul className="list-disc px-5 mb-2">
               <li>
-                Warpcast frame implementation for seamless project discovery and
-                direct contributions through social feeds
+                Farcaster frame implementation for seamless project discovery
+                and direct contributions through social feeds
               </li>
             </ul>
             <p className="font-bold">Wee Share the Success</p>
@@ -281,7 +282,7 @@ export const About = () => {
             </ul>
             <p className="font-bold">Wee Connect Communities </p>
             <ul className="list-disc px-5 mb-2">
-              <li>Dedicated Warpcast channel creation for each project</li>
+              <li>Dedicated Farcaster channel creation for each project</li>
               <li>Community engagement tools for team-funder communication</li>
               <li>Token-gated backer-only spaces for exclusive updates</li>
             </ul>
