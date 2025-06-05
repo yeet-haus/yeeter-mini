@@ -98,6 +98,12 @@ export const LaunchForm = () => {
 
       console.log("summonArgs", summonArgs);
 
+      const addy = YEETER_CONTRACTS["ONBOARDER_SUMMONER"][
+        chainid
+      ] as `0x${string}`;
+
+      console.log("addy", addy);
+
       writeContract({
         address: YEETER_CONTRACTS["ONBOARDER_SUMMONER"][
           chainid

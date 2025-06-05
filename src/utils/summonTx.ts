@@ -29,6 +29,8 @@ import { POSTER_TAGS } from "./tx-prepper/tx";
 import { isArray, isNumberish, isString } from "./tx-prepper/typeguards";
 import { SummonParams } from "./types";
 
+// 0x78cf150b2E684562C0510C0b699edE1DCD69b983
+
 export const assembleYeeterSummonerArgs = (args: ArbitraryState) => {
   const formValues = args.formValues as Record<string, unknown>;
   const chainId = args.chainId as ValidNetwork;
@@ -93,8 +95,10 @@ const assembleLootTokenParams = ({
   }
 
   const lootParams = encodeValues(
-    ["string", "string", "address[]", "uint256[]"],
-    [tokenName, tokenSymbol, [], []]
+    ["string", "string"],
+    // ["string", "string", "address[]", "uint256[]"],
+    [tokenName, tokenSymbol]
+    // [tokenName, tokenSymbol, [], []]
   );
 
   return encodeValues(["address", "bytes"], [lootSingleton, lootParams]);
@@ -112,18 +116,16 @@ const assembleShareTokenParams = ({
   const tokenSymbol = `${yeetName.substring(0, 2)}SHARES`;
   const shareSingleton = CONTRACT_KEYCHAINS["SHARES_SINGLETON"][chainId];
 
-  const shareHolders: string[] = formValues["members"] as string[];
-
-  const shareAmounts = shareHolders.map(
-    () => DEFAULT_SUMMON_VALUES.shareAmounts
-  );
+  // const shareAmounts = shareHolders.map(
+  //   () => DEFAULT_SUMMON_VALUES.shareAmounts
+  // );
 
   if (
     !isString(yeetName) ||
     !isString(tokenName) ||
     !isString(tokenSymbol) ||
-    !isArray(shareHolders) ||
-    shareHolders.some((addr) => !isString(addr)) ||
+    // !isArray(shareHolders) ||
+    // shareHolders.some((addr) => !isString(addr)) ||
     !shareSingleton
   ) {
     console.log("ERROR: passed args");
@@ -134,8 +136,11 @@ const assembleShareTokenParams = ({
   }
 
   const shareParams = encodeValues(
-    ["string", "string", "address[]", "uint256[]"],
-    [tokenName, tokenSymbol, shareHolders, shareAmounts]
+    ["string", "string"],
+    // ["string", "string", "address[]", "uint256[]"],
+
+    // [tokenName, tokenSymbol, shareHolders, shareAmounts]
+    [tokenName, tokenSymbol]
   );
 
   return encodeValues(["address", "bytes"], [shareSingleton, shareParams]);
@@ -213,6 +218,8 @@ const assembleInitActions = ({
 
   return [
     governanceConfigTX(DEFAULT_SUMMON_VALUES),
+    tokenConfigTX(),
+    tokenMintTX(formValues),
     metadataConfigTX(formValues, POSTER),
   ];
 };
@@ -254,6 +261,50 @@ const governanceConfigTX = (formValues: SummonParams) => {
   const encoded = encodeFunction(LOCAL_ABI.BAAL, "setGovernanceConfig", [
     encodedValues,
   ]);
+  if (isString(encoded)) {
+    return encoded;
+  }
+  throw new Error("Encoding Error");
+};
+
+const tokenConfigTX = () => {
+  const lootPaused = DEFAULT_SUMMON_VALUES.nvTransferable;
+  const sharesPaused = DEFAULT_SUMMON_VALUES.votingTransferable;
+
+  const encoded = encodeFunction(LOCAL_ABI.BAAL, "setAdminConfig", [
+    lootPaused,
+    sharesPaused,
+  ]);
+  console.log("lootPaused", lootPaused);
+  console.log("sharesPaused", sharesPaused);
+
+  console.log("encoded", encoded);
+  if (isString(encoded)) {
+    return encoded;
+  }
+  throw new Error("Encoding Error");
+};
+
+const tokenMintTX = (formValues: Record<string, unknown>) => {
+  const shareHolders: string[] = formValues["members"] as string[];
+
+  const shareAmounts = shareHolders.map(
+    () => DEFAULT_SUMMON_VALUES.shareAmounts
+  );
+
+  if (!isArray(shareHolders) || shareHolders.some((addr) => !isString(addr))) {
+    console.log("ERROR: passed args");
+
+    throw new Error(
+      "tokenMintTX recieved arguments in the wrong shape or type"
+    );
+  }
+
+  const encoded = encodeFunction(LOCAL_ABI.BAAL, "mintShares", [
+    shareHolders,
+    shareAmounts,
+  ]);
+
   if (isString(encoded)) {
     return encoded;
   }
