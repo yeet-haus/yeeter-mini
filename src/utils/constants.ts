@@ -122,8 +122,8 @@ export const DEFAULT_SUMMON_VALUES = {
   quorum: "0",
   sponsorThreshold: "1000000000000000000",
   minRetention: "66",
-  votingTransferable: true,
-  nvTransferable: true,
+  votingPaused: true,
+  nvPaused: true,
   shareAmounts: "1000000000000000000",
 };
 export const FEE_DISCLOSURE =

@@ -1,19 +1,3 @@
-// import {
-//   ArbitraryState,
-//   EthAddress,
-//   POSTER_TAGS,
-//   encodeFunction,
-//   encodeValues,
-//   getNonce,
-//   isArray,
-//   isEthAddress,
-//   isNumberish,
-//   isString,
-// } from "@daohaus/utils";
-// import { CONTRACT_KEYCHAINS, ValidNetwork } from "@daohaus/keychain-utils";
-// import { LOCAL_ABI } from "@daohaus/abis";
-// import { SummonParams, handleKeychains } from "@daohaus/contract-utils";
-
 import {
   DEFAULT_SUMMON_VALUES,
   DEFAULT_YEETER_VALUES,
@@ -28,8 +12,6 @@ import { ArbitraryState, ValidNetwork } from "./tx-prepper/prepper-types";
 import { POSTER_TAGS } from "./tx-prepper/tx";
 import { isArray, isNumberish, isString } from "./tx-prepper/typeguards";
 import { SummonParams } from "./types";
-
-// 0x78cf150b2E684562C0510C0b699edE1DCD69b983
 
 export const assembleYeeterSummonerArgs = (args: ArbitraryState) => {
   const formValues = args.formValues as Record<string, unknown>;
@@ -77,8 +59,6 @@ const assembleLootTokenParams = ({
   const tokenName = `${yeetName}loot`;
   const tokenSymbol = `${yeetName.substring(0, 2)}LOOT`;
 
-  // const tokenName = formValues["lootTokenName"];
-  // const tokenSymbol = formValues["lootTokenSymbol"];
   const lootSingleton = CONTRACT_KEYCHAINS["LOOT_SINGLETON"][chainId];
 
   if (
@@ -96,9 +76,7 @@ const assembleLootTokenParams = ({
 
   const lootParams = encodeValues(
     ["string", "string"],
-    // ["string", "string", "address[]", "uint256[]"],
     [tokenName, tokenSymbol]
-    // [tokenName, tokenSymbol, [], []]
   );
 
   return encodeValues(["address", "bytes"], [lootSingleton, lootParams]);
@@ -116,16 +94,10 @@ const assembleShareTokenParams = ({
   const tokenSymbol = `${yeetName.substring(0, 2)}SHARES`;
   const shareSingleton = CONTRACT_KEYCHAINS["SHARES_SINGLETON"][chainId];
 
-  // const shareAmounts = shareHolders.map(
-  //   () => DEFAULT_SUMMON_VALUES.shareAmounts
-  // );
-
   if (
     !isString(yeetName) ||
     !isString(tokenName) ||
     !isString(tokenSymbol) ||
-    // !isArray(shareHolders) ||
-    // shareHolders.some((addr) => !isString(addr)) ||
     !shareSingleton
   ) {
     console.log("ERROR: passed args");
@@ -137,9 +109,6 @@ const assembleShareTokenParams = ({
 
   const shareParams = encodeValues(
     ["string", "string"],
-    // ["string", "string", "address[]", "uint256[]"],
-
-    // [tokenName, tokenSymbol, shareHolders, shareAmounts]
     [tokenName, tokenSymbol]
   );
 
@@ -268,17 +237,13 @@ const governanceConfigTX = (formValues: SummonParams) => {
 };
 
 const tokenConfigTX = () => {
-  const lootPaused = DEFAULT_SUMMON_VALUES.nvTransferable;
-  const sharesPaused = DEFAULT_SUMMON_VALUES.votingTransferable;
+  const lootPaused = DEFAULT_SUMMON_VALUES.nvPaused;
+  const sharesPaused = DEFAULT_SUMMON_VALUES.votingPaused;
 
   const encoded = encodeFunction(LOCAL_ABI.BAAL, "setAdminConfig", [
     lootPaused,
     sharesPaused,
   ]);
-  console.log("lootPaused", lootPaused);
-  console.log("sharesPaused", sharesPaused);
-
-  console.log("encoded", encoded);
   if (isString(encoded)) {
     return encoded;
   }
