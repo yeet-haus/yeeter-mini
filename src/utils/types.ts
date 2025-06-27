@@ -69,8 +69,8 @@ export type SummonParams = {
   tokenSymbol?: string;
   lootTokenName?: string;
   lootTokenSymbol?: string;
-  votingTransferable?: boolean;
-  nvTransferable?: boolean;
+  votingPaused?: boolean;
+  nvPaused?: boolean;
   quorum?: string;
   minRetention?: string;
   sponsorThreshold?: string;
